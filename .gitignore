@@ -22,6 +22,9 @@
 .idea/dictionaries/
 .idea/libraries/
 
+/target/
+build/
+.gradle/
 
 # User-specific stuff
 .idea/**/workspace.xml
