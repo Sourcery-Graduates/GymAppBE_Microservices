@@ -1,10 +1,7 @@
 package com.sourcery.gymapp.backend.sharedLinks.model;
 
 
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
@@ -23,7 +20,7 @@ import java.util.UUID;
 public class BaseEntity {
 
     @Id
-    @Column(updatable = false, nullable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
     protected UUID id;
 
     @Column(updatable = false, nullable = false)

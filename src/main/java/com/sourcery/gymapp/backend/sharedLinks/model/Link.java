@@ -25,7 +25,7 @@ public class Link extends BaseEntity {
     @NotNull
     private UUID routineId;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "link")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "link", cascade = CascadeType.ALL)
     private List<LinkAccessLogs> linkAccessLogs;
 
     @NotNull
