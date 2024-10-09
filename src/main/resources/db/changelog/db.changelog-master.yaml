@@ -10,5 +10,5 @@ databaseChangeLog:
       file: changes/sharedlinks/v1.0-sharedlinks-changelog.sql
       relativeToChangelogFile: true
   - include:
-      file: changes/workout_module/db.changelog-workout-module-master.yaml
-      relativeToChangelogFile: false
+      file: changes/workout_data/db.changelog-workout-module-master.yaml
+      relativeToChangelogFile: true
