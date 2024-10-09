@@ -9,3 +9,6 @@ databaseChangeLog:
   - include:
       file: changes/sharedlinks/v1.0-sharedlinks-changelog.sql
       relativeToChangelogFile: true
+  - include:
+      file: changes/workout_module/db.changelog-workout-module-master.yaml
+      relativeToChangelogFile: false
