@@ -1,6 +1,10 @@
 package com.sourcery.gymapp.backend.sharedLinks.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.CascadeType;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,5 +25,6 @@ public class LinkAccessLogs extends BaseEntity {
     @NotNull
     private LocalDateTime accessedAt;
 
+    @NotNull
     private UUID accessedByUserId;
 }

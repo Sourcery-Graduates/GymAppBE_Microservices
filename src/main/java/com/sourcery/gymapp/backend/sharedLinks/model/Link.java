@@ -1,6 +1,10 @@
 package com.sourcery.gymapp.backend.sharedLinks.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.CascadeType;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,14 +19,19 @@ import java.util.UUID;
 @Table(name = "links", schema = "shared_links")
 public class Link extends BaseEntity {
 
+    @NotNull
     private UUID userId;
+
+    @NotNull
     private UUID routineId;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "link", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "link")
     private List<LinkAccessLogs> linkAccessLogs;
 
     @NotNull
     private String link;
+
+    @NotNull
     private boolean isActive;
 
     @NotNull
