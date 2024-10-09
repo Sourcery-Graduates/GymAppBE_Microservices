@@ -1,11 +1,11 @@
 package com.sourcery.gymapp.backend.workout.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
+import org.hibernate.type.SqlTypes;
 
 import java.util.List;
 
@@ -26,11 +26,11 @@ public class Exercise extends BaseEntity {
 
     private String equipment;
 
-    @ElementCollection
+    @JdbcTypeCode(SqlTypes.ARRAY)
     @Column(name = "primary_muscles", columnDefinition = "text[]")
     private List<String> primaryMuscles;
 
-    @ElementCollection
+    @JdbcTypeCode(SqlTypes.ARRAY)
     @Column(name = "secondary_muscles", columnDefinition = "text[]")
     private List<String> secondaryMuscles;
 
@@ -38,7 +38,7 @@ public class Exercise extends BaseEntity {
 
     private String category;
 
-    @ElementCollection
+    @JdbcTypeCode(SqlTypes.ARRAY)
     @Column(name = "images", columnDefinition = "text[]")
     private List<String> images;
 }

@@ -12,25 +12,10 @@ CREATE TABLE workout_data.exercise
     equipment   VARCHAR(255),
     description VARCHAR(255),
     category    VARCHAR(255),
+    primary_muscles TEXT[],
+    secondary_muscles TEXT[],
+    images      TEXT[],
     CONSTRAINT pk_exercise PRIMARY KEY (id)
-);
-
-CREATE TABLE workout_data.exercise_images
-(
-    exercise_id UUID NOT NULL,
-    images      TEXT[]
-);
-
-CREATE TABLE workout_data.exercise_primary_muscles
-(
-    exercise_id     UUID NOT NULL,
-    primary_muscles TEXT[]
-);
-
-CREATE TABLE workout_data.exercise_secondary_muscles
-(
-    exercise_id       UUID NOT NULL,
-    secondary_muscles TEXT[]
 );
 
 CREATE TABLE workout_data.routine
@@ -131,12 +116,3 @@ ALTER TABLE workout_data.workout
 
 ALTER TABLE workout_data.workout
     ADD CONSTRAINT FK_WORKOUT_ON_ROUTINE FOREIGN KEY (routine_id) REFERENCES workout_data.routine (id);
-
-ALTER TABLE workout_data.exercise_images
-    ADD CONSTRAINT fk_exercise_images_on_exercise FOREIGN KEY (exercise_id) REFERENCES workout_data.exercise (id);
-
-ALTER TABLE workout_data.exercise_primary_muscles
-    ADD CONSTRAINT fk_exercise_primarymuscles_on_exercise FOREIGN KEY (exercise_id) REFERENCES workout_data.exercise (id);
-
-ALTER TABLE workout_data.exercise_secondary_muscles
-    ADD CONSTRAINT fk_exercise_secondarymuscles_on_exercise FOREIGN KEY (exercise_id) REFERENCES workout_data.exercise (id);
