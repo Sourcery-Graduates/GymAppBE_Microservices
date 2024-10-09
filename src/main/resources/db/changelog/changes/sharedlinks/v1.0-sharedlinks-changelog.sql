@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS shared_links.links (
     user_id         UUID NOT NULL,
     routine_id      UUID NOT NULL,
     link            VARCHAR(256) NOT NULL,
-    expires_at      TIMESTAMP NOT NULL,
+    expires_at      TIMESTAMP WITH TIME ZONE NOT NULL,
     is_active       BOOLEAN NOT NULL,
     created_at      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     modified_at     TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
