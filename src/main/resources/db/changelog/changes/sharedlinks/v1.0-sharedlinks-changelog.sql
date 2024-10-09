@@ -1,7 +1,7 @@
 --liquibase formatted sql
 
---changeset przemyslawren:create-shared-links
-CREATE TABLE IF NOT EXISTS shared_links.shared_links (
+--changeset przemyslawren:create-links-table
+CREATE TABLE IF NOT EXISTS shared_links.links (
     id              UUID PRIMARY KEY,
     user_id         UUID,
     routine_id      UUID,
@@ -14,8 +14,9 @@ CREATE TABLE IF NOT EXISTS shared_links.shared_links (
     modified_by     UUID NOT NULL
 );
 
+--changeset przemyslawren:create-link-access-logs-table
 CREATE TABLE IF NOT EXISTS shared_links.link_access_logs (
-    access_id           UUID PRIMARY KEY,
+    id                  UUID PRIMARY KEY,
     link_id             UUID NOT NULL,
     accessed_at         TIMESTAMP NOT NULL DEFAULT NOW(),
     accessed_by_user_id UUID,

@@ -1,25 +1,25 @@
-package com.sourcery.gymapp.backend.sharedLinks.entity;
+package com.sourcery.gymapp.backend.sharedLinks.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.cglib.core.Local;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "shared_links")
-public class SharedLinks extends BaseEntity {
+@Table(name = "links", schema = "shared_links")
+public class Link extends BaseEntity {
 
     private UUID userId;
     private UUID routineId;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "link", cascade = CascadeType.ALL)
+    private List<LinkAccessLogs> linkAccessLogs;
 
     @NotNull
     private String link;

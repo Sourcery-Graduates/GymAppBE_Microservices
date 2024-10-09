@@ -1,6 +1,7 @@
-package com.sourcery.gymapp.backend.sharedLinks.entity;
+package com.sourcery.gymapp.backend.sharedLinks.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,13 +11,15 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Table(name = "link_access_logs")
+@Table(name = "link_access_logs", schema = "shared_links")
 public class LinkAccessLogs extends BaseEntity {
 
-    @ManyToOne
-    @JoinColumn(name = "link_id", referencedColumnName = "id", nullable = false)
-    private SharedLinks sharedLink;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "link_id")
+    private Link link;
 
+    @NotNull
     private LocalDateTime accessedAt;
+
     private UUID accessedByUserId;
 }
