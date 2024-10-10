@@ -18,3 +18,7 @@ databaseChangeLog:
   - include:
       file: changes/workout_data/db.changelog-workout-module-master.yaml
       relativeToChangelogFile: true
+
+  - include:
+      file: changes/userprofile/v1.0-userprofile-changelog.sql
+      relativeToChangelogFile: true
