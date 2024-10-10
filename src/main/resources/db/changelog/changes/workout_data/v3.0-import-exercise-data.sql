@@ -21,7 +21,10 @@ SELECT
     exercise_data::jsonb->>'level',          -- Extracting 'level' from JSON
     exercise_data::jsonb->>'mechanic',       -- Extracting 'mechanic' from JSON
     exercise_data::jsonb->>'equipment',      -- Extracting 'equipment' from JSON
-    exercise_data::jsonb->>'description',    -- Extracting 'description' from JSON
+    array(
+            SELECT jsonb_array_elements_text(exercise_data::jsonb->'instructions')
+    ),
+    -- Converting 'instructions' JSON array to PostgreSQL text[]
     exercise_data::jsonb->>'category',       -- Extracting 'category' from JSON
     -- Converting 'primaryMuscles' JSON array to PostgreSQL text[]
     array(

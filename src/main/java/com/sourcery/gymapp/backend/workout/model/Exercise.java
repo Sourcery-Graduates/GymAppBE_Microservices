@@ -41,8 +41,9 @@ public class Exercise extends BaseEntity {
     @Column(name = "secondary_muscles", columnDefinition = "text[]")
     private List<String> secondaryMuscles;
 
-    @Size(max = 255)
-    private String description;
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    @Column(name = "description", columnDefinition = "text[]")
+    private List<String> description;
 
     @Size(max = 255)
     private String category;
