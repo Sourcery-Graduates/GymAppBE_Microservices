@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: v1.0-workout-changelog.sql
+      relativeToChangelogFile: true
