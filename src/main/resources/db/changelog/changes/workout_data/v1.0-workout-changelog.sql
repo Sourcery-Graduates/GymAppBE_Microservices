@@ -10,7 +10,7 @@ CREATE TABLE workout_data.exercise
     level       VARCHAR(255),
     mechanic    VARCHAR(255),
     equipment   VARCHAR(255),
-    description VARCHAR(255),
+    description TEXT[],
     category    VARCHAR(255),
     primary_muscles TEXT[],
     secondary_muscles TEXT[],
