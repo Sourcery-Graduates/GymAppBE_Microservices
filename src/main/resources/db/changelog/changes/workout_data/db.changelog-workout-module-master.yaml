@@ -2,3 +2,11 @@ databaseChangeLog:
   - include:
       file: v1.0-workout-changelog.sql
       relativeToChangelogFile: true
+
+  - include:
+      file: v2.0-enable-uuid-generation-extension.sql
+      relativeToChangelogFile: true
+
+  - include:
+      file: v3.0-import-exercise-data.sql
+      relativeToChangelogFile: true

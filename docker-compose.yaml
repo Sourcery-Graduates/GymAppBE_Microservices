@@ -12,6 +12,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_gym_app_data:/var/lib/postgresql/data
+      - ./src/main/resources/db/changelog/changes/workout_data/exercises_data:/var/lib/postgresql/import-data
     networks:
       - app-network
 
