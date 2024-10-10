@@ -5,6 +5,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,10 +21,12 @@ public class Workout extends BaseEntity {
     @Column(nullable = false)
     private UUID userId;
 
+    @Size(max = 255)
     private String name;
 
     private Date date;
 
+    @Size(max = 255)
     private String comment;
 
     @ManyToOne

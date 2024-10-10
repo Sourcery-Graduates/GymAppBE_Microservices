@@ -5,8 +5,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,9 +31,6 @@ public class WorkoutExerciseSet extends BaseEntity {
 
   private Integer restTime;
 
-  @Min(1)
-  @Max(10)
-  private Integer rpe;
-
+  @Size(max = 255)
   private String comment;
 }

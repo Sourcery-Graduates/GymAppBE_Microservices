@@ -91,7 +91,6 @@ CREATE TABLE workout_data.workout_exercise_set
     reps                INTEGER,
     weight              DECIMAL(5, 2),
     rest_time           INTEGER,
-    rpe                 INTEGER,
     comment             VARCHAR(255),
     CONSTRAINT pk_workout_exercise_set PRIMARY KEY (id)
 );
