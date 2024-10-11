@@ -4,15 +4,15 @@ databaseChangeLog:
       relativeToChangelogFile: true
 
   - include:
-      file: changes/public/v1.0-create-event-publication-table.sql
+      file: changes/public/db.changelog-public-schema-master.yaml
       relativeToChangelogFile: true
 
   - include:
-      file: changes/userauth/v1.0-userauth-changelog.sql
+      file: changes/userauth/db.changelog-userauth-module-master.yaml
       relativeToChangelogFile: true
 
   - include:
-      file: changes/sharedlinks/v1.0-sharedlinks-changelog.sql
+      file: changes/sharedlinks/db.changelog-sharedlinks-module-master.yaml
       relativeToChangelogFile: true
 
   - include:
@@ -20,5 +20,5 @@ databaseChangeLog:
       relativeToChangelogFile: true
 
   - include:
-      file: changes/userprofile/v1.0-userprofile-changelog.sql
+      file: changes/userprofile/db.changelog-userprofile-module-master.yaml
       relativeToChangelogFile: true
