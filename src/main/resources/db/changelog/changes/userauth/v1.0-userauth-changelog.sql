@@ -8,9 +8,7 @@ CREATE TABLE user_auth.users
     password       VARCHAR(128) NOT NULL,
     email          VARCHAR(128) NOT NULL,
     created_at     TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    modified_at    TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    created_by     UUID NOT NULL,
-    modified_by    UUID NOT NULL
+    modified_at    TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
 --changeset TymofiiSkrypko:create-roles-table
