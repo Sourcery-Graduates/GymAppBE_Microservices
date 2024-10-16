@@ -9,7 +9,7 @@ public record CreateRoutineDto(
         @Size(max = 255)
         String name,
 
-        @Size(max = 255)
+        @Size(max = 3000)
         String description
 ) {
 }
