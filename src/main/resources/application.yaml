@@ -4,6 +4,9 @@ spring:
   application:
     name: Gym App Backend
 ---
+jwt:
+  secret: my-secret-key-which-needs-to-be-at-least-32-characters-long
+---
 spring:
   config:
     activate:
