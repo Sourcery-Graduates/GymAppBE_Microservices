@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class UserDetailsDto implements UserDetails {
     private UUID id;
     private String username;
+    private String password;
     private String email;
     private Set<String> roles;
     private Map<String, RolePermission.Level> permissions;
@@ -29,7 +30,7 @@ public class UserDetailsDto implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return password;
     }
 
     @Override

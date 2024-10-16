@@ -3,6 +3,7 @@ package com.sourcery.gymapp.backend.authentication.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,11 +19,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "users", schema = "user_auth")
+@EntityListeners(AuditingEntityListener.class)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,7 +37,7 @@ public class User {
     @Column(length = 128, nullable = false, unique = true)
     private String email;
 
-    @Column(length = 128, nullable = false, unique = false)
+    @Column(length = 128, nullable = false)
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
