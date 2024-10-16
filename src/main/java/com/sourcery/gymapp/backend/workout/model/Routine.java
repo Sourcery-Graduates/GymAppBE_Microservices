@@ -19,6 +19,7 @@ public class Routine extends BaseEntity {
     private UUID userId;
 
     @Column(nullable = false)
+    @Size(max = 255)
     private String name;
 
     @Size(max = 3000)
