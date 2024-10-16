@@ -59,8 +59,7 @@ public class RoutineService {
     public ResponseRoutineDto updateRoutine(UUID routineId, CreateRoutineDto routineDto) {
         Routine routine = findRoutineById(routineId);
 
-        routine.setName(routineDto.name());
-        routine.setDescription(routineDto.description());
+        routineMapper.updateEntity(routine, routineDto);
 
         routineRepository.save(routine);
 

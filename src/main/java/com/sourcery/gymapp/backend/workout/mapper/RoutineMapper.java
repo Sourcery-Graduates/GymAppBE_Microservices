@@ -27,4 +27,9 @@ public class RoutineMapper {
 
         return routine;
     }
+
+    public void updateEntity(Routine routine, CreateRoutineDto routineDto) {
+        routine.setName(routineDto.name());
+        routine.setDescription(routineDto.description());
+    }
 }
