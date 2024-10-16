@@ -10,6 +10,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Slf4j
 public class WorkoutExceptionHandler {
 
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFoundException(RoutineNotFoundException ex) {
+        log.error("UserNotFoundException caught: {}", ex.getMessage(), ex);
+
+        ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getCode(), null);
+        return new ResponseEntity<>(response, ex.getStatus());
+    }
+
     @ExceptionHandler(RoutineNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleRoutineNotFoundException(RoutineNotFoundException ex) {
         log.error("RoutineNotFoundException caught: {}", ex.getMessage(), ex);
@@ -18,9 +26,9 @@ public class WorkoutExceptionHandler {
         return new ResponseEntity<>(response, ex.getStatus());
     }
 
-    @ExceptionHandler(RoutineRuntimeException.class)
+    @ExceptionHandler(WorkoutRuntimeException.class)
     public ResponseEntity<ErrorResponse> handleRoutineRuntimeException(
-            RoutineRuntimeException ex) {
+            WorkoutRuntimeException ex) {
         log.error("RoutineRuntimeException caught: {}", ex.getMessage(), ex);
         ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getCode(), null);
         return new ResponseEntity<>(response, ex.getStatus());

@@ -8,6 +8,6 @@ public record ResponseRoutineDto(
         UUID id,
         String name,
         String description,
-        LocalDateTime localDateTime
+        LocalDateTime createdAt
 ) {
 }

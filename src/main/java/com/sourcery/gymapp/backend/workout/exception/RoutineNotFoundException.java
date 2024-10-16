@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
-public class RoutineNotFoundException extends RoutineRuntimeException {
+public class RoutineNotFoundException extends WorkoutRuntimeException {
 
     public RoutineNotFoundException(UUID id) {
         super("Can't find Routine by ID [%s]".formatted(id),

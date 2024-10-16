@@ -37,11 +37,10 @@ public class RoutineController {
         return routineService.getRoutineById(routineId);
     }
 
-    @GetMapping("/user/{userId}")
-    public List<ResponseRoutineDto> getRoutinesByUserId(
-        @PathVariable("userId") UUID userId) {
+    @GetMapping("/user")
+    public List<ResponseRoutineDto> getRoutinesByUserId() {
 
-        return routineService.getRoutinesByUserId(userId);
+        return routineService.getRoutinesByUserId();
     }
 
     @PutMapping("/{id}")

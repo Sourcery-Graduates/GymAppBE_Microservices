@@ -3,27 +3,33 @@ package com.sourcery.gymapp.backend.workout.service;
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
 import com.sourcery.gymapp.backend.workout.exception.RoutineNotFoundException;
+import com.sourcery.gymapp.backend.workout.exception.UserNotFoundException;
 import com.sourcery.gymapp.backend.workout.mapper.RoutineMapper;
 import com.sourcery.gymapp.backend.workout.model.Routine;
 import com.sourcery.gymapp.backend.workout.repository.RoutineRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class RoutineService {
     private final RoutineRepository routineRepository;
     private final RoutineMapper routineMapper;
+    private final AuditorAware<UUID> auditorAware;
+
 
     @Transactional
     public ResponseRoutineDto createRoutine(CreateRoutineDto routineDto) {
-        UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000001"); //TODO get userId from security context
-        Routine routine = routineMapper.toEntity(routineDto, userId);
+        UUID currentUserId = auditorAware.getCurrentAuditor().orElseThrow(
+                () -> new UserNotFoundException("Current user is not authenticated")
+        );
+
+        Routine routine = routineMapper.toEntity(routineDto, currentUserId);
 
         routineRepository.save(routine);
 
@@ -37,8 +43,12 @@ public class RoutineService {
         return routineMapper.toDto(routine);
     }
 
-    public List<ResponseRoutineDto> getRoutinesByUserId(UUID userId) {
-        List<Routine> routines = routineRepository.getRoutinesByUserId(userId);
+    public List<ResponseRoutineDto> getRoutinesByUserId() {
+        UUID currentUserId = auditorAware.getCurrentAuditor().orElseThrow(
+                () -> new UserNotFoundException("Current user is not authenticated")
+        );
+
+        List<Routine> routines = routineRepository.getRoutinesByUserId(currentUserId);
 
         return routines.stream()
                 .map(routineMapper::toDto)
