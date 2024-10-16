@@ -1,6 +1,7 @@
 package com.sourcery.gymapp.backend.workout.service;
 
-import com.sourcery.gymapp.backend.workout.dto.RoutineDto;
+import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
+import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
 import com.sourcery.gymapp.backend.workout.mapper.RoutineMapper;
 import com.sourcery.gymapp.backend.workout.model.Routine;
 import com.sourcery.gymapp.backend.workout.repository.RoutineRepository;
@@ -17,7 +18,7 @@ public class RoutineService {
     private final RoutineRepository routineRepository;
     private final RoutineMapper routineMapper;
 
-    public RoutineDto createRoutine(RoutineDto routineDto) {
+    public ResponseRoutineDto createRoutine(CreateRoutineDto routineDto) {
         UUID userId = UUID.fromString("4012527c-334e-4605-aa8e-1fef26ea37a5"); //TODO get userId from security context
         Routine routine = routineMapper.toEntity(routineDto, userId);
 
@@ -27,13 +28,13 @@ public class RoutineService {
     }
 
 
-    public RoutineDto getRoutineById(UUID routineId) {
+    public ResponseRoutineDto getRoutineById(UUID routineId) {
         Routine routine = findRoutineById(routineId);
 
         return routineMapper.toDto(routine);
     }
 
-    public List<RoutineDto> getRoutinesByUserId(UUID userId) {
+    public List<ResponseRoutineDto> getRoutinesByUserId(UUID userId) {
         List<Routine> routines = routineRepository.getRoutinesByUserId(userId);
 
         if (routines.isEmpty()) {
@@ -45,7 +46,7 @@ public class RoutineService {
                 .collect(Collectors.toList());
     }
 
-    public RoutineDto updateRoutine(UUID routineId, RoutineDto routineDto) {
+    public ResponseRoutineDto updateRoutine(UUID routineId, CreateRoutineDto routineDto) {
         Routine routine = findRoutineById(routineId);
 
         routine.setName(routineDto.name());

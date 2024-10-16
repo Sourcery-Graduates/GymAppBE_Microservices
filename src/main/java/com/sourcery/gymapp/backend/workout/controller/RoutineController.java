@@ -1,6 +1,7 @@
 package com.sourcery.gymapp.backend.workout.controller;
 
-import com.sourcery.gymapp.backend.workout.dto.RoutineDto;
+import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
+import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
 import com.sourcery.gymapp.backend.workout.service.RoutineService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,30 +24,30 @@ public class RoutineController {
     private final RoutineService routineService;
 
     @PostMapping
-    public RoutineDto createRoutine(
-        @Valid @RequestBody RoutineDto routineDto) {
+    public ResponseRoutineDto createRoutine(
+        @Valid @RequestBody CreateRoutineDto routineDto) {
 
         return routineService.createRoutine(routineDto);
     }
 
     @GetMapping("/{id}")
-    public RoutineDto getRoutineById(
+    public ResponseRoutineDto getRoutineById(
         @PathVariable("id") UUID routineId) {
 
         return routineService.getRoutineById(routineId);
     }
 
     @GetMapping("/user/{userId}")
-    public List<RoutineDto> getRoutinesByUserId(
+    public List<ResponseRoutineDto> getRoutinesByUserId(
         @PathVariable("userId") UUID userId) {
 
         return routineService.getRoutinesByUserId(userId);
     }
 
     @PutMapping("/{id}")
-    public RoutineDto updateRoutine(
+    public ResponseRoutineDto updateRoutine(
         @PathVariable("id") UUID routineId,
-        @Valid @RequestBody RoutineDto routineDto) {
+        @Valid @RequestBody CreateRoutineDto routineDto) {
 
         return routineService.updateRoutine(routineId, routineDto);
     }

@@ -1,6 +1,7 @@
 package com.sourcery.gymapp.backend.workout.mapper;
 
-import com.sourcery.gymapp.backend.workout.dto.RoutineDto;
+import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
+import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
 import com.sourcery.gymapp.backend.workout.model.Routine;
 import org.springframework.stereotype.Component;
 
@@ -8,15 +9,16 @@ import java.util.UUID;
 
 @Component
 public class RoutineMapper {
-    public RoutineDto toDto(Routine routine) {
-        return new RoutineDto(
+    public ResponseRoutineDto toDto(Routine routine) {
+        return new ResponseRoutineDto(
+            routine.getId(),
             routine.getName(),
             routine.getDescription(),
             routine.getCreatedAt()
         );
     }
 
-    public Routine toEntity(RoutineDto routineDto, UUID userId) {
+    public Routine toEntity(CreateRoutineDto routineDto, UUID userId) {
         Routine routine = new Routine();
         routine.setId(UUID.randomUUID());
         routine.setName(routineDto.name());
