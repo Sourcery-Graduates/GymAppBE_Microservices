@@ -7,6 +7,7 @@ import com.sourcery.gymapp.backend.workout.model.Routine;
 import com.sourcery.gymapp.backend.workout.repository.RoutineRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +19,7 @@ public class RoutineService {
     private final RoutineRepository routineRepository;
     private final RoutineMapper routineMapper;
 
+    @Transactional
     public ResponseRoutineDto createRoutine(CreateRoutineDto routineDto) {
         UUID userId = UUID.fromString("4012527c-334e-4605-aa8e-1fef26ea37a5"); //TODO get userId from security context
         Routine routine = routineMapper.toEntity(routineDto, userId);
@@ -46,6 +48,7 @@ public class RoutineService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public ResponseRoutineDto updateRoutine(UUID routineId, CreateRoutineDto routineDto) {
         Routine routine = findRoutineById(routineId);
 
@@ -57,6 +60,7 @@ public class RoutineService {
         return routineMapper.toDto(routine);
     }
 
+    @Transactional
     public void deleteRoutine(UUID id) {
         Routine routine = findRoutineById(id);
 
