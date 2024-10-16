@@ -21,6 +21,6 @@ public class Routine extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
-    @Size(max = 255)
+    @Size(max = 3000)
     private String description;
 }

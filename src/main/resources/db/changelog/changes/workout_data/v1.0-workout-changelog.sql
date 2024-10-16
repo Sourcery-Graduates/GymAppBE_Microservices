@@ -27,7 +27,7 @@ CREATE TABLE workout_data.routine
     modified_by UUID                     NOT NULL,
     user_id     UUID                     NOT NULL,
     name        VARCHAR(255)             NOT NULL,
-    description VARCHAR(255),
+    description VARCHAR(3000),
     CONSTRAINT pk_routine PRIMARY KEY (id)
 );
 
