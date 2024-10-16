@@ -2,6 +2,7 @@ package com.sourcery.gymapp.backend.workout.service;
 
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
+import com.sourcery.gymapp.backend.workout.exception.RoutineNotFoundException;
 import com.sourcery.gymapp.backend.workout.mapper.RoutineMapper;
 import com.sourcery.gymapp.backend.workout.model.Routine;
 import com.sourcery.gymapp.backend.workout.repository.RoutineRepository;
@@ -21,7 +22,7 @@ public class RoutineService {
 
     @Transactional
     public ResponseRoutineDto createRoutine(CreateRoutineDto routineDto) {
-        UUID userId = UUID.fromString("4012527c-334e-4605-aa8e-1fef26ea37a5"); //TODO get userId from security context
+        UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000001"); //TODO get userId from security context
         Routine routine = routineMapper.toEntity(routineDto, userId);
 
         routineRepository.save(routine);
@@ -39,13 +40,9 @@ public class RoutineService {
     public List<ResponseRoutineDto> getRoutinesByUserId(UUID userId) {
         List<Routine> routines = routineRepository.getRoutinesByUserId(userId);
 
-        if (routines.isEmpty()) {
-            throw new RuntimeException("No routines found"); //TODO create custom exceptions
-        }
-
         return routines.stream()
                 .map(routineMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
@@ -71,7 +68,7 @@ public class RoutineService {
         Routine routine = routineRepository.getRoutineById(id);
 
         if (routine == null) {
-            throw new RuntimeException("Routine not found"); //TODO create custom exceptions
+            throw new RoutineNotFoundException(id);
         }
 
         return routine;
