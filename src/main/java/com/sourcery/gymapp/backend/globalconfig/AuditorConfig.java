@@ -1,5 +1,8 @@
 package com.sourcery.gymapp.backend.globalconfig;
 
+import com.sourcery.gymapp.backend.shared.CurrentUserService;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -8,17 +11,22 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Configuration
+@RequiredArgsConstructor
 public class AuditorConfig {
 
     @Bean
-    public AuditorAware<UUID> auditorProvider() {
-        return new AuditorAwareImpl();
+    public AuditorAwareImpl auditorProvider(CurrentUserService currentUserService) {
+        return new AuditorAwareImpl(currentUserService);
     }
 
+    @RequiredArgsConstructor
     public static class AuditorAwareImpl implements AuditorAware<UUID> {
+        private final CurrentUserService currentUserService;
+
         @Override
+        @NonNull
         public Optional<UUID> getCurrentAuditor() {
-            return Optional.of(UUID.fromString("00000000-0000-0000-0000-000000000001"));
+            return Optional.of(UUID.fromString(currentUserService.getCurrentUserId()));
         }
     }
 }
