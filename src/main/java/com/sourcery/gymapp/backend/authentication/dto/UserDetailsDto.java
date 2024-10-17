@@ -7,12 +7,14 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.Data;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Data
 public class UserDetailsDto implements UserDetails {
+    @Getter
     private UUID id;
     private String username;
     private String password;

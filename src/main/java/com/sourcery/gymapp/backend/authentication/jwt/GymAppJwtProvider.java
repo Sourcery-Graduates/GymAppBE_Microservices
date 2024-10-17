@@ -1,5 +1,6 @@
 package com.sourcery.gymapp.backend.authentication.jwt;
 
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -15,7 +16,7 @@ public class GymAppJwtProvider {
 
     private final JwtEncoder jwtEncoder;
 
-    public String generateToken(String username) {
+    public String generateToken(String username, UUID userId) {
         Instant now = Instant.now();
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
@@ -24,6 +25,7 @@ public class GymAppJwtProvider {
                 .expiresAt(now.plus(1, ChronoUnit.HOURS)) // Token is valid for 1 hour
                 .subject(username)
                 .claim("username", username)
+                .claim("userId", userId)
                 .build();
 
         return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

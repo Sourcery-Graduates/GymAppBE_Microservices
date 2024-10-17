@@ -27,15 +27,19 @@ public class AuthService {
     @Transactional(readOnly = true)
     public UserAuthDto authenticateUser(Authentication authentication) {
         if (authentication.getPrincipal() instanceof UserDetails userDetails) {
-            String token = jwtProvider.generateToken(userDetails.getUsername());
-            return userMapper.toAuthDto((UserDetailsDto) userDetails, token);
+            UserDetailsDto userDetailsDto = (UserDetailsDto) userDetails;
+            String token = jwtProvider.generateToken(userDetailsDto.getUsername(),
+                    userDetailsDto.getId());
+            return userMapper.toAuthDto(userDetailsDto, token);
         }
+
         if (authentication.getPrincipal() instanceof Jwt jwt) {
             UserDetailsDto userDetails =
                     (UserDetailsDto) userDetailsService.loadUserByUsername(jwt.getClaim("username"));
             String token = jwt.getTokenValue();
             return userMapper.toAuthDto(userDetails, token);
         }
+
         throw new RuntimeException("USER NOT AUTHENTICATED EXCEPTION");
     }
 
