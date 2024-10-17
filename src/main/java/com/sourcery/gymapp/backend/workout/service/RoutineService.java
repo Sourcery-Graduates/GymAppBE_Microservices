@@ -48,7 +48,7 @@ public class RoutineService {
                 () -> new UserNotFoundException("Current user is not authenticated")
         );
 
-        List<Routine> routines = routineRepository.findRoutinesByUserId(currentUserId);
+        List<Routine> routines = routineRepository.findByUserId(currentUserId);
 
         return routines.stream()
                 .map(routineMapper::toDto)
@@ -74,12 +74,7 @@ public class RoutineService {
     }
 
     private Routine findRoutineById(UUID id) {
-        Routine routine = routineRepository.findRoutineById(id);
 
-        if (routine == null) {
-            throw new RoutineNotFoundException(id);
-        }
-
-        return routine;
+        return routineRepository.findById(id).orElseThrow(() -> new RoutineNotFoundException(id));
     }
 }
