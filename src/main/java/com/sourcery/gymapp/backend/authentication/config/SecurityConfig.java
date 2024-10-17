@@ -24,6 +24,7 @@ public class SecurityConfig {
     private final JwtDecoder jwtDecoder;
     private final CustomUserDetailsService userDetailsService;
 
+    //TODO: IMPORTANT!!! Add oauth2 client support (so only our FE could use our BE)
     @Bean
     public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -35,8 +36,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "api/auth/register",
-                                "api/auth/authenticate"
+                                "api/auth/register"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
