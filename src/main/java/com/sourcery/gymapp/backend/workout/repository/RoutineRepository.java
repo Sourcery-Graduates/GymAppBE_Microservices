@@ -10,6 +10,6 @@ import java.util.UUID;
 @Repository
 public interface RoutineRepository extends JpaRepository<Routine, UUID> {
 
-    Routine getRoutineById(UUID routineId);
-    List<Routine> getRoutinesByUserId(UUID userId);
+    Routine findRoutineById(UUID routineId);
+    List<Routine> findRoutinesByUserId(UUID userId);
 }
