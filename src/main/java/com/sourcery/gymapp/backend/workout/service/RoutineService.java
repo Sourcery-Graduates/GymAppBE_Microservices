@@ -3,12 +3,10 @@ package com.sourcery.gymapp.backend.workout.service;
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
 import com.sourcery.gymapp.backend.workout.exception.RoutineNotFoundException;
-import com.sourcery.gymapp.backend.workout.exception.UserNotFoundException;
 import com.sourcery.gymapp.backend.workout.mapper.RoutineMapper;
 import com.sourcery.gymapp.backend.workout.model.Routine;
 import com.sourcery.gymapp.backend.workout.repository.RoutineRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,14 +18,11 @@ import java.util.UUID;
 public class RoutineService {
     private final RoutineRepository routineRepository;
     private final RoutineMapper routineMapper;
-    private final AuditorAware<UUID> auditorAware;
-
+    private final CurrentUserService currentUserService;
 
     @Transactional
     public ResponseRoutineDto createRoutine(CreateRoutineDto routineDto) {
-        UUID currentUserId = auditorAware.getCurrentAuditor().orElseThrow(
-                () -> new UserNotFoundException("Current user is not authenticated")
-        );
+        UUID currentUserId = currentUserService.getCurrentUserId();
 
         Routine routine = routineMapper.toEntity(routineDto, currentUserId);
 
@@ -44,9 +39,7 @@ public class RoutineService {
     }
 
     public List<ResponseRoutineDto> getRoutinesByUserId() {
-        UUID currentUserId = auditorAware.getCurrentAuditor().orElseThrow(
-                () -> new UserNotFoundException("Current user is not authenticated")
-        );
+        UUID currentUserId = currentUserService.getCurrentUserId();
 
         List<Routine> routines = routineRepository.findByUserId(currentUserId);
 
