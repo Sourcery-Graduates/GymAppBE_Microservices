@@ -1,9 +1,7 @@
 package com.sourcery.gymapp.backend.userProfile.service;
 
-import com.sourcery.gymapp.backend.userProfile.exception.UserNotFoundException;
 import com.sourcery.gymapp.backend.userProfile.factory.UserProfileTestFactory;
 import com.sourcery.gymapp.backend.userProfile.mapper.UserProfileMapper;
-import com.sourcery.gymapp.backend.userProfile.repository.UserProfileRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -11,15 +9,9 @@ import com.sourcery.gymapp.backend.userProfile.model.UserProfile;
 import com.sourcery.gymapp.backend.userProfile.dto.UserProfileDto;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.AuditorAware;
-
-import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
 

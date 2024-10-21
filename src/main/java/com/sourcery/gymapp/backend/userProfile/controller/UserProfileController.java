@@ -1,8 +1,6 @@
 package com.sourcery.gymapp.backend.userProfile.controller;
 
 import com.sourcery.gymapp.backend.userProfile.dto.UserProfileDto;
-import com.sourcery.gymapp.backend.userProfile.exception.UserNotFoundException;
-import com.sourcery.gymapp.backend.userProfile.exception.UserProfileNotFoundException;
 import com.sourcery.gymapp.backend.userProfile.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
