@@ -3,6 +3,7 @@ package com.sourcery.gymapp.backend.workout.service;
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
 import com.sourcery.gymapp.backend.workout.exception.RoutineNotFoundException;
+import com.sourcery.gymapp.backend.workout.exception.UserNotFoundException;
 import com.sourcery.gymapp.backend.workout.mapper.RoutineMapper;
 import com.sourcery.gymapp.backend.workout.model.Routine;
 import com.sourcery.gymapp.backend.workout.repository.RoutineRepository;
@@ -18,12 +19,14 @@ import java.util.UUID;
 public class RoutineService {
     private final RoutineRepository routineRepository;
     private final RoutineMapper routineMapper;
-    private final CurrentUserService currentUserService;
+    private final WorkoutCurrentUserService currentUserService;
 
     @Transactional
     public ResponseRoutineDto createRoutine(CreateRoutineDto routineDto) {
         UUID currentUserId = currentUserService.getCurrentUserId();
-
+        if (currentUserId == null) {
+            throw new UserNotFoundException();
+        }
         Routine routine = routineMapper.toEntity(routineDto, currentUserId);
 
         routineRepository.save(routine);
