@@ -22,7 +22,7 @@ public class GymAppJwtProvider {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
-                .expiresAt(now.plus(1, ChronoUnit.HOURS)) // Token is valid for 1 hour
+                .expiresAt(now.plus(1, ChronoUnit.DAYS))
                 .subject(username)
                 .claim("username", username)
                 .claim("userId", userId)

@@ -28,20 +28,17 @@ public class JwtConfig {
 
     @Bean
     public JwtEncoder jwtEncoder() {
-        // Create a JWK for signing, specifying KeyUse as SIGNATURE
         JWK jwk = new RSAKey.Builder(publicKey)
                 .privateKey(privateKey)
-                .keyUse(com.nimbusds.jose.jwk.KeyUse.SIGNATURE) // Ensuring the key is used for signing
+                .keyUse(com.nimbusds.jose.jwk.KeyUse.SIGNATURE)
                 .build();
 
-        // Create a JWKSource from the JWK
         JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwkSource);
     }
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        // Configure the JWT decoder with the public key to verify the token's signature
         return NimbusJwtDecoder.withPublicKey(publicKey).build();
     }
 }
