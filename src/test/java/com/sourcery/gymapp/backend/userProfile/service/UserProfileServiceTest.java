@@ -44,7 +44,7 @@ class UserProfileServiceTest {
     @DisplayName("Get user profile tests")
     public class userProfileServiceGetUserProfile {
         @Test
-        void testGetUserProfileSuccess() throws UserNotFoundException, UserProfileNotFoundException {
+        void testGetUserProfile_Success() throws UserNotFoundException, UserProfileNotFoundException {
             //given
             UserProfile userProfile = UserProfileTestFactory.createUserProfile();
             UserProfileDto userProfileDto = UserProfileTestFactory.createUserProfileDtoFromEntity(userProfile);
@@ -135,7 +135,7 @@ class UserProfileServiceTest {
         }
 
         @Test
-        void testDeleteUserProfile_ThrowsUserNotFoundException() {
+        void testDeleteUserProfile_UserDoesntExist_ThrowsUserNotFoundException() {
             //given
             when(auditorAware.getCurrentAuditor()).thenReturn(Optional.empty());
             //then
@@ -143,7 +143,7 @@ class UserProfileServiceTest {
         }
 
         @Test
-        void testDeleteUserProfile_ThrowsUserProfileNotFoundException() {
+        void testDeleteUserProfile_UserProfileDoesntExist_ThrowsUserProfileNotFoundException() {
             //given
             UserProfile userProfile = UserProfileTestFactory.createUserProfile();
 

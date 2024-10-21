@@ -49,7 +49,7 @@ public class UserProfileMapperTest {
         }
 
         @Test
-        void testMapToDto_notAppropiateAmountOfFields() {
+        void testMapToDto_AppropiateAmountOfFields() {
             int expectedFieldCount = 7;
             //given
             UserProfile userProfile = UserProfileTestFactory.createUserProfile();
@@ -101,7 +101,7 @@ public class UserProfileMapperTest {
         }
 
         @Test
-        void testMapToEntity_NotAppropiateAmountOfFields() {
+        void testMapToEntity_AppropiateAmountOfFields() {
             int expectedFieldCount = 8;
             //given
             UserProfile userProfile = UserProfileTestFactory.createUserProfile();
