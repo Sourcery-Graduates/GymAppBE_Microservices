@@ -26,7 +26,26 @@ public class SecurityConfig {
 
     //TODO: IMPORTANT!!! Add oauth2 client support (so only our FE could use our BE)
     @Bean
-    public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain basicAuthFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .securityMatcher("/api/auth/authenticate")
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().authenticated()
+                )
+                .httpBasic(Customizer.withDefaults())
+                .authenticationProvider(daoAuthenticationProvider())
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.decoder(jwtDecoder))
+                )
+                .build();
+    }
+
+    @Bean
+    public SecurityFilterChain jwtFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
@@ -43,25 +62,6 @@ public class SecurityConfig {
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.decoder(jwtDecoder))
                 )
-                .build();
-    }
-    @Bean
-    public SecurityFilterChain authFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "api/auth/authenticate"
-                        ).authenticated()
-                )
-                .httpBasic(Customizer.withDefaults())
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.decoder(jwtDecoder))
-                )
-                .authenticationProvider(daoAuthenticationProvider())
                 .build();
     }
 

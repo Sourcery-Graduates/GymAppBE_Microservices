@@ -1,6 +1,5 @@
 package com.sourcery.gymapp.backend.globalconfig;
 
-import com.sourcery.gymapp.backend.shared.CurrentUserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
