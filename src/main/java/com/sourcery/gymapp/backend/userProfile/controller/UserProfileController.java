@@ -15,7 +15,7 @@ public class UserProfileController {
     private final UserProfileService userProfileService;
 
     @GetMapping
-    public UserProfileDto getUserProfile() throws UserNotFoundException, UserProfileNotFoundException {
+    public UserProfileDto getUserProfile() {
         return userProfileService.getUserProfile();
     }
 
@@ -24,7 +24,7 @@ public class UserProfileController {
         return userProfileService.updateUserProfile(dto);
     }
     @DeleteMapping()
-    public UserProfileDto deleteUserProfile() throws UserNotFoundException, UserProfileNotFoundException {
+    public UserProfileDto deleteUserProfile() {
         return userProfileService.deleteUserProfile();
     }
 }

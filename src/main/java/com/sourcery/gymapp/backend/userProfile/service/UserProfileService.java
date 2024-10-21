@@ -28,8 +28,7 @@ public class UserProfileService {
                                 .getCurrentAuditor()
                                 .orElseThrow(UserNotFoundException::new));
 
-        if (userProfile==null)
-        {
+        if (userProfile==null) {
             throw new UserProfileNotFoundException();
         }
 
@@ -38,7 +37,14 @@ public class UserProfileService {
 
     @Transactional
     public UserProfileDto updateUserProfile(UserProfileDto dto) {
-        UserProfile entity = userProfileRepository.save(userProfileMapper.toEntity(dto));
+
+        UUID currentUserId = auditorAware
+                .getCurrentAuditor().orElseThrow(UserNotFoundException::new);
+
+        UserProfile userProfile = userProfileRepository
+                .findUserProfileByUserId(currentUserId);
+
+        UserProfile entity = userProfileRepository.save(userProfileMapper.toEntity(dto, currentUserId, userProfile.getId()));
         return  userProfileMapper.toDto(entity);
     }
 

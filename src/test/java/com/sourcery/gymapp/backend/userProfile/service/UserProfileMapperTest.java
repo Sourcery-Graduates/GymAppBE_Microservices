@@ -25,10 +25,6 @@ import java.lang.reflect.Field;
 
 @ExtendWith(MockitoExtension.class)
 public class UserProfileMapperTest {
-    @Mock
-    private AuditorAware<UUID> auditorAware;
-    @Mock
-    private UserProfileRepository userProfileRepository;
     @InjectMocks
     private UserProfileMapper userProfileMapper;
 
@@ -71,10 +67,8 @@ public class UserProfileMapperTest {
             UserProfile userProfile = UserProfileTestFactory.createUserProfile();
             UserProfileDto userProfileDto = UserProfileTestFactory.createUserProfileDtoFromEntity(userProfile);
 
-            when(auditorAware.getCurrentAuditor()).thenReturn(Optional.of(userProfile.getUserId()));
-            when(userProfileRepository.findUserProfileByUserId(userProfile.getUserId())).thenReturn(userProfile);
             //when
-            UserProfile result = userProfileMapper.toEntity(userProfileDto);
+            UserProfile result = userProfileMapper.toEntity(userProfileDto, userProfile.getUserId(), userProfile.getId());
             //then
             assertAll(
                     () -> assertEquals(result.getUserId(), userProfile.getUserId()),
@@ -90,27 +84,14 @@ public class UserProfileMapperTest {
         }
 
         @Test
-        void testMapToEntity_ThrowsUserNotFoundException() {
-            //given
-            UserProfile userProfile = UserProfileTestFactory.createUserProfile();
-            UserProfileDto userProfileDto = UserProfileTestFactory.createUserProfileDtoFromEntity(userProfile);
-
-            when(auditorAware.getCurrentAuditor()).thenReturn(Optional.empty());
-            //then
-            assertThrows(UserNotFoundException.class, () -> userProfileMapper.toEntity(userProfileDto));
-        }
-
-        @Test
         void testMapToEntity_AppropiateAmountOfFields() {
             int expectedFieldCount = 8;
             //given
             UserProfile userProfile = UserProfileTestFactory.createUserProfile();
             UserProfileDto userProfileDto = UserProfileTestFactory.createUserProfileDtoFromEntity(userProfile);
 
-            when(auditorAware.getCurrentAuditor()).thenReturn(Optional.of(userProfile.getUserId()));
-            when(userProfileRepository.findUserProfileByUserId(userProfile.getUserId())).thenReturn(userProfile);
             //when
-            UserProfile result = userProfileMapper.toEntity(userProfileDto);
+            UserProfile result = userProfileMapper.toEntity(userProfileDto, userProfile.getUserId(), userProfile.getId());
             Field[] fields = result.getClass().getDeclaredFields();
             //then
             assertEquals(fields.length, expectedFieldCount);

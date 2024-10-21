@@ -98,9 +98,11 @@ class UserProfileServiceTest {
             UserProfile userProfile = UserProfileTestFactory.createUserProfile();
             UserProfileDto userProfileDto = UserProfileTestFactory.createUserProfileDtoFromEntity(userProfile);
 
+            when(auditorAware.getCurrentAuditor()).thenReturn(Optional.of(userProfile.getUserId()));
+            when(userProfileRepository.findUserProfileByUserId(userProfile.getUserId())).thenReturn(userProfile);
             when(userProfileMapper.toDto(userProfile)).thenReturn(userProfileDto);
             when(userProfileRepository.save(userProfile)).thenReturn(userProfile);
-            when(userProfileMapper.toEntity(userProfileDto)).thenReturn(userProfile);
+            when(userProfileMapper.toEntity(userProfileDto, userProfile.getUserId(), userProfile.getId())).thenReturn(userProfile);
             //when
             UserProfileDto result = userProfileService.updateUserProfile(userProfileDto);
             //then
