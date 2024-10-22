@@ -40,7 +40,6 @@ public class AuditorConfig {
             RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
             if (requestAttributes instanceof ServletRequestAttributes) {
                 String requestUri = ((ServletRequestAttributes) requestAttributes).getRequest().getRequestURI();
-                System.out.println(requestUri);
                 return registrationPath.equals(requestUri);
             }
             return false;
