@@ -12,11 +12,7 @@ public class CurrentUserService {
     public UUID getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
-            UUID userId = jwt.getClaim("userId");
-            if (userId == null) {
-                throw new IllegalStateException("There is no userId in JWT");
-            }
-            return userId;
+            return UUID.fromString(jwt.getClaimAsString("userId"));
         }
         throw new IllegalStateException("User is not authenticated");
     }
