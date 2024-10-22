@@ -1,7 +1,6 @@
 package com.sourcery.gymapp.backend.userProfile.service;
 
 import java.util.UUID;
-import com.sourcery.gymapp.backend.userProfile.exception.JwtIllegalStateException;
 import com.sourcery.gymapp.backend.userProfile.exception.UserNotAuthenticatedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,11 +13,7 @@ public class ProfileCurrentUserService {
     public UUID getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
-            UUID userId = jwt.getClaim("userId");
-            if (userId == null) {
-                throw new JwtIllegalStateException("There is no userId in JWT");
-            }
-            return userId;
+            return UUID.fromString(jwt.getClaimAsString("userId"));
         }
         throw new UserNotAuthenticatedException();
     }

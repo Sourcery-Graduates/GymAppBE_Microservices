@@ -1,6 +1,5 @@
 package com.sourcery.gymapp.backend.workout.service;
 
-import com.sourcery.gymapp.backend.workout.exception.JwtIllegalStateException;
 import com.sourcery.gymapp.backend.workout.exception.UserNotAuthenticatedException;
 import java.util.UUID;
 import org.springframework.security.core.Authentication;
@@ -14,11 +13,7 @@ public class WorkoutCurrentUserService {
     public UUID getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
-            UUID userId = jwt.getClaim("userId");
-            if (userId == null) {
-                throw new JwtIllegalStateException("There is no userId in JWT");
-            }
-            return userId;
+            return UUID.fromString(jwt.getClaimAsString("userId"));
         }
         throw new UserNotAuthenticatedException();
     }
