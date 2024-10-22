@@ -82,11 +82,11 @@ public class RoutineService {
             return getAllRoutines(pageable);
         }
 
-        List<Routine> routines = routineRepository.findByNameContaining(name, pageable);
+        Page<Routine> page = routineRepository.findByNameIgnoreCaseContaining(name, pageable);
 
-        return new RoutineGridDto(routines.size(), routines.stream()
-                .map(routineMapper::toDto)
-                .toList());
+        return new RoutineGridDto(
+                page.getTotalPages(),
+                page.getContent().stream().map(routineMapper::toDto).toList());
     }
 
     private RoutineGridDto getAllRoutines(Pageable pageable) {
