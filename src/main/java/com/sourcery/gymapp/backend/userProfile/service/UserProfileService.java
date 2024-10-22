@@ -7,7 +7,6 @@ import com.sourcery.gymapp.backend.userProfile.model.UserProfile;
 import com.sourcery.gymapp.backend.userProfile.repository.UserProfileRepository;
 import com.sourcery.gymapp.backend.userProfile.mapper.UserProfileMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
@@ -16,17 +15,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserProfileService {
 
-    private final AuditorAware<UUID> auditorAware;
+    private final ProfileCurrentUserService currentUserService;
     private final UserProfileRepository userProfileRepository;
     private final UserProfileMapper userProfileMapper;
 
     public UserProfileDto getUserProfile() throws UserNotFoundException, UserProfileNotFoundException {
 
+        UUID currentUserId = currentUserService.getCurrentUserId();
+
         UserProfile userProfile = userProfileRepository
-                .findUserProfileByUserId(
-                        auditorAware
-                                .getCurrentAuditor()
-                                .orElseThrow(UserNotFoundException::new));
+                .findUserProfileByUserId(currentUserId);
 
         if (userProfile==null) {
             throw new UserProfileNotFoundException();
@@ -38,8 +36,7 @@ public class UserProfileService {
     @Transactional
     public UserProfileDto updateUserProfile(UserProfileDto dto) {
 
-        UUID currentUserId = auditorAware
-                .getCurrentAuditor().orElseThrow(UserNotFoundException::new);
+        UUID currentUserId = currentUserService.getCurrentUserId();
 
         UserProfile userProfile = userProfileRepository
                 .findUserProfileByUserId(currentUserId);
@@ -51,10 +48,10 @@ public class UserProfileService {
     @Transactional
     public UserProfileDto deleteUserProfile() throws UserNotFoundException, UserProfileNotFoundException {
 
-        UserProfile userProfile =  userProfileRepository.findUserProfileByUserId(
-                auditorAware
-                        .getCurrentAuditor()
-                .orElseThrow(UserNotFoundException::new));
+        UUID currentUserId = currentUserService.getCurrentUserId();
+
+        UserProfile userProfile = userProfileRepository
+                .findUserProfileByUserId(currentUserId);
 
         if (userProfile == null) {
                 throw new UserProfileNotFoundException();

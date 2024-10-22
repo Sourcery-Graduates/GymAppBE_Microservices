@@ -14,11 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.AuditorAware;
-
-import java.util.UUID;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -29,7 +24,7 @@ import static org.mockito.Mockito.*;
 class UserProfileServiceTest {
 
     @Mock
-    private AuditorAware<UUID> auditorAware;
+    private ProfileCurrentUserService currentUserService;
     @Mock
     private UserProfileRepository userProfileRepository;
 
@@ -50,8 +45,8 @@ class UserProfileServiceTest {
             UserProfileDto userProfileDto = UserProfileTestFactory.createUserProfileDtoFromEntity(userProfile);
 
             when(userProfileMapper.toDto(userProfile)).thenReturn(userProfileDto);
-            when(auditorAware.getCurrentAuditor())
-                    .thenReturn(Optional.of(userProfile.getUserId()));
+            when(currentUserService.getCurrentUserId())
+                    .thenReturn(userProfile.getUserId());
             when(userProfileRepository.findUserProfileByUserId(userProfile.getUserId()))
                     .thenReturn(userProfile);
 
@@ -69,19 +64,11 @@ class UserProfileServiceTest {
         }
 
         @Test
-        void testGetUserProfile_UserDoesntExist_ThrowsUserNotFoundException() {
-            //when
-            when(auditorAware.getCurrentAuditor()).thenReturn(Optional.empty());
-            //then
-            assertThrows(UserNotFoundException.class, () -> userProfileService.getUserProfile());
-        }
-
-        @Test
         void testGetUserProfile_UserProfileDoesntExist_ThrowsUserNotFoundException() {
             //given
             UserProfile userProfile = UserProfileTestFactory.createUserProfile();
 
-            when(auditorAware.getCurrentAuditor()).thenReturn(Optional.of(userProfile.getUserId()));
+            when(currentUserService.getCurrentUserId()).thenReturn(userProfile.getUserId());
             when(userProfileRepository.findUserProfileByUserId(userProfile.getUserId())).thenReturn(null);
             //then
             assertThrows(UserProfileNotFoundException.class, () -> userProfileService.getUserProfile());
@@ -98,7 +85,7 @@ class UserProfileServiceTest {
             UserProfile userProfile = UserProfileTestFactory.createUserProfile();
             UserProfileDto userProfileDto = UserProfileTestFactory.createUserProfileDtoFromEntity(userProfile);
 
-            when(auditorAware.getCurrentAuditor()).thenReturn(Optional.of(userProfile.getUserId()));
+            when(currentUserService.getCurrentUserId()).thenReturn(userProfile.getUserId());
             when(userProfileRepository.findUserProfileByUserId(userProfile.getUserId())).thenReturn(userProfile);
             when(userProfileMapper.toDto(userProfile)).thenReturn(userProfileDto);
             when(userProfileRepository.save(userProfile)).thenReturn(userProfile);
@@ -124,7 +111,7 @@ class UserProfileServiceTest {
             UserProfileDto userProfileDto = UserProfileTestFactory.createUserProfileDtoFromEntity(userProfile);
 
             when(userProfileMapper.toDto(userProfile)).thenReturn(userProfileDto);
-            when(auditorAware.getCurrentAuditor()).thenReturn(Optional.of(userProfile.getUserId()));
+            when(currentUserService.getCurrentUserId()).thenReturn(userProfile.getUserId());
             when(userProfileRepository.findUserProfileByUserId(userProfile.getUserId())).thenReturn(userProfile);
             //when
             UserProfileDto result = userProfileService.deleteUserProfile();
@@ -136,20 +123,13 @@ class UserProfileServiceTest {
             );
         }
 
-        @Test
-        void testDeleteUserProfile_UserDoesntExist_ThrowsUserNotFoundException() {
-            //given
-            when(auditorAware.getCurrentAuditor()).thenReturn(Optional.empty());
-            //then
-            assertThrows(UserNotFoundException.class, () -> userProfileService.deleteUserProfile());
-        }
 
         @Test
         void testDeleteUserProfile_UserProfileDoesntExist_ThrowsUserProfileNotFoundException() {
             //given
             UserProfile userProfile = UserProfileTestFactory.createUserProfile();
 
-            when(auditorAware.getCurrentAuditor()).thenReturn(Optional.of(userProfile.getUserId()));
+            when(currentUserService.getCurrentUserId()).thenReturn(userProfile.getUserId());
             when(userProfileRepository.findUserProfileByUserId(userProfile.getUserId())).thenReturn(null);
             //then
             assertThrows(UserProfileNotFoundException.class, () -> userProfileService.deleteUserProfile());
