@@ -1,4 +1,4 @@
-package com.sourcery.gymapp.backend.globalConfig;
+package com.sourcery.gymapp.backend.globalconfig;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
