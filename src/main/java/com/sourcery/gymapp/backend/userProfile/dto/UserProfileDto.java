@@ -4,21 +4,21 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.Map;
 
 public record UserProfileDto(
-@NotBlank
-String username,
+    @NotBlank
+    String username,
 
-@NotBlank
-String firstName,
+    @NotBlank
+    String firstName,
 
-@NotBlank
-String lastName,
+    @NotBlank
+    String lastName,
 
-String bio,
+    String bio,
 
-String avatarUrl,
+    String avatarUrl,
 
-String location,
+    String location,
 
-Map<String, Object> settings
+    Map<String, Object> settings
 ) {
 }
