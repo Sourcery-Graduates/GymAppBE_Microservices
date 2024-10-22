@@ -2,7 +2,7 @@ package com.sourcery.gymapp.backend.userProfile.service;
 
 import java.util.UUID;
 
-import com.sourcery.gymapp.backend.userProfile.exception.UserNotFoundException;
+import com.sourcery.gymapp.backend.userProfile.exception.UserNotAuthenticatedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -16,6 +16,6 @@ public class ProfileCurrentUserService {
         if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
             return UUID.fromString(jwt.getClaim("userId"));
         }
-        throw new UserNotFoundException();
+        throw new UserNotAuthenticatedException();
     }
 }

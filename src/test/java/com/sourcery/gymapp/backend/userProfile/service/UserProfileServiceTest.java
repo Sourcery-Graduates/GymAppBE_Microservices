@@ -1,7 +1,7 @@
 package com.sourcery.gymapp.backend.userProfile.service;
 
 import com.sourcery.gymapp.backend.userProfile.dto.UserProfileDto;
-import com.sourcery.gymapp.backend.userProfile.exception.UserNotFoundException;
+import com.sourcery.gymapp.backend.userProfile.exception.UserNotAuthenticatedException;
 import com.sourcery.gymapp.backend.userProfile.exception.UserProfileNotFoundException;
 import com.sourcery.gymapp.backend.userProfile.factory.UserProfileTestFactory;
 import com.sourcery.gymapp.backend.userProfile.mapper.UserProfileMapper;
@@ -14,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -39,7 +41,7 @@ class UserProfileServiceTest {
     @DisplayName("Get user profile tests")
     public class userProfileServiceGetUserProfile {
         @Test
-        void testGetUserProfile_Success() throws UserNotFoundException, UserProfileNotFoundException {
+        void testGetUserProfile_Success() throws UserNotAuthenticatedException, UserProfileNotFoundException {
             //given
             UserProfile userProfile = UserProfileTestFactory.createUserProfile();
             UserProfileDto userProfileDto = UserProfileTestFactory.createUserProfileDtoFromEntity(userProfile);
@@ -48,7 +50,7 @@ class UserProfileServiceTest {
             when(currentUserService.getCurrentUserId())
                     .thenReturn(userProfile.getUserId());
             when(userProfileRepository.findUserProfileByUserId(userProfile.getUserId()))
-                    .thenReturn(userProfile);
+                    .thenReturn(Optional.of(userProfile));
 
             //when
             UserProfileDto result = userProfileService.getUserProfile();
@@ -69,7 +71,7 @@ class UserProfileServiceTest {
             UserProfile userProfile = UserProfileTestFactory.createUserProfile();
 
             when(currentUserService.getCurrentUserId()).thenReturn(userProfile.getUserId());
-            when(userProfileRepository.findUserProfileByUserId(userProfile.getUserId())).thenReturn(null);
+            when(userProfileRepository.findUserProfileByUserId(userProfile.getUserId())).thenReturn(Optional.empty());
             //then
             assertThrows(UserProfileNotFoundException.class, () -> userProfileService.getUserProfile());
         }
@@ -86,7 +88,7 @@ class UserProfileServiceTest {
             UserProfileDto userProfileDto = UserProfileTestFactory.createUserProfileDtoFromEntity(userProfile);
 
             when(currentUserService.getCurrentUserId()).thenReturn(userProfile.getUserId());
-            when(userProfileRepository.findUserProfileByUserId(userProfile.getUserId())).thenReturn(userProfile);
+            when(userProfileRepository.findUserProfileByUserId(userProfile.getUserId())).thenReturn(Optional.of(userProfile));
             when(userProfileMapper.toDto(userProfile)).thenReturn(userProfileDto);
             when(userProfileRepository.save(userProfile)).thenReturn(userProfile);
             when(userProfileMapper.toEntity(userProfileDto, userProfile.getUserId(), userProfile.getId())).thenReturn(userProfile);
@@ -105,14 +107,14 @@ class UserProfileServiceTest {
     @DisplayName("Delete user profile")
     public class userProfileServiceDelete {
         @Test
-        void testDeleteUserProfile_Success() throws UserNotFoundException, UserProfileNotFoundException {
+        void testDeleteUserProfile_Success() throws UserNotAuthenticatedException, UserProfileNotFoundException {
             //given
             UserProfile userProfile = UserProfileTestFactory.createUserProfile();
             UserProfileDto userProfileDto = UserProfileTestFactory.createUserProfileDtoFromEntity(userProfile);
 
             when(userProfileMapper.toDto(userProfile)).thenReturn(userProfileDto);
             when(currentUserService.getCurrentUserId()).thenReturn(userProfile.getUserId());
-            when(userProfileRepository.findUserProfileByUserId(userProfile.getUserId())).thenReturn(userProfile);
+            when(userProfileRepository.findUserProfileByUserId(userProfile.getUserId())).thenReturn(Optional.of(userProfile));
             //when
             UserProfileDto result = userProfileService.deleteUserProfile();
             //then
@@ -130,7 +132,7 @@ class UserProfileServiceTest {
             UserProfile userProfile = UserProfileTestFactory.createUserProfile();
 
             when(currentUserService.getCurrentUserId()).thenReturn(userProfile.getUserId());
-            when(userProfileRepository.findUserProfileByUserId(userProfile.getUserId())).thenReturn(null);
+            when(userProfileRepository.findUserProfileByUserId(userProfile.getUserId())).thenReturn(Optional.empty());
             //then
             assertThrows(UserProfileNotFoundException.class, () -> userProfileService.deleteUserProfile());
         }

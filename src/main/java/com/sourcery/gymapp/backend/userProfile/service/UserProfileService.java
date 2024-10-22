@@ -1,7 +1,6 @@
 package com.sourcery.gymapp.backend.userProfile.service;
 
 import com.sourcery.gymapp.backend.userProfile.dto.UserProfileDto;
-import com.sourcery.gymapp.backend.userProfile.exception.UserNotFoundException;
 import com.sourcery.gymapp.backend.userProfile.exception.UserProfileNotFoundException;
 import com.sourcery.gymapp.backend.userProfile.model.UserProfile;
 import com.sourcery.gymapp.backend.userProfile.repository.UserProfileRepository;
@@ -19,16 +18,13 @@ public class UserProfileService {
     private final UserProfileRepository userProfileRepository;
     private final UserProfileMapper userProfileMapper;
 
-    public UserProfileDto getUserProfile() throws UserNotFoundException, UserProfileNotFoundException {
+    public UserProfileDto getUserProfile(){
 
         UUID currentUserId = currentUserService.getCurrentUserId();
 
         UserProfile userProfile = userProfileRepository
-                .findUserProfileByUserId(currentUserId);
-
-        if (userProfile==null) {
-            throw new UserProfileNotFoundException();
-        }
+                .findUserProfileByUserId(currentUserId)
+                .orElseThrow(() -> new UserProfileNotFoundException(currentUserId));
 
         return userProfileMapper.toDto(userProfile);
     }
@@ -39,26 +35,24 @@ public class UserProfileService {
         UUID currentUserId = currentUserService.getCurrentUserId();
 
         UserProfile userProfile = userProfileRepository
-                .findUserProfileByUserId(currentUserId);
+                .findUserProfileByUserId(currentUserId)
+                .orElseThrow(() -> new UserProfileNotFoundException(currentUserId));;
 
         UserProfile entity = userProfileRepository.save(userProfileMapper.toEntity(dto, currentUserId, userProfile.getId()));
         return  userProfileMapper.toDto(entity);
     }
 
     @Transactional
-    public UserProfileDto deleteUserProfile() throws UserNotFoundException, UserProfileNotFoundException {
+    public UserProfileDto deleteUserProfile(){
 
         UUID currentUserId = currentUserService.getCurrentUserId();
 
         UserProfile userProfile = userProfileRepository
-                .findUserProfileByUserId(currentUserId);
+                .findUserProfileByUserId(currentUserId)
+                .orElseThrow(() -> new UserProfileNotFoundException(currentUserId));;
 
-        if (userProfile == null) {
-                throw new UserProfileNotFoundException();
-        }
-        else {
             userProfileRepository.deleteById(userProfile.getId());
-        }
+
         return userProfileMapper.toDto(userProfile);
     }
 }
