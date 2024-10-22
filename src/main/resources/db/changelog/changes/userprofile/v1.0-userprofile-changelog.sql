@@ -13,3 +13,4 @@ CREATE TABLE IF NOT EXISTS user_profiles.profiles(
     location VARCHAR(128),
     settings JSONB
 );
+
