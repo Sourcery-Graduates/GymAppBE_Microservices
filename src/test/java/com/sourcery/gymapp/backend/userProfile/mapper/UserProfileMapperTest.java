@@ -1,4 +1,4 @@
-package com.sourcery.gymapp.backend.userProfile.service;
+package com.sourcery.gymapp.backend.userProfile.mapper;
 
 import com.sourcery.gymapp.backend.userProfile.factory.UserProfileTestFactory;
 import com.sourcery.gymapp.backend.userProfile.mapper.UserProfileMapper;

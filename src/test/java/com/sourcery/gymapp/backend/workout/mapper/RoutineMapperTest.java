@@ -1,4 +1,4 @@
-package com.sourcery.gymapp.backend.workout.service;
+package com.sourcery.gymapp.backend.workout.mapper;
 
 
 import com.sourcery.gymapp.backend.workout.factory.RoutineFactory;
