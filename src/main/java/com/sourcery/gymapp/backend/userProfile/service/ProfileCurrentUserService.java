@@ -1,4 +1,4 @@
-package com.sourcery.gymapp.backend.globalconfig;
+package com.sourcery.gymapp.backend.userProfile.service;
 
 import java.util.UUID;
 import org.springframework.security.core.Authentication;
@@ -7,7 +7,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CurrentUserService {
+public class ProfileCurrentUserService {
 
     public UUID getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

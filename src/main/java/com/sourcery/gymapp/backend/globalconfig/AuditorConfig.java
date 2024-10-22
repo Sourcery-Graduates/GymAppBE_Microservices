@@ -25,7 +25,7 @@ public class AuditorConfig {
         @Override
         @NonNull
         public Optional<UUID> getCurrentAuditor() {
-            return Optional.of(UUID.fromString(currentUserService.getCurrentUserId()));
+            return Optional.of(currentUserService.getCurrentUserId());
         }
     }
 }

@@ -9,6 +9,7 @@ import com.sourcery.gymapp.backend.workout.mapper.RoutineMapper;
 import com.sourcery.gymapp.backend.workout.model.Routine;
 import com.sourcery.gymapp.backend.workout.repository.RoutineRepository;
 import com.sourcery.gymapp.backend.workout.service.RoutineService;
+import com.sourcery.gymapp.backend.workout.service.WorkoutCurrentUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,7 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.AuditorAware;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +37,7 @@ public class RoutineServiceTest {
     private RoutineMapper routineMapper;
 
     @Mock
-    private AuditorAware<UUID> auditorAware;
+    private WorkoutCurrentUserService currentUserService;
 
     @InjectMocks
     private RoutineService routineService;
@@ -65,7 +65,7 @@ public class RoutineServiceTest {
         @Test
         void shouldCreateRoutineSuccessfully() {
             // Arrange
-            when(auditorAware.getCurrentAuditor()).thenReturn(Optional.of(userId));
+            when(currentUserService.getCurrentUserId()).thenReturn(userId);
             when(routineMapper.toEntity(createRoutineDto, userId)).thenReturn(routine);
             when(routineRepository.save(routine)).thenReturn(routine);
             when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
@@ -81,7 +81,7 @@ public class RoutineServiceTest {
         @Test
         void shouldThrowExceptionWhenUserNotAuthenticated() {
             // Arrange
-            when(auditorAware.getCurrentAuditor()).thenReturn(Optional.empty());
+            when(currentUserService.getCurrentUserId()).thenReturn(null);
 
             // Act & Assert
             assertThrows(UserNotFoundException.class, () -> routineService.createRoutine(createRoutineDto));
@@ -120,9 +120,9 @@ public class RoutineServiceTest {
         void shouldGetRoutinesByUserIdSuccessfully() {
             // Arrange
             List<Routine> routines = List.of(routine);
-            when(auditorAware.getCurrentAuditor()).thenReturn(Optional.of(userId));
             when(routineRepository.findByUserId(userId)).thenReturn(routines);
             when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
+            when(currentUserService.getCurrentUserId()).thenReturn(userId);
 
             // Act
             List<ResponseRoutineDto> result = routineService.getRoutinesByUserId();
