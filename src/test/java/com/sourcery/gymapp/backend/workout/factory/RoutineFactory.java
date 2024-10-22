@@ -1,4 +1,4 @@
-package com.sourcery.gymapp.backend.factory;
+package com.sourcery.gymapp.backend.workout.factory;
 
 
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
