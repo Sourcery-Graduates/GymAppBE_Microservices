@@ -3,6 +3,7 @@ package com.sourcery.gymapp.backend.workout;
 import com.sourcery.gymapp.backend.factory.RoutineFactory;
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
+import com.sourcery.gymapp.backend.workout.dto.RoutineGridDto;
 import com.sourcery.gymapp.backend.workout.exception.RoutineNotFoundException;
 import com.sourcery.gymapp.backend.workout.exception.UserNotFoundException;
 import com.sourcery.gymapp.backend.workout.mapper.RoutineMapper;
@@ -18,13 +19,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -66,6 +67,7 @@ public class RoutineServiceTest {
         void shouldCreateRoutineSuccessfully() {
             // Arrange
             when(currentUserService.getCurrentUserId()).thenReturn(userId);
+
             when(routineMapper.toEntity(createRoutineDto, userId)).thenReturn(routine);
             when(routineRepository.save(routine)).thenReturn(routine);
             when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
@@ -120,6 +122,7 @@ public class RoutineServiceTest {
         void shouldGetRoutinesByUserIdSuccessfully() {
             // Arrange
             List<Routine> routines = List.of(routine);
+            when(currentUserService.getCurrentUserId()).thenReturn(userId);
             when(routineRepository.findByUserId(userId)).thenReturn(routines);
             when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
             when(currentUserService.getCurrentUserId()).thenReturn(userId);
@@ -131,6 +134,32 @@ public class RoutineServiceTest {
             assertEquals(1, result.size());
             assertEquals(responseRoutineDto, result.getFirst());
             verify(routineRepository, times(1)).findByUserId(userId);
+        }
+
+        @Test //TODO Repair the test
+        void shouldGetPagedRoutinesSuccessfully() {
+            // Arrange
+            Routine routine = RoutineFactory.createRoutine("good routine", "description");
+            Routine routine2 = RoutineFactory.createRoutine("bad routine", "description");
+            Routine routine3 = RoutineFactory.createRoutine("bad routine", "description");
+
+            List<Routine> routines = List.of(routine, routine2, routine3);
+
+            List<ResponseRoutineDto> routinesDto = routines.stream().map(routineMapper::toDto).toList();
+
+            Pageable pageable = PageRequest.of(0, 20, Sort.by("name"));
+
+            when(routineRepository.findByNameContaining("good", pageable)).thenReturn(routines);
+
+            // Act
+            RoutineGridDto result = routineService.searchRoutines("", pageable);
+
+            // Assert
+            List<ResponseRoutineDto> expected = List.of(routineMapper.toDto(routine));
+            assertNotNull(result);
+            assertEquals(1, result.totalPages());
+            assertEquals(1, result.data().size());
+            assertEquals(expected, result.data());
         }
     }
 

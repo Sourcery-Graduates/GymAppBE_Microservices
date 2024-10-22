@@ -21,6 +21,15 @@ public class RoutineFactory {
         return routine;
     }
 
+    public static Routine createRoutine(String name, String description) {
+        return createRoutine(
+                name,
+                description,
+                LocalDateTime.now(),
+                UUID.randomUUID()
+        );
+    }
+
     public static Routine createRoutine() {
         return createRoutine(
                 "Test Routine",
