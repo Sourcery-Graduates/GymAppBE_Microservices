@@ -9,11 +9,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class LinksCurrentUserService {
 
+    //TODO: add to module-local exception handler when handler is created
     public UUID getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
-            return UUID.fromString(jwt.getClaim("userId"));
+            UUID userId = jwt.getClaim("userId");
+            if (userId == null) {
+                throw new IllegalStateException("There is no userId in JWT");
+            }
+            return userId;
         }
-        return null;
+        throw new IllegalStateException("User is not authenticated");
     }
 }
