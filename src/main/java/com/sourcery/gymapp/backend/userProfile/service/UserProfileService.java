@@ -20,11 +20,7 @@ public class UserProfileService {
 
     public UserProfileDto getUserProfile(){
 
-        UUID currentUserId = currentUserService.getCurrentUserId();
-
-        UserProfile userProfile = userProfileRepository
-                .findUserProfileByUserId(currentUserId)
-                .orElseThrow(() -> new UserProfileNotFoundException(currentUserId));
+        UserProfile userProfile = getCurrentUserProfile();
 
         return userProfileMapper.toDto(userProfile);
     }
@@ -32,27 +28,25 @@ public class UserProfileService {
     @Transactional
     public UserProfileDto updateUserProfile(UserProfileDto dto) {
 
-        UUID currentUserId = currentUserService.getCurrentUserId();
+        UserProfile userProfile = getCurrentUserProfile();
 
-        UserProfile userProfile = userProfileRepository
-                .findUserProfileByUserId(currentUserId)
-                .orElseThrow(() -> new UserProfileNotFoundException(currentUserId));;
-
-        UserProfile entity = userProfileRepository.save(userProfileMapper.toEntity(dto, currentUserId, userProfile.getId()));
+        UserProfile entity = userProfileRepository.save(userProfileMapper.toEntity(dto, userProfile.getUserId(), userProfile.getId()));
         return  userProfileMapper.toDto(entity);
     }
 
     @Transactional
     public UserProfileDto deleteUserProfile(){
 
-        UUID currentUserId = currentUserService.getCurrentUserId();
+        UserProfile userProfile = getCurrentUserProfile();;
 
-        UserProfile userProfile = userProfileRepository
-                .findUserProfileByUserId(currentUserId)
-                .orElseThrow(() -> new UserProfileNotFoundException(currentUserId));;
-
-            userProfileRepository.deleteById(userProfile.getId());
+        userProfileRepository.deleteById(userProfile.getId());
 
         return userProfileMapper.toDto(userProfile);
+    }
+
+    private UserProfile getCurrentUserProfile() {
+        UUID currentUserId = currentUserService.getCurrentUserId();
+        return userProfileRepository.findUserProfileByUserId(currentUserId)
+                .orElseThrow(() -> new UserProfileNotFoundException(currentUserId));
     }
 }
