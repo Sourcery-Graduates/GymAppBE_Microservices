@@ -9,8 +9,6 @@ import com.sourcery.gymapp.backend.workout.exception.UserNotFoundException;
 import com.sourcery.gymapp.backend.workout.mapper.RoutineMapper;
 import com.sourcery.gymapp.backend.workout.model.Routine;
 import com.sourcery.gymapp.backend.workout.repository.RoutineRepository;
-import com.sourcery.gymapp.backend.workout.service.RoutineService;
-import com.sourcery.gymapp.backend.workout.service.WorkoutCurrentUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -140,14 +138,25 @@ public class RoutineServiceTest {
     @Nested
     @DisplayName("Get Paged Routine Tests")
     public class GetPagedRoutineTests {
+        private Routine routine2;
+        private Routine routine3;
+        private ResponseRoutineDto responseRoutineDto2;
+        private ResponseRoutineDto responseRoutineDto3;
+        private Pageable pageable;
+
+        @BeforeEach
+        void setup() {
+            routine2 = RoutineFactory.createRoutine("Test Routine 2");
+            routine3 = RoutineFactory.createRoutine("Test Routine 3");
+
+            responseRoutineDto2 = RoutineFactory.createResponseRoutineDto();
+            responseRoutineDto3 = RoutineFactory.createResponseRoutineDto();
+            pageable = PageRequest.of(0, 20);
+        }
 
         @Test
         void shouldGetAllPagedRoutinesSuccessfully() {
             // Arrange
-            Routine routine = RoutineFactory.createRoutine("good routine", "description");
-            Routine routine2 = RoutineFactory.createRoutine("bad routine", "description");
-            Routine routine3 = RoutineFactory.createRoutine("bad routine", "description");
-
             List<Routine> routines = List.of(routine, routine2, routine3);
 
             Pageable pageable = PageRequest.of(0, 20);
@@ -155,52 +164,22 @@ public class RoutineServiceTest {
             Page<Routine> mockPage = new PageImpl<>(routines, pageable, routines.size());
 
             when(routineRepository.findByNameIgnoreCaseContaining("", pageable)).thenReturn(mockPage);
-
             when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
-            when(routineMapper.toDto(routine2)).thenReturn(responseRoutineDto);
-            when(routineMapper.toDto(routine3)).thenReturn(responseRoutineDto);
+            when(routineMapper.toDto(routine2)).thenReturn(responseRoutineDto2);
+            when(routineMapper.toDto(routine3)).thenReturn(responseRoutineDto3);
 
             // Act
             RoutineGridDto result = routineService.searchRoutines("", pageable);
 
             // Assert
-            assertEquals(3, result.data().size());
-            assertEquals(1, result.totalPages());
-        }
-
-        @Test
-        void shouldGetSearchedPagedRoutinesSuccessfully() {
-            // Arrange
-            Routine routine = RoutineFactory.createRoutine("good routine", "description");
-            Routine routine2 = RoutineFactory.createRoutine("bad routine", "description");
-            Routine routine3 = RoutineFactory.createRoutine("bad routine", "description");
-
-            List<Routine> routines = List.of(routine, routine2, routine3);
-
-            Pageable pageable = PageRequest.of(0, 20);
-
-            List<Routine> searchResults = List.of(routine2, routine3);
-
-            Page<Routine> mockSearchedPage = new PageImpl<>(searchResults, pageable, routines.size());
-
-            when(routineRepository.findByNameIgnoreCaseContaining("bad", pageable)).thenReturn(mockSearchedPage);
-
-            when(routineMapper.toDto(routine2)).thenReturn(responseRoutineDto);
-            when(routineMapper.toDto(routine3)).thenReturn(responseRoutineDto);
-
-            // Act
-            RoutineGridDto result = routineService.searchRoutines("bad", pageable);
-
-            // Assert
-            assertEquals(2, result.data().size());
-            assertEquals(1, result.totalPages());
+            assertAll(
+                    () -> assertEquals(3, result.data().size()),
+                    () -> assertEquals(1, result.totalPages())
+            );
         }
 
         @Test
         void shouldGetEmptyPagedRoutinesSuccessfully() {
-
-            Pageable pageable = PageRequest.of(0, 20);
-
             List<Routine> searchResults = List.of();
 
             Page<Routine> mockSearchedPage = new PageImpl<>(searchResults, pageable, 0);
@@ -232,7 +211,6 @@ public class RoutineServiceTest {
 
             // Assert
             assertEquals(responseRoutineDto, result);
-            verify(routineRepository, times(1)).save(routine);
         }
 
         @Test

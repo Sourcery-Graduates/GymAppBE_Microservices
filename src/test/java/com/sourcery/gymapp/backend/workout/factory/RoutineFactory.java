@@ -30,6 +30,15 @@ public class RoutineFactory {
         );
     }
 
+    public static Routine createRoutine(String name) {
+        return createRoutine(
+                name,
+                "Test Description",
+                LocalDateTime.now(),
+                UUID.randomUUID()
+        );
+    }
+
     public static Routine createRoutine() {
         return createRoutine(
                 "Test Routine",
