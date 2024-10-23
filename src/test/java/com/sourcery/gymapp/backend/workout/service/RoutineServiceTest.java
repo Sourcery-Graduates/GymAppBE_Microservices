@@ -164,7 +164,8 @@ public class RoutineServiceTest {
             List<ResponseRoutineDto> responseRoutinesDto =
                     List.of(responseRoutineDto, responseRoutineDto2, responseRoutineDto3);
 
-            when(routineRepository.findByNameIgnoreCaseContaining("", pageable)).thenReturn(mockPage);
+            when(routineRepository.findAll(pageable)).thenReturn(mockPage);
+
             when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
             when(routineMapper.toDto(routine2)).thenReturn(responseRoutineDto2);
             when(routineMapper.toDto(routine3)).thenReturn(responseRoutineDto3);
@@ -185,7 +186,7 @@ public class RoutineServiceTest {
             // Arrange
             Page<Routine> mockSearchedPage = new PageImpl<>(List.of(), pageable, 0);
 
-            when(routineRepository.findByNameIgnoreCaseContaining("", pageable)).thenReturn(mockSearchedPage);
+            when(routineRepository.findAll(pageable)).thenReturn(mockSearchedPage);
             // Act
             RoutineGridDto result = routineService.searchRoutines("", pageable);
 
@@ -194,6 +195,29 @@ public class RoutineServiceTest {
                     () -> assertEquals(0, result.totalPages()),
                     () -> assertEquals(0, result.totalElements()),
                     () -> assertTrue(result.data().isEmpty())
+            );
+        }
+
+        @Test
+        void shouldGetFilteredPagedRoutinesSuccessfully() {
+            // Arrange
+            String searchName = "Test Routine";
+            List<Routine> filteredRoutines = List.of(routine);
+            Page<Routine> mockFilteredPage = new PageImpl<>(filteredRoutines, pageable, filteredRoutines.size());
+
+            List<ResponseRoutineDto> responseRoutinesDto = List.of(responseRoutineDto);
+
+            when(routineRepository.findByNameIgnoreCaseContaining(searchName, pageable)).thenReturn(mockFilteredPage);
+            when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
+
+            // Act
+            RoutineGridDto result = routineService.searchRoutines(searchName, pageable);
+
+            // Assert
+            assertAll(
+                    () -> assertEquals(1, result.totalPages()),
+                    () -> assertEquals(responseRoutinesDto.size(), result.totalElements()),
+                    () -> assertEquals(responseRoutinesDto, result.data())
             );
         }
     }
