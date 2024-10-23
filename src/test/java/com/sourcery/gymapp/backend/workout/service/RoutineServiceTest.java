@@ -161,6 +161,9 @@ public class RoutineServiceTest {
 
             Page<Routine> mockPage = new PageImpl<>(routines, pageable, routines.size());
 
+            List<ResponseRoutineDto> responseRoutinesDto =
+                    List.of(responseRoutineDto, responseRoutineDto2, responseRoutineDto3);
+
             when(routineRepository.findByNameIgnoreCaseContaining("", pageable)).thenReturn(mockPage);
             when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
             when(routineMapper.toDto(routine2)).thenReturn(responseRoutineDto2);
@@ -171,24 +174,27 @@ public class RoutineServiceTest {
 
             // Assert
             assertAll(
-                    () -> assertEquals(3, result.data().size()),
-                    () -> assertEquals(1, result.totalPages())
+                    () -> assertEquals(1, result.totalPages()),
+                    () -> assertEquals(responseRoutinesDto.size(), result.totalElements()),
+                    () -> assertEquals(responseRoutinesDto, result.data())
             );
         }
 
         @Test
         void shouldGetEmptyPagedRoutinesSuccessfully() {
-            List<Routine> searchResults = List.of();
-
-            Page<Routine> mockSearchedPage = new PageImpl<>(searchResults, pageable, 0);
+            // Arrange
+            Page<Routine> mockSearchedPage = new PageImpl<>(List.of(), pageable, 0);
 
             when(routineRepository.findByNameIgnoreCaseContaining("", pageable)).thenReturn(mockSearchedPage);
             // Act
             RoutineGridDto result = routineService.searchRoutines("", pageable);
 
             // Assert
-            assertEquals(0, result.data().size());
-            assertEquals(0, result.totalPages());
+            assertAll(
+                    () -> assertEquals(0, result.totalPages()),
+                    () -> assertEquals(0, result.totalElements()),
+                    () -> assertTrue(result.data().isEmpty())
+            );
         }
     }
 
