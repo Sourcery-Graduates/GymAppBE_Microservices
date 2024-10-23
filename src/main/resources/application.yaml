@@ -29,6 +29,7 @@ spring:
     swagger-ui:
       path: /swagger-ui.html
 
+
 ---
 jwt:
   public-key: |
