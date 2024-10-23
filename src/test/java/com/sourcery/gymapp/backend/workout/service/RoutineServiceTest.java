@@ -159,8 +159,6 @@ public class RoutineServiceTest {
             // Arrange
             List<Routine> routines = List.of(routine, routine2, routine3);
 
-            Pageable pageable = PageRequest.of(0, 20);
-
             Page<Routine> mockPage = new PageImpl<>(routines, pageable, routines.size());
 
             when(routineRepository.findByNameIgnoreCaseContaining("", pageable)).thenReturn(mockPage);
