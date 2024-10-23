@@ -78,26 +78,24 @@ public class RoutineService {
     }
 
     public RoutineGridDto searchRoutines(String name, Pageable pageable) {
-        if (name == null) {
-            return getAllRoutines(pageable);
+        Page<Routine> routinePage;
+
+        if (name == null || name.isBlank()) {
+            routinePage = getAllRoutines(pageable);
+        } else {
+            routinePage = routineRepository.findByNameIgnoreCaseContaining(name, pageable);
         }
 
-        Page<Routine> page = routineRepository.findByNameIgnoreCaseContaining(name, pageable);
-        List<ResponseRoutineDto> routines = page.map(routineMapper::toDto).getContent();
+        List<ResponseRoutineDto> routines = routinePage.map(routineMapper::toDto).getContent();
 
         return new RoutineGridDto(
-                page.getTotalPages(),
-                page.getTotalElements(),
-                routines);
+                routinePage.getTotalPages(),
+                routinePage.getTotalElements(),
+                routines
+        );
     }
 
-    private RoutineGridDto getAllRoutines(Pageable pageable) {
-        Page<Routine> page = routineRepository.findAll(pageable);
-        List<ResponseRoutineDto> routines = page.map(routineMapper::toDto).getContent();
-
-        return new RoutineGridDto(
-                page.getTotalPages(),
-                page.getTotalElements(),
-                routines);
+    private Page<Routine> getAllRoutines(Pageable pageable) {
+        return routineRepository.findAll(pageable);
     }
 }
