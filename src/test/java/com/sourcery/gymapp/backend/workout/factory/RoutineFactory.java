@@ -1,4 +1,4 @@
-package com.sourcery.gymapp.backend.factory;
+package com.sourcery.gymapp.backend.workout.factory;
 
 
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
@@ -19,6 +19,24 @@ public class RoutineFactory {
         routine.setCreatedAt(createdAt);
         routine.setUserId(userId);
         return routine;
+    }
+
+    public static Routine createRoutine(String name, String description) {
+        return createRoutine(
+                name,
+                description,
+                LocalDateTime.now(),
+                UUID.randomUUID()
+        );
+    }
+
+    public static Routine createRoutine(String name) {
+        return createRoutine(
+                name,
+                "Test Description",
+                LocalDateTime.now(),
+                UUID.randomUUID()
+        );
     }
 
     public static Routine createRoutine() {

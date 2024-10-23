@@ -1,7 +1,7 @@
-package com.sourcery.gymapp.backend.workout;
+package com.sourcery.gymapp.backend.workout.mapper;
 
 
-import com.sourcery.gymapp.backend.factory.RoutineFactory;
+import com.sourcery.gymapp.backend.workout.factory.RoutineFactory;
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
 import com.sourcery.gymapp.backend.workout.mapper.RoutineMapper;
