@@ -6,6 +6,7 @@ import com.sourcery.gymapp.backend.workout.dto.RoutineGridDto;
 import com.sourcery.gymapp.backend.workout.service.RoutineService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,7 +50,7 @@ public class RoutineController {
 
     @GetMapping
     public RoutineGridDto getPagedRoutines(
-            @PageableDefault(size = 20, sort = "name") Pageable pageable,
+            @ParameterObject @PageableDefault(size = 20, sort = "name") Pageable pageable,
             @RequestParam(required = false) String name) {
 
         return routineService.searchRoutines(name, pageable);

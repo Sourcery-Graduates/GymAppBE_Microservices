@@ -4,6 +4,7 @@ import java.util.List;
 
 public record RoutineGridDto(
         int totalPages,
+        long totalElements,
         List<ResponseRoutineDto> data
 ) {
 }
