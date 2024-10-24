@@ -2,12 +2,15 @@ package com.sourcery.gymapp.backend.workout.service;
 
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
+import com.sourcery.gymapp.backend.workout.dto.RoutineGridDto;
 import com.sourcery.gymapp.backend.workout.exception.RoutineNotFoundException;
 import com.sourcery.gymapp.backend.workout.exception.UserNotFoundException;
 import com.sourcery.gymapp.backend.workout.mapper.RoutineMapper;
 import com.sourcery.gymapp.backend.workout.model.Routine;
 import com.sourcery.gymapp.backend.workout.repository.RoutineRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,5 +75,27 @@ public class RoutineService {
     private Routine findRoutineById(UUID id) {
 
         return routineRepository.findById(id).orElseThrow(() -> new RoutineNotFoundException(id));
+    }
+
+    public RoutineGridDto searchRoutines(String name, Pageable pageable) {
+        Page<Routine> routinePage;
+
+        if (name == null || name.isBlank()) {
+            routinePage = getAllRoutines(pageable);
+        } else {
+            routinePage = routineRepository.findByNameIgnoreCaseContaining(name, pageable);
+        }
+
+        List<ResponseRoutineDto> routines = routinePage.map(routineMapper::toDto).getContent();
+
+        return new RoutineGridDto(
+                routinePage.getTotalPages(),
+                routinePage.getTotalElements(),
+                routines
+        );
+    }
+
+    private Page<Routine> getAllRoutines(Pageable pageable) {
+        return routineRepository.findAll(pageable);
     }
 }

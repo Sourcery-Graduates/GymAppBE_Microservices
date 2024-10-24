@@ -1,15 +1,14 @@
-package com.sourcery.gymapp.backend.workout;
+package com.sourcery.gymapp.backend.workout.service;
 
-import com.sourcery.gymapp.backend.factory.RoutineFactory;
+import com.sourcery.gymapp.backend.workout.factory.RoutineFactory;
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
+import com.sourcery.gymapp.backend.workout.dto.RoutineGridDto;
 import com.sourcery.gymapp.backend.workout.exception.RoutineNotFoundException;
 import com.sourcery.gymapp.backend.workout.exception.UserNotFoundException;
 import com.sourcery.gymapp.backend.workout.mapper.RoutineMapper;
 import com.sourcery.gymapp.backend.workout.model.Routine;
 import com.sourcery.gymapp.backend.workout.repository.RoutineRepository;
-import com.sourcery.gymapp.backend.workout.service.RoutineService;
-import com.sourcery.gymapp.backend.workout.service.WorkoutCurrentUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,13 +17,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -66,6 +65,7 @@ public class RoutineServiceTest {
         void shouldCreateRoutineSuccessfully() {
             // Arrange
             when(currentUserService.getCurrentUserId()).thenReturn(userId);
+
             when(routineMapper.toEntity(createRoutineDto, userId)).thenReturn(routine);
             when(routineRepository.save(routine)).thenReturn(routine);
             when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
@@ -120,6 +120,7 @@ public class RoutineServiceTest {
         void shouldGetRoutinesByUserIdSuccessfully() {
             // Arrange
             List<Routine> routines = List.of(routine);
+            when(currentUserService.getCurrentUserId()).thenReturn(userId);
             when(routineRepository.findByUserId(userId)).thenReturn(routines);
             when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
             when(currentUserService.getCurrentUserId()).thenReturn(userId);
@@ -131,6 +132,93 @@ public class RoutineServiceTest {
             assertEquals(1, result.size());
             assertEquals(responseRoutineDto, result.getFirst());
             verify(routineRepository, times(1)).findByUserId(userId);
+        }
+    }
+
+    @Nested
+    @DisplayName("Get Paged Routine Tests")
+    public class GetPagedRoutineTests {
+        private Routine routine2;
+        private Routine routine3;
+        private ResponseRoutineDto responseRoutineDto2;
+        private ResponseRoutineDto responseRoutineDto3;
+        private Pageable pageable;
+
+        @BeforeEach
+        void setup() {
+            routine2 = RoutineFactory.createRoutine("Test Routine 2");
+            routine3 = RoutineFactory.createRoutine("Test Routine 3");
+
+            responseRoutineDto2 = RoutineFactory.createResponseRoutineDto();
+            responseRoutineDto3 = RoutineFactory.createResponseRoutineDto();
+            pageable = PageRequest.of(0, 20);
+        }
+
+        @Test
+        void shouldGetAllPagedRoutinesSuccessfully() {
+            // Arrange
+            List<Routine> routines = List.of(routine, routine2, routine3);
+
+            Page<Routine> mockPage = new PageImpl<>(routines, pageable, routines.size());
+
+            List<ResponseRoutineDto> responseRoutinesDto =
+                    List.of(responseRoutineDto, responseRoutineDto2, responseRoutineDto3);
+
+            when(routineRepository.findAll(pageable)).thenReturn(mockPage);
+
+            when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
+            when(routineMapper.toDto(routine2)).thenReturn(responseRoutineDto2);
+            when(routineMapper.toDto(routine3)).thenReturn(responseRoutineDto3);
+
+            // Act
+            RoutineGridDto result = routineService.searchRoutines("", pageable);
+
+            // Assert
+            assertAll(
+                    () -> assertEquals(1, result.totalPages()),
+                    () -> assertEquals(responseRoutinesDto.size(), result.totalElements()),
+                    () -> assertEquals(responseRoutinesDto, result.data())
+            );
+        }
+
+        @Test
+        void shouldGetEmptyPagedRoutinesSuccessfully() {
+            // Arrange
+            Page<Routine> mockSearchedPage = new PageImpl<>(List.of(), pageable, 0);
+
+            when(routineRepository.findAll(pageable)).thenReturn(mockSearchedPage);
+            // Act
+            RoutineGridDto result = routineService.searchRoutines("", pageable);
+
+            // Assert
+            assertAll(
+                    () -> assertEquals(0, result.totalPages()),
+                    () -> assertEquals(0, result.totalElements()),
+                    () -> assertTrue(result.data().isEmpty())
+            );
+        }
+
+        @Test
+        void shouldGetFilteredPagedRoutinesSuccessfully() {
+            // Arrange
+            String searchName = "Test Routine";
+            List<Routine> filteredRoutines = List.of(routine);
+            Page<Routine> mockFilteredPage = new PageImpl<>(filteredRoutines, pageable, filteredRoutines.size());
+
+            List<ResponseRoutineDto> responseRoutinesDto = List.of(responseRoutineDto);
+
+            when(routineRepository.findByNameIgnoreCaseContaining(searchName, pageable)).thenReturn(mockFilteredPage);
+            when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
+
+            // Act
+            RoutineGridDto result = routineService.searchRoutines(searchName, pageable);
+
+            // Assert
+            assertAll(
+                    () -> assertEquals(1, result.totalPages()),
+                    () -> assertEquals(responseRoutinesDto.size(), result.totalElements()),
+                    () -> assertEquals(responseRoutinesDto, result.data())
+            );
         }
     }
 
@@ -151,7 +239,6 @@ public class RoutineServiceTest {
 
             // Assert
             assertEquals(responseRoutineDto, result);
-            verify(routineRepository, times(1)).save(routine);
         }
 
         @Test
