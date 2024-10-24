@@ -7,7 +7,7 @@ import java.util.UUID;
 public class ExerciseNotFoundException extends WorkoutRuntimeException {
     public ExerciseNotFoundException(UUID id) {
         super("Can't find Exercise by ID [%s]".formatted(id),
-                ErrorCode.ROUTINE_NOT_FOUND,
+                ErrorCode.EXERCISE_NOT_FOUND,
                 HttpStatus.NOT_FOUND);
     }
 }
