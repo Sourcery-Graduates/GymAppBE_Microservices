@@ -1,3 +1,5 @@
+--liquibase formatted sql
+
 CREATE TABLE IF NOT EXISTS user_profiles.profiles(
     id UUID PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -14,3 +16,10 @@ CREATE TABLE IF NOT EXISTS user_profiles.profiles(
     settings JSONB
 );
 
+--changeset PiotrBaranowski:table_userprofiles.profiles_Add_Not_Null_for_firstName
+ALTER TABLE user_profiles.profiles
+ALTER COLUMN first_name SET NOT NULL;
+
+--changeset PiotrBaranowski:table_userprofiles.profiles_Add_Not_Null_for_lastName
+ALTER TABLE user_profiles.profiles
+ALTER COLUMN last_name SET NOT NULL;
