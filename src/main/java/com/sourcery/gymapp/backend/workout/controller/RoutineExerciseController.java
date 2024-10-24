@@ -3,6 +3,7 @@ package com.sourcery.gymapp.backend.workout.controller;
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineExerciseDto;
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineGridExerciseDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineExerciseDto;
+import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineGridExerciseDto;
 import com.sourcery.gymapp.backend.workout.service.RoutineExerciseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -21,17 +22,14 @@ public class RoutineExerciseController {
             @RequestParam UUID routineId,
             @RequestBody List<CreateRoutineExerciseDto> createRoutineExerciseDto) {
 
-        routineExerciseService.addExerciseToRoutine();
+        return routineExerciseService.updateExercisesInRoutine(routineId, createRoutineExerciseDto);
     }
 
 
     @GetMapping
-    public List<ResponseRoutineExerciseDto> getExercisesFromRoutine() {
-        routineExerciseService.getExercisesFromRoutine();
-    }
-
-    @DeleteMapping("/{id}")
-    public void removeExerciseFromRoutine(@PathVariable UUID id) {
-        routineExerciseService.removeExerciseFromRoutine();
+    public ResponseRoutineGridExerciseDto getExercisesFromRoutine(
+            @RequestParam UUID routineId
+    ) {
+        return routineExerciseService.getExercisesFromRoutine(routineId);
     }
 }
