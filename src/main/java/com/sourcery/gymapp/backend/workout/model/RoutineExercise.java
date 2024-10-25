@@ -5,6 +5,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,13 +29,16 @@ public class RoutineExercise extends BaseEntity {
     @Column(nullable = false)
     private Integer orderNumber;
 
+    @Column(nullable = false)
     private Integer defaultSets;
 
+    @Column(nullable = false)
     private Integer defaultReps;
 
-    @Column(precision = 5, scale = 2)
+    @Column(precision = 5, scale = 2, nullable = false)
     private BigDecimal defaultWeight;
 
+    @Column(nullable = false)
     private Integer defaultRestTime;
 
     @Size(max = 255)
