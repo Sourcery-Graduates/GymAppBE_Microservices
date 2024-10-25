@@ -82,7 +82,7 @@ class UserProfileServiceTest {
     @DisplayName("Update user profile")
     public class userProfileServiceUpdate {
         @Test
-        void testUpdateUserProfile_Success() {
+        void testUpdateUserProfile_existingUserProfile_Success() {
             //given
             UserProfile userProfile = UserProfileTestFactory.createUserProfile();
             UserProfileDto userProfileDto = UserProfileTestFactory.createUserProfileDtoFromEntity(userProfile);
@@ -102,6 +102,26 @@ class UserProfileServiceTest {
             );
         }
     }
+        @Test
+        void testUpdateUserProfile_newUserProfile_Success() {
+            //given
+            UserProfile userProfile = UserProfileTestFactory.createUserProfile();
+            UserProfileDto userProfileDto = UserProfileTestFactory.createUserProfileDtoFromEntity(userProfile);
+
+            when(currentUserService.getCurrentUserId()).thenReturn(userProfile.getUserId());
+            when(userProfileRepository.findUserProfileByUserId(userProfile.getUserId())).thenReturn(Optional.empty());
+            when(userProfileMapper.toDto(userProfile)).thenReturn(userProfileDto);
+            when(userProfileRepository.save(userProfile)).thenReturn(userProfile);
+            when(userProfileMapper.toEntity(userProfileDto, userProfile.getUserId(), null)).thenReturn(userProfile);
+            //when
+            UserProfileDto result = userProfileService.updateUserProfile(userProfileDto);
+            //then
+            assertAll(
+                    () -> assertNotNull(result),
+                    () -> assertEquals(userProfileDto, result),
+                    () -> verify(userProfileRepository).save(userProfile)
+            );
+        }
 
     @Nested
     @DisplayName("Delete user profile")

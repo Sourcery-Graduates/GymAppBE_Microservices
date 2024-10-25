@@ -3,6 +3,7 @@ package com.sourcery.gymapp.backend.userProfile.controller;
 import com.sourcery.gymapp.backend.userProfile.dto.UserProfileDto;
 import com.sourcery.gymapp.backend.userProfile.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,7 +19,7 @@ public class UserProfileController {
     }
 
     @PutMapping()
-    public UserProfileDto updateUserProfile(@RequestBody UserProfileDto dto) {
+    public UserProfileDto updateUserProfile(@Validated @RequestBody UserProfileDto dto) {
         return userProfileService.updateUserProfile(dto);
     }
     @DeleteMapping()
