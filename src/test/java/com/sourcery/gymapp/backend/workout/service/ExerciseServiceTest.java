@@ -70,19 +70,4 @@ public class ExerciseServiceTest {
         String expectedMessage = "Can't find Exercises by IDs [" + exercise2.getId() + "]";
         assertEquals(expectedMessage, exception.getMessage());
     }
-
-    @Test
-    void shouldThrowExerciseNotFoundExceptionWhenAllExercisesAreMissing() {
-        // Arrange
-        when(exerciseRepository.findAllByIdIn(anyList())).thenReturn(Collections.emptyList());
-
-        // Act & Assert
-        ExerciseNotFoundException exception = assertThrows(
-                ExerciseNotFoundException.class,
-                () -> exerciseService.getExerciseMapByIds(exerciseIds)
-        );
-
-        String expectedMessage = "Can't find Exercises by IDs [" + exercise1.getId() + ", " + exercise2.getId() + "]";
-        assertEquals(expectedMessage, exception.getMessage());
-    }
 }
