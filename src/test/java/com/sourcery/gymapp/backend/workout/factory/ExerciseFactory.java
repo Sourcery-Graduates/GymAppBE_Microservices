@@ -14,6 +14,23 @@ import java.util.UUID;
 
 public class ExerciseFactory {
 
+    public static Exercise createExercise() {
+        Exercise exercise = new Exercise();
+        exercise.setId(UUID.randomUUID());
+        exercise.setName("Test Exercise");
+        exercise.setForce("Test Force");
+        exercise.setLevel("Intermediate");
+        exercise.setMechanic("Compound");
+        exercise.setEquipment("Dumbbell");
+        exercise.setPrimaryMuscles(List.of("Chest", "Shoulders"));
+        exercise.setSecondaryMuscles(List.of("Triceps"));
+        exercise.setDescription(List.of("Step 1: Get into position.", "Step 2: Execute the exercise."));
+        exercise.setCategory("Strength");
+        exercise.setImages(List.of("image1.jpg", "image2.jpg"));
+
+        return exercise;
+    }
+
     public static ExerciseSimpleDto createExerciseSimpleDto() {
         return new ExerciseSimpleDto(
                 UUID.randomUUID(),
@@ -48,7 +65,7 @@ public class ExerciseFactory {
         );
     }
 
-    public static CreateRoutineExerciseListDto createRoutineGridExerciseDto(
+    public static CreateRoutineExerciseListDto createRoutineExerciseListDto(
             UUID routineId,
             List<CreateRoutineExerciseDto> exercises) {
 

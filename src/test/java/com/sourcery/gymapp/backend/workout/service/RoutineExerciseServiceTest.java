@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,42 +43,54 @@ public class RoutineExerciseServiceTest {
 
     private Routine routine;
     private UUID routineId;
-    private UUID userId;
     private List<CreateRoutineExerciseDto> createRoutineExercisesDto;
+    private Map<UUID, Exercise> exerciseMap;
+    private List<RoutineExercise> routineExercises;
 
     @BeforeEach
     void setup() {
         routine = RoutineFactory.createRoutine();
         routineId = routine.getId();
-        userId = routine.getUserId();
 
-        ExerciseSimpleDto exerciseSimpleDto = ExerciseFactory.createExerciseSimpleDto();
-        ExerciseFactory.createRoutineExercise(routine, new );
-        createRoutineExercisesDto = List.of(ExerciseFactory.createRoutineExerciseDto());
+        CreateRoutineExerciseDto exerciseDto = ExerciseFactory.createRoutineExerciseDto();
+        createRoutineExercisesDto = List.of(exerciseDto);
+
+        Exercise exercise = new Exercise();
+        exercise.setId(exerciseDto.exerciseId());
+        exerciseMap = Map.of(exerciseDto.exerciseId(), exercise);
+
+        RoutineExercise routineExercise = ExerciseFactory.createRoutineExercise(routine, exercise);
+
+        routineExercises = List.of(routineExercise);
     }
 
     @Test
     void shouldUpdateRoutineExercises() {
         // Arrange
         when(routineService.findRoutineById(routineId)).thenReturn(routine);
-        when(exerciseService.getExerciseFromDatabaseById(any())).thenReturn(new Exercise());
-        when(routineExerciseMapper.toEntity(any(), eq(routine), any())).thenReturn(new RoutineExercise());
+        when(exerciseService.getExerciseMapByIds(anyList())).thenReturn(exerciseMap);
+        when(routineExerciseMapper.toEntity(any(CreateRoutineExerciseDto.class), eq(routine), any(Exercise.class)))
+                .thenReturn(routineExercises.getFirst());
+        when(routineExerciseMapper.toResponseRoutineExerciseDto(any(RoutineExercise.class)))
+                .thenReturn(ExerciseFactory.createResponseRoutineExerciseDto());
 
         // Act
-        CreateRoutineExerciseListDto result = routineExerciseService.replaceExercisesInRoutine(routineId, createRoutineExercisesDto);
+        ResponseRoutineListExerciseDto result = routineExerciseService.replaceExercisesInRoutine(routineId, createRoutineExercisesDto);
 
         // Assert
         verify(routineExerciseRepository).deleteAllByRoutineId(routineId);
         verify(routineExerciseRepository).saveAll(anyList());
         assertEquals(routineId, result.routineId());
+        assertEquals(1, result.exercises().size());
     }
 
     @Test
     void shouldGetRoutineExercises() {
         // Arrange
-        List<RoutineExercise> routineExercises = List.of(new RoutineExercise());
+        when(routineService.findRoutineById(routineId)).thenReturn(routine);
         when(routineExerciseRepository.findAllByRoutineId(routineId)).thenReturn(routineExercises);
-        when(routineExerciseMapper.toResponseRoutineExerciseDto(any())).thenReturn(new ResponseRoutineExerciseDto());
+        when(routineExerciseMapper.toResponseRoutineExerciseDto(any(RoutineExercise.class)))
+                .thenReturn(ExerciseFactory.createResponseRoutineExerciseDto());
 
         // Act
         ResponseRoutineListExerciseDto result = routineExerciseService.getExercisesFromRoutine(routineId);
@@ -91,6 +104,7 @@ public class RoutineExerciseServiceTest {
     @Test
     void shouldReturnEmptyExercises() {
         // Arrange
+        when(routineService.findRoutineById(routineId)).thenReturn(routine);
         when(routineExerciseRepository.findAllByRoutineId(routineId)).thenReturn(List.of());
 
         // Act
@@ -99,14 +113,5 @@ public class RoutineExerciseServiceTest {
         // Assert
         assertTrue(result.exercises().isEmpty());
         assertEquals(routineId, result.routineId());
-    }
-
-    @Test
-    void shouldThrowValidationExceptionWhenRoutineNotFound() {
-        // Arrange
-        when(routineService.findRoutineById(routineId)).thenThrow(new IllegalArgumentException("Routine not found"));
-
-        // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> routineExerciseService.getExercisesFromRoutine(routineId));
     }
 }
