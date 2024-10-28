@@ -15,7 +15,7 @@ import java.util.List;
 public class WorkoutExceptionHandler {
 
     @ExceptionHandler(HandlerMethodValidationException.class)
-    public ResponseEntity<ErrorResponse> handleValidationExceptions(HandlerMethodValidationException ex) {
+    public ResponseEntity<FieldErrorResponse> handleValidationException(HandlerMethodValidationException ex) {
         log.error("HandlerMethodValidationException caught: {}", ex.getAllErrors(), ex);
 
         List<FieldResponse> fields = ex.getAllErrors().stream()
@@ -27,7 +27,7 @@ public class WorkoutExceptionHandler {
                 })
                 .toList();
 
-        ErrorResponse response = new ErrorResponse(
+        FieldErrorResponse response = new FieldErrorResponse(
                 "Request validation error",
                 ErrorCode.VALIDATION_ERROR,
                 fields);
@@ -39,7 +39,7 @@ public class WorkoutExceptionHandler {
     public ResponseEntity<ErrorResponse> handleUserNotFoundException(RoutineNotFoundException ex) {
         log.error("UserNotFoundException caught: {}", ex.getMessage(), ex);
 
-        ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getCode(), null);
+        ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getCode());
         return new ResponseEntity<>(response, ex.getStatus());
     }
 
@@ -47,7 +47,7 @@ public class WorkoutExceptionHandler {
     public ResponseEntity<ErrorResponse> handleRoutineNotFoundException(RoutineNotFoundException ex) {
         log.error("RoutineNotFoundException caught: {}", ex.getMessage(), ex);
 
-        ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getCode(), null);
+        ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getCode());
         return new ResponseEntity<>(response, ex.getStatus());
     }
 
@@ -55,7 +55,7 @@ public class WorkoutExceptionHandler {
     public ResponseEntity<ErrorResponse> handleRoutineRuntimeException(
             WorkoutRuntimeException ex) {
         log.error("RoutineRuntimeException caught: {}", ex.getMessage(), ex);
-        ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getCode(), null);
+        ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getCode());
         return new ResponseEntity<>(response, ex.getStatus());
     }
 
@@ -63,8 +63,7 @@ public class WorkoutExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGenericWorkoutException(Exception ex) {
         log.error("Unexpected workout module error occurred: {}", ex.getMessage(), ex);
         ErrorResponse response = new ErrorResponse("Internal server error",
-                ErrorCode.INTERNAL_SERVER_ERROR,
-                null);
+                ErrorCode.INTERNAL_SERVER_ERROR);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
