@@ -49,10 +49,7 @@ public class RoutineExerciseService {
         routineExerciseRepository.deleteAllByRoutineId(routine.getId());
         routineExerciseRepository.saveAll(routineExercises);
 
-        List<ResponseRoutineExerciseDto> routineExercisesDto = routineExercises
-                .stream().map(routineExerciseMapper::toResponseRoutineExerciseDto).toList();
-
-        return new ResponseRoutineListExerciseDto(routineId, routineExercisesDto);
+        return mapToResponseDto(routineId, routineExercises);
     }
 
     public ResponseRoutineListExerciseDto getExercisesFromRoutine(UUID routineId) {
@@ -63,7 +60,10 @@ public class RoutineExerciseService {
                 .sorted(Comparator.comparing(RoutineExercise::getOrderNumber))
                 .toList();
 
+        return mapToResponseDto(routineId, routineExercises);
+    }
 
+    private ResponseRoutineListExerciseDto mapToResponseDto(UUID routineId, List<RoutineExercise> routineExercises) {
         List<ResponseRoutineExerciseDto> routineExercisesDto = routineExercises
                 .stream()
                 .map(routineExerciseMapper::toResponseRoutineExerciseDto)
