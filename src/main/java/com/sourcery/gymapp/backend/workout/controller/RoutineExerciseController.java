@@ -1,12 +1,11 @@
 package com.sourcery.gymapp.backend.workout.controller;
 
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineExerciseDto;
-import com.sourcery.gymapp.backend.workout.dto.CreateRoutineGridExerciseDto;
-import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineGridExerciseDto;
+import com.sourcery.gymapp.backend.workout.dto.CreateRoutineExerciseListDto;
+import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineListExerciseDto;
 import com.sourcery.gymapp.backend.workout.service.RoutineExerciseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,16 +23,16 @@ public class RoutineExerciseController {
     private final RoutineExerciseService routineExerciseService;
 
     @PutMapping
-    public CreateRoutineGridExerciseDto updateExercisesInRoutine(
+    public ResponseRoutineListExerciseDto updateExercisesInRoutine(
             @RequestParam UUID routineId,
             @Valid @RequestBody List<CreateRoutineExerciseDto> createRoutineExerciseDto) {
 
-        return routineExerciseService.updateExercisesInRoutine(routineId, createRoutineExerciseDto);
+        return routineExerciseService.replaceExercisesInRoutine(routineId, createRoutineExerciseDto);
     }
 
 
     @GetMapping
-    public ResponseRoutineGridExerciseDto getExercisesFromRoutine(
+    public ResponseRoutineListExerciseDto getExercisesFromRoutine(
             @RequestParam UUID routineId
     ) {
         return routineExerciseService.getExercisesFromRoutine(routineId);
