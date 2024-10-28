@@ -4,7 +4,9 @@ import com.sourcery.gymapp.backend.workout.dto.CreateRoutineExerciseDto;
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineGridExerciseDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineGridExerciseDto;
 import com.sourcery.gymapp.backend.workout.service.RoutineExerciseService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,7 +26,7 @@ public class RoutineExerciseController {
     @PutMapping
     public CreateRoutineGridExerciseDto updateExercisesInRoutine(
             @RequestParam UUID routineId,
-            @RequestBody List<CreateRoutineExerciseDto> createRoutineExerciseDto) {
+            @Valid @RequestBody List<CreateRoutineExerciseDto> createRoutineExerciseDto) {
 
         return routineExerciseService.updateExercisesInRoutine(routineId, createRoutineExerciseDto);
     }

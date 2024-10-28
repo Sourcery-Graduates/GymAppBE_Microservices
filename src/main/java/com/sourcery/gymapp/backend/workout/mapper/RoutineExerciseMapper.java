@@ -41,12 +41,14 @@ public class RoutineExerciseMapper {
     }
 
     public ResponseRoutineExerciseDto toResponseRoutineExerciseDto(RoutineExercise routineExercise) {
+        ExerciseSimpleDto exerciseSimpleDto = new ExerciseSimpleDto(
+                routineExercise.getExercise().getId(),
+                routineExercise.getExercise().getName()
+        );
+
         return new ResponseRoutineExerciseDto(
                 routineExercise.getId(),
-                new ExerciseSimpleDto(
-                        routineExercise.getExercise().getId(),
-                        routineExercise.getExercise().getName()
-                ),
+                exerciseSimpleDto,
                 routineExercise.getOrderNumber(),
                 routineExercise.getDefaultSets(),
                 routineExercise.getDefaultReps(),

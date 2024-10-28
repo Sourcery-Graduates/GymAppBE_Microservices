@@ -1,6 +1,6 @@
 package com.sourcery.gymapp.backend.workout.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
@@ -8,22 +8,22 @@ import java.util.UUID;
 
 public record CreateRoutineExerciseDto(
 
-        @NotBlank
+        @NotNull
         UUID exerciseId,
 
-        @NotBlank
+        @NotNull
         Integer orderNumber,
 
-        @NotBlank
+        @NotNull
         Integer defaultSets,
 
-        @NotBlank
+        @NotNull
         Integer defaultReps,
 
-        @NotBlank
+        @NotNull
         BigDecimal defaultWeight,
 
-        @NotBlank
+        @NotNull
         Integer defaultRestTime,
 
         @Size(max = 1000)
