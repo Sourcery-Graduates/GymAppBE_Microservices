@@ -12,8 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,18 +32,13 @@ public class RoutineExerciseService {
 
         Routine routine = routineService.findRoutineById(routineId);
 
-        Set<Exercise> exercises = exerciseService
-                .getAllExercisesFromDatabaseById(createRoutineExerciseDto.
+        Map<UUID, Exercise> exerciseMap = exerciseService
+                .getExerciseMapByIds(createRoutineExerciseDto.
                         stream().map(CreateRoutineExerciseDto::exerciseId).toList());
-        System.out.println(exercises);
 
-        Map<UUID, Exercise> exerciseMap =
-                exercises.stream().collect(Collectors.toMap(Exercise::getId, exercise -> exercise));
-        System.out.println(exerciseMap);
-
-        List<RoutineExercise> routineExercises = createRoutineExerciseDto
-                .stream().map(
-                        exerciseDto -> {
+        List<RoutineExercise> routineExercises = createRoutineExerciseDto.stream()
+                .sorted(Comparator.comparingInt(CreateRoutineExerciseDto::orderNumber))
+                .map(exerciseDto -> {
                             Exercise exercise = exerciseMap.get(exerciseDto.exerciseId());
 
                             return routineExerciseMapper.toEntity(exerciseDto, routine, exercise);
@@ -61,10 +58,16 @@ public class RoutineExerciseService {
     public ResponseRoutineListExerciseDto getExercisesFromRoutine(UUID routineId) {
         routineService.findRoutineById(routineId);
 
-        List<RoutineExercise> routineExercises = routineExerciseRepository.findAllByRoutineId(routineId);
+        List<RoutineExercise> routineExercises = routineExerciseRepository.findAllByRoutineId(routineId)
+                .stream()
+                .sorted(Comparator.comparing(RoutineExercise::getOrderNumber))
+                .toList();
+
 
         List<ResponseRoutineExerciseDto> routineExercisesDto = routineExercises
-                .stream().map(routineExerciseMapper::toResponseRoutineExerciseDto).toList();
+                .stream()
+                .map(routineExerciseMapper::toResponseRoutineExerciseDto)
+                .toList();
 
         return new ResponseRoutineListExerciseDto(routineId, routineExercisesDto);
     }

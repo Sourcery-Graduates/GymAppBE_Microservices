@@ -6,10 +6,11 @@ import com.sourcery.gymapp.backend.workout.repository.ExerciseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,19 +18,19 @@ import java.util.stream.Collectors;
 public class ExerciseService {
     private final ExerciseRepository exerciseRepository;
 
-    public Set<Exercise> getAllExercisesFromDatabaseById(List<UUID> exerciseIds) {
-        Set<Exercise> exercises = exerciseRepository.findAllByIdIn(exerciseIds);
+    public Map<UUID, Exercise> getExerciseMapByIds(List<UUID> exerciseIds) {
+        List<Exercise> exercises = exerciseRepository.findAllByIdIn(exerciseIds);
 
-        Set<UUID> foundIds = exercises
-                .stream().map(Exercise::getId).collect(Collectors.toSet());
+        Map<UUID, Exercise> exerciseMap =
+                exercises.stream().collect(Collectors.toMap(Exercise::getId, exercise -> exercise));
 
         Set<UUID> missingIds = new HashSet<>(exerciseIds);
-        missingIds.removeAll(foundIds);
+        missingIds.removeAll(exerciseMap.keySet());
 
         if (!missingIds.isEmpty()) {
             throw new ExerciseNotFoundException(missingIds);
         }
 
-        return exercises;
+        return exerciseMap;
     }
 }
