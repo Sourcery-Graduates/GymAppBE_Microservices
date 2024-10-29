@@ -105,7 +105,7 @@ public class RoutineService {
     private Page<Routine> getAllRoutines(Pageable pageable) {
         return routineRepository.findAll(pageable);
     }
-    //TODO is that proper approach shouldnt it be based on roles and permissions?
+
     private void checkIsUserAuthorized(UUID currentUserId, UUID routineUserId) {
 
         if (routineUserId != currentUserId) {

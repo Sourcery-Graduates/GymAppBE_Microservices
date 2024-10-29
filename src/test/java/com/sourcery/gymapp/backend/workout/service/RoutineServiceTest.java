@@ -1,5 +1,6 @@
 package com.sourcery.gymapp.backend.workout.service;
 
+import com.sourcery.gymapp.backend.workout.exception.UserNotAuthorizedException;
 import com.sourcery.gymapp.backend.workout.factory.RoutineFactory;
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
@@ -229,6 +230,7 @@ public class RoutineServiceTest {
         @Test
         void shouldUpdateRoutineSuccessfully() {
             // Arrange
+            when(currentUserService.getCurrentUserId()).thenReturn(userId);
             when(routineRepository.findById(routineId)).thenReturn(Optional.of(routine));
             doNothing().when(routineMapper).updateEntity(routine, createRoutineDto);
             when(routineRepository.save(routine)).thenReturn(routine);
@@ -239,6 +241,15 @@ public class RoutineServiceTest {
 
             // Assert
             assertEquals(responseRoutineDto, result);
+        }
+
+        @Test
+        void shouldThrowExceptionWhenUserNotAuthorized() {
+            // Arrange
+            when(routineRepository.findById(routineId)).thenReturn(Optional.of(routine));
+
+            // Act & Assert
+            assertThrows(UserNotAuthorizedException.class, () -> routineService.updateRoutine(routineId, createRoutineDto));
         }
 
         @Test
@@ -258,6 +269,7 @@ public class RoutineServiceTest {
         @Test
         void shouldDeleteRoutineSuccessfully() {
             // Arrange
+            when(currentUserService.getCurrentUserId()).thenReturn(userId);
             when(routineRepository.findById(routineId)).thenReturn(Optional.of(routine));
             doNothing().when(routineRepository).delete(routine);
 
@@ -266,6 +278,16 @@ public class RoutineServiceTest {
 
             // Assert
             verify(routineRepository, times(1)).delete(routine);
+        }
+
+        @Test
+        void shouldThrowExceptionWhenUserNotAuthorized() {
+            // Arrange
+            when(routineRepository.findById(routineId)).thenReturn(Optional.of(routine));
+
+            // Act & Assert
+            assertThrows(UserNotAuthorizedException.class, () -> routineService.deleteRoutine(routineId));
+            verify(routineRepository, times(0)).delete(routine);
         }
     }
 }
