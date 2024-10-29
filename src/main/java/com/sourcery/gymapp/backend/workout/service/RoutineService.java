@@ -72,7 +72,7 @@ public class RoutineService {
         routineRepository.delete(routine);
     }
 
-    private Routine findRoutineById(UUID id) {
+    public Routine findRoutineById(UUID id) {
 
         return routineRepository.findById(id).orElseThrow(() -> new RoutineNotFoundException(id));
     }

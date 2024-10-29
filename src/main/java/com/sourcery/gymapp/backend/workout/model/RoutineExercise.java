@@ -28,13 +28,16 @@ public class RoutineExercise extends BaseEntity {
     @Column(nullable = false)
     private Integer orderNumber;
 
+    @Column(nullable = false)
     private Integer defaultSets;
 
+    @Column(nullable = false)
     private Integer defaultReps;
 
-    @Column(precision = 5, scale = 2)
+    @Column(precision = 5, scale = 2, nullable = false)
     private BigDecimal defaultWeight;
 
+    @Column(nullable = false)
     private Integer defaultRestTime;
 
     @Size(max = 255)
