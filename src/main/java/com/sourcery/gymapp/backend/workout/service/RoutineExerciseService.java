@@ -2,7 +2,7 @@ package com.sourcery.gymapp.backend.workout.service;
 
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineExerciseDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineExerciseDto;
-import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineListExerciseDto;
+import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineExerciseListDto;
 import com.sourcery.gymapp.backend.workout.mapper.RoutineExerciseMapper;
 import com.sourcery.gymapp.backend.workout.model.Exercise;
 import com.sourcery.gymapp.backend.workout.model.Routine;
@@ -26,7 +26,7 @@ public class RoutineExerciseService {
     private final RoutineExerciseMapper routineExerciseMapper;
 
     @Transactional
-    public ResponseRoutineListExerciseDto replaceExercisesInRoutine(
+    public ResponseRoutineExerciseListDto replaceExercisesInRoutine(
             UUID routineId,
             List<CreateRoutineExerciseDto> createRoutineExerciseDto) {
 
@@ -52,7 +52,7 @@ public class RoutineExerciseService {
         return mapToResponseDto(routineId, routineExercises);
     }
 
-    public ResponseRoutineListExerciseDto getExercisesFromRoutine(UUID routineId) {
+    public ResponseRoutineExerciseListDto getExercisesFromRoutine(UUID routineId) {
         routineService.findRoutineById(routineId);
 
         List<RoutineExercise> routineExercises = routineExerciseRepository.findAllByRoutineId(routineId)
@@ -63,12 +63,12 @@ public class RoutineExerciseService {
         return mapToResponseDto(routineId, routineExercises);
     }
 
-    private ResponseRoutineListExerciseDto mapToResponseDto(UUID routineId, List<RoutineExercise> routineExercises) {
+    private ResponseRoutineExerciseListDto mapToResponseDto(UUID routineId, List<RoutineExercise> routineExercises) {
         List<ResponseRoutineExerciseDto> routineExercisesDto = routineExercises
                 .stream()
                 .map(routineExerciseMapper::toResponseRoutineExerciseDto)
                 .toList();
 
-        return new ResponseRoutineListExerciseDto(routineId, routineExercisesDto);
+        return new ResponseRoutineExerciseListDto(routineId, routineExercisesDto);
     }
 }

@@ -1,7 +1,6 @@
 package com.sourcery.gymapp.backend.userProfile.mapper;
 
 import com.sourcery.gymapp.backend.userProfile.factory.UserProfileTestFactory;
-import com.sourcery.gymapp.backend.userProfile.mapper.UserProfileMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

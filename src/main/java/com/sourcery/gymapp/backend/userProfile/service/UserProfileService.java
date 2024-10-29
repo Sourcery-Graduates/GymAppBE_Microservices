@@ -28,16 +28,19 @@ public class UserProfileService {
     @Transactional
     public UserProfileDto updateUserProfile(UserProfileDto dto) {
 
-        UserProfile userProfile = getCurrentUserProfile();
+        UUID currentUserId = currentUserService.getCurrentUserId();
+        UUID userProfileId = userProfileRepository.findUserProfileByUserId(currentUserId)
+                .map(UserProfile::getId)
+                .orElse(null);
 
-        UserProfile entity = userProfileRepository.save(userProfileMapper.toEntity(dto, userProfile.getUserId(), userProfile.getId()));
+        UserProfile entity = userProfileRepository.save(userProfileMapper.toEntity(dto, currentUserId, userProfileId));
         return  userProfileMapper.toDto(entity);
     }
 
     @Transactional
     public UserProfileDto deleteUserProfile(){
 
-        UserProfile userProfile = getCurrentUserProfile();;
+        UserProfile userProfile = getCurrentUserProfile();
 
         userProfileRepository.deleteById(userProfile.getId());
 
