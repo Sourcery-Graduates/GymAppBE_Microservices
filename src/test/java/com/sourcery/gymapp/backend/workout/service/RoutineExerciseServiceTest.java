@@ -75,7 +75,7 @@ public class RoutineExerciseServiceTest {
                 .thenReturn(ExerciseFactory.createResponseRoutineExerciseDto());
 
         // Act
-        ResponseRoutineListExerciseDto result = routineExerciseService.replaceExercisesInRoutine(routineId, createRoutineExercisesDto);
+        ResponseRoutineExerciseListDto result = routineExerciseService.replaceExercisesInRoutine(routineId, createRoutineExercisesDto);
 
         // Assert
         verify(routineExerciseRepository).deleteAllByRoutineId(routineId);
@@ -93,7 +93,7 @@ public class RoutineExerciseServiceTest {
                 .thenReturn(ExerciseFactory.createResponseRoutineExerciseDto());
 
         // Act
-        ResponseRoutineListExerciseDto result = routineExerciseService.getExercisesFromRoutine(routineId);
+        ResponseRoutineExerciseListDto result = routineExerciseService.getExercisesFromRoutine(routineId);
 
         // Assert
         assertEquals(routineId, result.routineId());
@@ -108,7 +108,7 @@ public class RoutineExerciseServiceTest {
         when(routineExerciseRepository.findAllByRoutineId(routineId)).thenReturn(List.of());
 
         // Act
-        ResponseRoutineListExerciseDto result = routineExerciseService.getExercisesFromRoutine(routineId);
+        ResponseRoutineExerciseListDto result = routineExerciseService.getExercisesFromRoutine(routineId);
 
         // Assert
         assertTrue(result.exercises().isEmpty());
