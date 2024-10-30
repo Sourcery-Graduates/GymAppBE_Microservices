@@ -4,6 +4,7 @@ import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.RoutineGridDto;
 import com.sourcery.gymapp.backend.workout.exception.RoutineNotFoundException;
+import com.sourcery.gymapp.backend.workout.exception.UserNotAuthorizedException;
 import com.sourcery.gymapp.backend.workout.exception.UserNotFoundException;
 import com.sourcery.gymapp.backend.workout.mapper.RoutineMapper;
 import com.sourcery.gymapp.backend.workout.model.Routine;
@@ -56,7 +57,10 @@ public class RoutineService {
 
     @Transactional
     public ResponseRoutineDto updateRoutine(UUID routineId, CreateRoutineDto routineDto) {
+        UUID currentUserId = currentUserService.getCurrentUserId();
         Routine routine = findRoutineById(routineId);
+
+        checkIsUserAuthorized(currentUserId, routine.getUserId());
 
         routineMapper.updateEntity(routine, routineDto);
 
@@ -67,7 +71,10 @@ public class RoutineService {
 
     @Transactional
     public void deleteRoutine(UUID id) {
+        UUID currentUserId = currentUserService.getCurrentUserId();
         Routine routine = findRoutineById(id);
+
+        checkIsUserAuthorized(currentUserId, routine.getUserId());
 
         routineRepository.delete(routine);
     }
@@ -97,5 +104,12 @@ public class RoutineService {
 
     private Page<Routine> getAllRoutines(Pageable pageable) {
         return routineRepository.findAll(pageable);
+    }
+
+    private void checkIsUserAuthorized(UUID currentUserId, UUID routineUserId) {
+
+        if (!routineUserId.equals(currentUserId)) {
+            throw new UserNotAuthorizedException();
+        }
     }
 }

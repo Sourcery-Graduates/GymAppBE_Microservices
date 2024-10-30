@@ -11,6 +11,7 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR("Internal server error"),
     USER_NOT_FOUND("User not found"),
     USER_NOT_AUTHENTICATED("User not authenticated"),
+    USER_NOT_AUTHORIZED("User not authorized"),
     VALIDATION_ERROR("Validation error");
 
     private final String code;
