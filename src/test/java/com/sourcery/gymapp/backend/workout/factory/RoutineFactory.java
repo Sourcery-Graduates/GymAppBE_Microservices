@@ -62,9 +62,9 @@ public class RoutineFactory {
         );
     }
 
-    public static ResponseRoutineDto createResponseRoutineDto(String name, String description, LocalDateTime createdAt) {
+    public static ResponseRoutineDto createResponseRoutineDto(UUID id, String name, String description, LocalDateTime createdAt) {
         return new ResponseRoutineDto(
-                UUID.randomUUID(),
+                id,
                 name,
                 description,
                 createdAt
@@ -73,6 +73,7 @@ public class RoutineFactory {
 
     public static ResponseRoutineDto createResponseRoutineDto() {
         return createResponseRoutineDto(
+                UUID.randomUUID(),
                 "Test Routine",
                 "Test Description",
                 LocalDateTime.now()

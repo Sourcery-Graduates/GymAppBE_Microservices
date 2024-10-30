@@ -4,7 +4,7 @@ import com.sourcery.gymapp.backend.workout.exception.UserNotAuthorizedException;
 import com.sourcery.gymapp.backend.workout.factory.RoutineFactory;
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
-import com.sourcery.gymapp.backend.workout.dto.RoutineGridDto;
+import com.sourcery.gymapp.backend.workout.dto.RoutinePageDto;
 import com.sourcery.gymapp.backend.workout.exception.RoutineNotFoundException;
 import com.sourcery.gymapp.backend.workout.exception.UserNotFoundException;
 import com.sourcery.gymapp.backend.workout.mapper.RoutineMapper;
@@ -172,7 +172,7 @@ public class RoutineServiceTest {
             when(routineMapper.toDto(routine3)).thenReturn(responseRoutineDto3);
 
             // Act
-            RoutineGridDto result = routineService.searchRoutines("", pageable);
+            RoutinePageDto result = routineService.searchRoutines("", pageable);
 
             // Assert
             assertAll(
@@ -189,7 +189,7 @@ public class RoutineServiceTest {
 
             when(routineRepository.findAll(pageable)).thenReturn(mockSearchedPage);
             // Act
-            RoutineGridDto result = routineService.searchRoutines("", pageable);
+            RoutinePageDto result = routineService.searchRoutines("", pageable);
 
             // Assert
             assertAll(
@@ -212,7 +212,7 @@ public class RoutineServiceTest {
             when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
 
             // Act
-            RoutineGridDto result = routineService.searchRoutines(searchName, pageable);
+            RoutinePageDto result = routineService.searchRoutines(searchName, pageable);
 
             // Assert
             assertAll(

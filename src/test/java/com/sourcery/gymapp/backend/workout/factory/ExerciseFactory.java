@@ -1,9 +1,6 @@
 package com.sourcery.gymapp.backend.workout.factory;
 
-import com.sourcery.gymapp.backend.workout.dto.CreateRoutineExerciseDto;
-import com.sourcery.gymapp.backend.workout.dto.CreateRoutineExerciseListDto;
-import com.sourcery.gymapp.backend.workout.dto.ExerciseSimpleDto;
-import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineExerciseDto;
+import com.sourcery.gymapp.backend.workout.dto.*;
 import com.sourcery.gymapp.backend.workout.model.Exercise;
 import com.sourcery.gymapp.backend.workout.model.Routine;
 import com.sourcery.gymapp.backend.workout.model.RoutineExercise;
@@ -29,6 +26,16 @@ public class ExerciseFactory {
         exercise.setImages(List.of("image1.jpg", "image2.jpg"));
 
         return exercise;
+    }
+
+    public static ExerciseSimpleDto createExerciseSimpleDto(
+            UUID exerciseId,
+            String exerciseName) {
+
+        return new ExerciseSimpleDto(
+                exerciseId,
+                exerciseName
+        );
     }
 
     public static ExerciseSimpleDto createExerciseSimpleDto() {
@@ -65,26 +72,30 @@ public class ExerciseFactory {
         );
     }
 
-    public static CreateRoutineExerciseListDto createRoutineExerciseListDto(
-            UUID routineId,
-            List<CreateRoutineExerciseDto> exercises) {
+    public static ResponseRoutineExerciseDto createResponseRoutineExerciseDto(
+            ExerciseSimpleDto exerciseSimpleDto) {
 
-        return new CreateRoutineExerciseListDto(
-                routineId,
-                exercises
-        );
-    }
-
-    public static ResponseRoutineExerciseDto createResponseRoutineExerciseDto() {
         return new ResponseRoutineExerciseDto(
                 UUID.randomUUID(),
-                createExerciseSimpleDto(),
+                exerciseSimpleDto,
                 1,
                 3,
                 10,
                 BigDecimal.valueOf(50.0),
                 60,
                 "Test notes"
+        );
+    }
+
+    public static ResponseRoutineDetailDto createResponseRoutineDetailExerciseListDto(
+            ResponseRoutineDto routineDto,
+            List<ResponseRoutineExerciseDto> exercises) {
+
+        ResponseRoutineDto responseRoutineDto = RoutineFactory.createResponseRoutineDto();
+
+        return new ResponseRoutineDetailDto(
+            responseRoutineDto,
+            exercises
         );
     }
 }

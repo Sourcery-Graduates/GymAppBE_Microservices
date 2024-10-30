@@ -2,7 +2,7 @@ package com.sourcery.gymapp.backend.workout.controller;
 
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
-import com.sourcery.gymapp.backend.workout.dto.RoutineGridDto;
+import com.sourcery.gymapp.backend.workout.dto.RoutinePageDto;
 import com.sourcery.gymapp.backend.workout.service.RoutineService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,7 @@ public class RoutineController {
     }
 
     @GetMapping
-    public RoutineGridDto getPagedRoutines(
+    public RoutinePageDto getPagedRoutines(
             @ParameterObject @PageableDefault(size = 20, sort = "name") Pageable pageable,
             @RequestParam(required = false) String name) {
 
