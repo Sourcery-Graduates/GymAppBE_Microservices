@@ -1,7 +1,7 @@
 package com.sourcery.gymapp.backend.workout.controller;
 
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineExerciseDto;
-import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineExerciseListDto;
+import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDetailDto;
 import com.sourcery.gymapp.backend.workout.service.RoutineExerciseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class RoutineExerciseController {
     private final RoutineExerciseService routineExerciseService;
 
     @PutMapping
-    public ResponseRoutineExerciseListDto updateExercisesInRoutine(
+    public ResponseRoutineDetailDto updateExercisesInRoutine(
             @RequestParam UUID routineId,
             @Valid @RequestBody List<CreateRoutineExerciseDto> createRoutineExerciseDto) {
 
@@ -31,9 +31,9 @@ public class RoutineExerciseController {
 
 
     @GetMapping
-    public ResponseRoutineExerciseListDto getExercisesFromRoutine(
+    public ResponseRoutineDetailDto getRoutineDetails(
             @RequestParam UUID routineId
     ) {
-        return routineExerciseService.getExercisesFromRoutine(routineId);
+        return routineExerciseService.getRoutineDetails(routineId);
     }
 }

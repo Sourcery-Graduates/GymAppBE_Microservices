@@ -4,6 +4,7 @@ import com.sourcery.gymapp.backend.workout.dto.*;
 import com.sourcery.gymapp.backend.workout.factory.ExerciseFactory;
 import com.sourcery.gymapp.backend.workout.factory.RoutineFactory;
 import com.sourcery.gymapp.backend.workout.mapper.RoutineExerciseMapper;
+import com.sourcery.gymapp.backend.workout.mapper.RoutineMapper;
 import com.sourcery.gymapp.backend.workout.model.Exercise;
 import com.sourcery.gymapp.backend.workout.model.Routine;
 import com.sourcery.gymapp.backend.workout.model.RoutineExercise;
@@ -15,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -36,32 +38,50 @@ public class RoutineExerciseServiceTest {
     private RoutineExerciseRepository routineExerciseRepository;
     @Mock
     private RoutineExerciseMapper routineExerciseMapper;
+    @Mock
+    private RoutineMapper routineMapper;
 
     @InjectMocks
     private RoutineExerciseService routineExerciseService;
 
 
     private Routine routine;
-    private UUID routineId;
-    private List<CreateRoutineExerciseDto> createRoutineExercisesDto;
+    private Exercise exercise;
+    private ExerciseSimpleDto exerciseSimpleDto;
+    private ResponseRoutineDto responseRoutineDto;
+    private CreateRoutineExerciseDto createRoutineExerciseDto;
+    private List<CreateRoutineExerciseDto> createRoutineExerciseListDto;
+    private ResponseRoutineExerciseDto responseRoutineExerciseDto;
     private Map<UUID, Exercise> exerciseMap;
     private List<RoutineExercise> routineExercises;
+    private UUID routineId;
 
     @BeforeEach
     void setup() {
         routine = RoutineFactory.createRoutine();
         routineId = routine.getId();
 
-        CreateRoutineExerciseDto exerciseDto = ExerciseFactory.createRoutineExerciseDto();
-        createRoutineExercisesDto = List.of(exerciseDto);
+        responseRoutineDto = RoutineFactory.createResponseRoutineDto(
+                routine.getId(),
+                routine.getName(),
+                routine.getDescription(),
+                routine.getCreatedAt()
+        );
 
-        Exercise exercise = new Exercise();
-        exercise.setId(exerciseDto.exerciseId());
-        exerciseMap = Map.of(exerciseDto.exerciseId(), exercise);
+        createRoutineExerciseDto = ExerciseFactory.createRoutineExerciseDto();
+        createRoutineExerciseListDto = List.of(createRoutineExerciseDto);
+
+        exercise = ExerciseFactory.createExercise();
+        exercise.setId(createRoutineExerciseDto.exerciseId());
+        exerciseMap = Map.of(createRoutineExerciseDto.exerciseId(), exercise);
+
+        exerciseSimpleDto = ExerciseFactory.createExerciseSimpleDto(exercise.getId(), exercise.getName());
 
         RoutineExercise routineExercise = ExerciseFactory.createRoutineExercise(routine, exercise);
-
         routineExercises = List.of(routineExercise);
+
+        responseRoutineExerciseDto = ExerciseFactory
+                .createResponseRoutineExerciseDto(exerciseSimpleDto);
     }
 
     @Test
@@ -69,19 +89,27 @@ public class RoutineExerciseServiceTest {
         // Arrange
         when(routineService.findRoutineById(routineId)).thenReturn(routine);
         when(exerciseService.getExerciseMapByIds(anyList())).thenReturn(exerciseMap);
-        when(routineExerciseMapper.toEntity(any(CreateRoutineExerciseDto.class), eq(routine), any(Exercise.class)))
+        when(routineExerciseMapper.toEntity(createRoutineExerciseDto, routine, exercise))
                 .thenReturn(routineExercises.getFirst());
         when(routineExerciseMapper.toResponseRoutineExerciseDto(any(RoutineExercise.class)))
-                .thenReturn(ExerciseFactory.createResponseRoutineExerciseDto());
+                .thenReturn(responseRoutineExerciseDto);
+        when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
 
         // Act
-        ResponseRoutineExerciseListDto result = routineExerciseService.replaceExercisesInRoutine(routineId, createRoutineExercisesDto);
+        ResponseRoutineDetailDto result = routineExerciseService
+                .replaceExercisesInRoutine(routineId, createRoutineExerciseListDto);
 
         // Assert
         verify(routineExerciseRepository).deleteAllByRoutineId(routineId);
         verify(routineExerciseRepository).saveAll(anyList());
-        assertEquals(routineId, result.routineId());
-        assertEquals(1, result.exercises().size());
+        assertAll(
+                () -> assertEquals(routineId, result.routine().id()),
+                () -> assertEquals(routine.getName(), result.routine().name()),
+                () -> assertEquals(routine.getDescription(), result.routine().description()),
+                () -> assertEquals(routine.getCreatedAt(), result.routine().createdAt()),
+                () -> assertEquals(1, result.exercises().size()),
+                () -> assertEquals(responseRoutineExerciseDto, result.exercises().getFirst())
+        );
     }
 
     @Test
@@ -90,15 +118,22 @@ public class RoutineExerciseServiceTest {
         when(routineService.findRoutineById(routineId)).thenReturn(routine);
         when(routineExerciseRepository.findAllByRoutineId(routineId)).thenReturn(routineExercises);
         when(routineExerciseMapper.toResponseRoutineExerciseDto(any(RoutineExercise.class)))
-                .thenReturn(ExerciseFactory.createResponseRoutineExerciseDto());
+                .thenReturn(responseRoutineExerciseDto);
+        when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
 
         // Act
-        ResponseRoutineExerciseListDto result = routineExerciseService.getExercisesFromRoutine(routineId);
+        ResponseRoutineDetailDto result = routineExerciseService.getRoutineDetails(routineId);
 
         // Assert
-        assertEquals(routineId, result.routineId());
         verify(routineExerciseRepository).findAllByRoutineId(routineId);
-        assertEquals(1, result.exercises().size());
+        assertAll(
+                () -> assertEquals(routineId, result.routine().id()),
+                () -> assertEquals(routine.getName(), result.routine().name()),
+                () -> assertEquals(routine.getDescription(), result.routine().description()),
+                () -> assertEquals(routine.getCreatedAt(), result.routine().createdAt()),
+                () -> assertEquals(1, result.exercises().size()),
+                () -> assertEquals(responseRoutineExerciseDto, result.exercises().getFirst())
+        );
     }
 
     @Test
@@ -106,12 +141,18 @@ public class RoutineExerciseServiceTest {
         // Arrange
         when(routineService.findRoutineById(routineId)).thenReturn(routine);
         when(routineExerciseRepository.findAllByRoutineId(routineId)).thenReturn(List.of());
+        when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
 
         // Act
-        ResponseRoutineExerciseListDto result = routineExerciseService.getExercisesFromRoutine(routineId);
+        ResponseRoutineDetailDto result = routineExerciseService.getRoutineDetails(routineId);
 
         // Assert
-        assertTrue(result.exercises().isEmpty());
-        assertEquals(routineId, result.routineId());
+        assertAll(
+                () -> assertEquals(routineId, result.routine().id()),
+                () -> assertEquals(routine.getName(), result.routine().name()),
+                () -> assertEquals(routine.getDescription(), result.routine().description()),
+                () -> assertEquals(routine.getCreatedAt(), result.routine().createdAt()),
+                () -> assertTrue(result.exercises().isEmpty())
+        );
     }
 }

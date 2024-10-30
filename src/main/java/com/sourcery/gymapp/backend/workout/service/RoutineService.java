@@ -2,7 +2,7 @@ package com.sourcery.gymapp.backend.workout.service;
 
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
-import com.sourcery.gymapp.backend.workout.dto.RoutineGridDto;
+import com.sourcery.gymapp.backend.workout.dto.RoutinePageDto;
 import com.sourcery.gymapp.backend.workout.exception.RoutineNotFoundException;
 import com.sourcery.gymapp.backend.workout.exception.UserNotAuthorizedException;
 import com.sourcery.gymapp.backend.workout.exception.UserNotFoundException;
@@ -84,7 +84,7 @@ public class RoutineService {
         return routineRepository.findById(id).orElseThrow(() -> new RoutineNotFoundException(id));
     }
 
-    public RoutineGridDto searchRoutines(String name, Pageable pageable) {
+    public RoutinePageDto searchRoutines(String name, Pageable pageable) {
         Page<Routine> routinePage;
 
         if (name == null || name.isBlank()) {
@@ -95,7 +95,7 @@ public class RoutineService {
 
         List<ResponseRoutineDto> routines = routinePage.map(routineMapper::toDto).getContent();
 
-        return new RoutineGridDto(
+        return new RoutinePageDto(
                 routinePage.getTotalPages(),
                 routinePage.getTotalElements(),
                 routines

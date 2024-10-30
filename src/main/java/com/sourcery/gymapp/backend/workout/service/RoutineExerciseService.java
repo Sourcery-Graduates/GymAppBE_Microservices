@@ -1,9 +1,11 @@
 package com.sourcery.gymapp.backend.workout.service;
 
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineExerciseDto;
+import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineExerciseDto;
-import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineExerciseListDto;
+import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDetailDto;
 import com.sourcery.gymapp.backend.workout.mapper.RoutineExerciseMapper;
+import com.sourcery.gymapp.backend.workout.mapper.RoutineMapper;
 import com.sourcery.gymapp.backend.workout.model.Exercise;
 import com.sourcery.gymapp.backend.workout.model.Routine;
 import com.sourcery.gymapp.backend.workout.model.RoutineExercise;
@@ -24,9 +26,10 @@ public class RoutineExerciseService {
     private final ExerciseService exerciseService;
     private final RoutineExerciseRepository routineExerciseRepository;
     private final RoutineExerciseMapper routineExerciseMapper;
+    private final RoutineMapper routineMapper;
 
     @Transactional
-    public ResponseRoutineExerciseListDto replaceExercisesInRoutine(
+    public ResponseRoutineDetailDto replaceExercisesInRoutine(
             UUID routineId,
             List<CreateRoutineExerciseDto> createRoutineExerciseDto) {
 
@@ -49,26 +52,28 @@ public class RoutineExerciseService {
         routineExerciseRepository.deleteAllByRoutineId(routine.getId());
         routineExerciseRepository.saveAll(routineExercises);
 
-        return mapToResponseDto(routineId, routineExercises);
+        return mapToResponseDto(routine, routineExercises);
     }
 
-    public ResponseRoutineExerciseListDto getExercisesFromRoutine(UUID routineId) {
-        routineService.findRoutineById(routineId);
+    public ResponseRoutineDetailDto getRoutineDetails(UUID routineId) {
+        Routine routine = routineService.findRoutineById(routineId);
 
         List<RoutineExercise> routineExercises = routineExerciseRepository.findAllByRoutineId(routineId)
                 .stream()
                 .sorted(Comparator.comparing(RoutineExercise::getOrderNumber))
                 .toList();
 
-        return mapToResponseDto(routineId, routineExercises);
+        return mapToResponseDto(routine, routineExercises);
     }
 
-    private ResponseRoutineExerciseListDto mapToResponseDto(UUID routineId, List<RoutineExercise> routineExercises) {
+    private ResponseRoutineDetailDto mapToResponseDto(Routine routine, List<RoutineExercise> routineExercises) {
         List<ResponseRoutineExerciseDto> routineExercisesDto = routineExercises
                 .stream()
                 .map(routineExerciseMapper::toResponseRoutineExerciseDto)
                 .toList();
 
-        return new ResponseRoutineExerciseListDto(routineId, routineExercisesDto);
+        ResponseRoutineDto routineDto = routineMapper.toDto(routine);
+
+        return new ResponseRoutineDetailDto(routineDto, routineExercisesDto);
     }
 }
