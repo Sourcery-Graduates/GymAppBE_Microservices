@@ -108,7 +108,7 @@ public class RoutineService {
 
     private void checkIsUserAuthorized(UUID currentUserId, UUID routineUserId) {
 
-        if (routineUserId != currentUserId) {
+        if (!routineUserId.equals(currentUserId)) {
             throw new UserNotAuthorizedException();
         }
     }
