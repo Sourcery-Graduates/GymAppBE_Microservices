@@ -1,14 +1,16 @@
 package com.sourcery.gymapp.backend.workout.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -28,4 +30,7 @@ public class WorkoutExercise extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "workout_id", referencedColumnName = "id", nullable = false)
     private Workout workout;
+
+    @OneToMany(mappedBy = "workoutExercise", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<WorkoutExerciseSet> sets;
 }
