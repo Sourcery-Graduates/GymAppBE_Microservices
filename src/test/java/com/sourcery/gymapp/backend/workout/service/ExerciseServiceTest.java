@@ -1,7 +1,9 @@
 package com.sourcery.gymapp.backend.workout.service;
 
+import com.sourcery.gymapp.backend.workout.dto.ExerciseDetailDto;
 import com.sourcery.gymapp.backend.workout.exception.ExerciseNotFoundException;
 import com.sourcery.gymapp.backend.workout.factory.ExerciseFactory;
+import com.sourcery.gymapp.backend.workout.mapper.ExerciseMapper;
 import com.sourcery.gymapp.backend.workout.model.Exercise;
 import com.sourcery.gymapp.backend.workout.repository.ExerciseRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +20,9 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,6 +33,9 @@ public class ExerciseServiceTest {
 
     @InjectMocks
     private ExerciseService exerciseService;
+
+    @Mock
+    private ExerciseMapper exerciseMapper;
 
     private Exercise exercise1;
     private Exercise exercise2;
@@ -69,5 +76,23 @@ public class ExerciseServiceTest {
 
         String expectedMessage = "Can't find Exercises by IDs [" + exercise2.getId() + "]";
         assertEquals(expectedMessage, exception.getMessage());
+    }
+
+    @Test
+    void shouldReturnExercisesByPrefix() {
+        // Arrange
+        exercise1 = ExerciseFactory.createExercise(); // use factory for test exercise
+        List<Exercise> exercises = List.of(exercise1);
+        ExerciseDetailDto exerciseDetailDto = ExerciseFactory.createExerciseDetailDto(); // expected DTO result
+
+        when(exerciseRepository.findTopByPrefixOrContaining(anyString(), anyInt())).thenReturn(exercises);
+        when(exerciseMapper.toDto(exercise1)).thenReturn(exerciseDetailDto);
+
+        // Act
+        List<ExerciseDetailDto> result = exerciseService.getExercisesByPrefix("Test", 10);
+
+        // Assert
+        assertEquals(1, result.size());
+        assertEquals(exerciseDetailDto, result.get(0));
     }
 }
