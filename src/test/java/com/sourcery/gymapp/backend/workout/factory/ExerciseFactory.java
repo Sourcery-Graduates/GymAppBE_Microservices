@@ -45,6 +45,38 @@ public class ExerciseFactory {
         );
     }
 
+    public static ExerciseDetailDto createExerciseDetailDto() {
+        return new ExerciseDetailDto(
+                UUID.randomUUID(),
+                "Test Exercise",
+                "Push",
+                "Intermediate",
+                "Compound",
+                "Dumbbell",
+                List.of("Chest", "Shoulders"),
+                List.of("Triceps"),
+                List.of("Step 1: Get into position.", "Step 2: Execute the exercise."),
+                "Strength",
+                List.of("image1.jpg", "image2.jpg")
+        );
+    }
+
+    public static ExerciseDetailDto createMatchingExerciseDetailDto(Exercise exercise) {
+        return new ExerciseDetailDto(
+                exercise.getId(),
+                exercise.getName(),
+                exercise.getForce(),
+                exercise.getLevel(),
+                exercise.getMechanic(),
+                exercise.getEquipment(),
+                exercise.getPrimaryMuscles(),
+                exercise.getSecondaryMuscles(),
+                exercise.getDescription(),
+                exercise.getCategory(),
+                exercise.getImages()
+        );
+    }
+
     public static RoutineExercise createRoutineExercise(Routine routine, Exercise exercise) {
         RoutineExercise routineExercise = new RoutineExercise();
         routineExercise.setId(UUID.randomUUID());

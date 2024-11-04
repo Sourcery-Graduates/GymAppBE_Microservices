@@ -1,9 +1,14 @@
 package com.sourcery.gymapp.backend.workout.service;
 
+import com.sourcery.gymapp.backend.workout.dto.ExerciseDetailDto;
+import com.sourcery.gymapp.backend.workout.dto.ExercisePageDto;
 import com.sourcery.gymapp.backend.workout.exception.ExerciseNotFoundException;
+import com.sourcery.gymapp.backend.workout.mapper.ExerciseMapper;
 import com.sourcery.gymapp.backend.workout.model.Exercise;
 import com.sourcery.gymapp.backend.workout.repository.ExerciseRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ExerciseService {
     private final ExerciseRepository exerciseRepository;
+    private final ExerciseMapper exerciseMapper;
 
     public Map<UUID, Exercise> getExerciseMapByIds(List<UUID> exerciseIds) {
         List<Exercise> exercises = exerciseRepository.findAllByIdIn(exerciseIds);
@@ -32,5 +38,23 @@ public class ExerciseService {
         }
 
         return exerciseMap;
+    }
+
+    public ExercisePageDto getExercisesByPrefix(String prefix, Pageable pageable) {
+        Page<Exercise> exercisePage;
+
+        if (prefix == null || prefix.isBlank()) {
+            exercisePage = exerciseRepository.findAll(pageable);
+        } else {
+            exercisePage = exerciseRepository.findByPrefixOrContaining(prefix, pageable);
+        }
+
+        List<ExerciseDetailDto> exercises = exercisePage.map(exerciseMapper::toDto).getContent();
+
+        return new ExercisePageDto(
+                exercisePage.getTotalPages(),
+                exercisePage.getTotalElements(),
+                exercises
+        );
     }
 }
