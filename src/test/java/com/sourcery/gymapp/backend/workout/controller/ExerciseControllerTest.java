@@ -1,6 +1,6 @@
 package com.sourcery.gymapp.backend.workout.controller;
 
-import com.sourcery.gymapp.backend.workout.dto.ExerciseDetailDto;
+import com.sourcery.gymapp.backend.workout.dto.ExercisePageDto;
 import com.sourcery.gymapp.backend.workout.factory.ExerciseFactory;
 import com.sourcery.gymapp.backend.workout.service.ExerciseService;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,13 +8,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 class ExerciseControllerTest {
@@ -25,36 +26,44 @@ class ExerciseControllerTest {
     @InjectMocks
     private ExerciseController exerciseController;
 
-    private List<ExerciseDetailDto> exerciseDtos;
+    private ExercisePageDto exercisePageDto;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        exerciseDtos = List.of(ExerciseFactory.createExerciseDetailDto());
+        exercisePageDto = new ExercisePageDto(1, 1L,
+                List.of(ExerciseFactory.createExerciseDetailDto())
+        );
     }
 
     @Test
-    void shouldReturnExercisesByPrefix() {
+    void shouldReturnExercisesByPrefixWithPagination() {
         // Arrange
-        when(exerciseService.getExercisesByPrefix(anyString(), anyInt())).thenReturn(exerciseDtos);
+        when(exerciseService.getExercisesByPrefix(anyString(), any(Pageable.class)))
+                .thenReturn(exercisePageDto);
+        Pageable pageable = PageRequest.of(0, 10);
 
         // Act
-        List<ExerciseDetailDto> result = exerciseController.getExercisesByPrefix("Test", 10);
+        ExercisePageDto result = exerciseController.getPagedExercises(pageable, "Test");
 
         // Assert
-        assertEquals(1, result.size());
-        assertEquals("Test Exercise", result.getFirst().name());
+        assertEquals(1, result.totalElements());
+        assertEquals(1, result.totalPages());
+        assertEquals("Test Exercise", result.data().get(0).name());
     }
 
     @Test
-    void shouldReturnDefaultLimitWhenLimitIsNotProvided() {
+    void shouldReturnDefaultPageWhenNoPageableProvided() {
         // Arrange
-        when(exerciseService.getExercisesByPrefix(anyString(), eq(null))).thenReturn(exerciseDtos);
+        when(exerciseService.getExercisesByPrefix(anyString(), any(Pageable.class)))
+                .thenReturn(exercisePageDto);
 
         // Act
-        List<ExerciseDetailDto> result = exerciseController.getExercisesByPrefix("Test", null);
+        ExercisePageDto result =
+                exerciseController.getPagedExercises(PageRequest.of(0, 10), "Test");
 
         // Assert
-        assertEquals(1, result.size());
+        assertEquals(1, result.totalElements());
+        assertEquals(1, result.totalPages());
     }
 }

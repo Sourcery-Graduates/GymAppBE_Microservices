@@ -1,6 +1,8 @@
 package com.sourcery.gymapp.backend.workout.repository;
 
 import com.sourcery.gymapp.backend.workout.model.Exercise;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -15,8 +17,10 @@ public interface ExerciseRepository extends JpaRepository<Exercise, UUID> {
     @Query(value = "SELECT * FROM workout_data.exercise " +
             "WHERE name ILIKE :prefix || '%' " +
             "OR name ILIKE '%' || :prefix || '%' " +
-            "ORDER BY (CASE WHEN name ILIKE :prefix || '%' THEN 0 ELSE 1 END), name " +
-            "LIMIT :limit",
+            "ORDER BY (CASE WHEN name ILIKE :prefix || '%' THEN 0 ELSE 1 END), name",
+            countQuery = "SELECT COUNT(*) FROM workout_data.exercise " +
+                    "WHERE name ILIKE :prefix || '%' OR name ILIKE '%' || :prefix || '%'",
             nativeQuery = true)
-    List<Exercise> findTopByPrefixOrContaining(@Param("prefix") String prefix, @Param("limit") int limit);
+    Page<Exercise> findByPrefixOrContaining(@Param("prefix") String prefix, Pageable pageable);
+
 }

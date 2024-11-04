@@ -1,11 +1,14 @@
 package com.sourcery.gymapp.backend.workout.service;
 
 import com.sourcery.gymapp.backend.workout.dto.ExerciseDetailDto;
+import com.sourcery.gymapp.backend.workout.dto.ExercisePageDto;
 import com.sourcery.gymapp.backend.workout.exception.ExerciseNotFoundException;
 import com.sourcery.gymapp.backend.workout.mapper.ExerciseMapper;
 import com.sourcery.gymapp.backend.workout.model.Exercise;
 import com.sourcery.gymapp.backend.workout.repository.ExerciseRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +21,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ExerciseService {
-    private static final int DEFAULT_EXERCISE_LIMIT = 10;
     private final ExerciseRepository exerciseRepository;
     private final ExerciseMapper exerciseMapper;
 
@@ -38,11 +40,21 @@ public class ExerciseService {
         return exerciseMap;
     }
 
-    public List<ExerciseDetailDto> getExercisesByPrefix(String prefix, Integer limit) {
-        int effectiveLimit = (limit != null) ? limit : DEFAULT_EXERCISE_LIMIT;
+    public ExercisePageDto getExercisesByPrefix(String prefix, Pageable pageable) {
+        Page<Exercise> exercisePage;
 
-        return exerciseRepository.findTopByPrefixOrContaining(prefix, effectiveLimit).stream()
-                .map(exerciseMapper::toDto)
-                .collect(Collectors.toList());
+        if (prefix == null || prefix.isBlank()) {
+            exercisePage = exerciseRepository.findAll(pageable);
+        } else {
+            exercisePage = exerciseRepository.findByPrefixOrContaining(prefix, pageable);
+        }
+
+        List<ExerciseDetailDto> exercises = exercisePage.map(exerciseMapper::toDto).getContent();
+
+        return new ExercisePageDto(
+                exercisePage.getTotalPages(),
+                exercisePage.getTotalElements(),
+                exercises
+        );
     }
 }
