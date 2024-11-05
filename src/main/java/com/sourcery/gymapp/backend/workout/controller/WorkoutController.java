@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -27,5 +28,17 @@ public class WorkoutController {
             @PathVariable("id") UUID workoutId) {
 
         return workoutService.updateWorkout(updateWorkoutDto, workoutId);
+    }
+
+    @GetMapping("{id}")
+    public ResponseWorkoutDto getWorkoutById(@PathVariable("id") UUID workoutId) {
+
+        return workoutService.getWorkoutById(workoutId);
+    }
+
+    @GetMapping("/user")
+    public List<ResponseWorkoutDto> getWorkoutsByUserId() {
+
+        return workoutService.getWorkoutsByUserId();
     }
 }

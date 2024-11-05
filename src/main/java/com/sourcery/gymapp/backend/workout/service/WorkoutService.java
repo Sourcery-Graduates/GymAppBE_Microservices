@@ -2,6 +2,7 @@ package com.sourcery.gymapp.backend.workout.service;
 
 import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutDto;
 import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutExerciseDto;
+import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseWorkoutDto;
 import com.sourcery.gymapp.backend.workout.exception.UserNotAuthorizedException;
 import com.sourcery.gymapp.backend.workout.exception.WorkoutNotFoundException;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -73,6 +75,22 @@ public class WorkoutService {
         workoutRepository.save(workout);
 
         return workoutMapper.toDto(workout);
+    }
+
+    public ResponseWorkoutDto getWorkoutById(UUID workoutId) {
+        Workout workout = findWorkoutById(workoutId);
+
+        return workoutMapper.toDto(workout);
+    }
+
+    public List<ResponseWorkoutDto> getWorkoutsByUserId() {
+        var currentUserId = currentUserService.getCurrentUserId();
+
+        List<Workout> workouts = workoutRepository.findByUserId(currentUserId);
+
+        return workouts.stream()
+                .map(workoutMapper::toDto)
+                .toList();
     }
 
     public Workout findWorkoutById(UUID id) {
