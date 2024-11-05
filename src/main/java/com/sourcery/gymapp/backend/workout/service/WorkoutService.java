@@ -93,6 +93,15 @@ public class WorkoutService {
                 .toList();
     }
 
+    public void deleteWorkout(UUID workoutId) {
+        var currentUserId = currentUserService.getCurrentUserId();
+        var workout = findWorkoutById(workoutId);
+
+        checkIsUserAuthorized(currentUserId, workout.getUserId());
+
+        workoutRepository.delete(workout);
+    }
+
     public Workout findWorkoutById(UUID id) {
 
         return workoutRepository.findById(id)

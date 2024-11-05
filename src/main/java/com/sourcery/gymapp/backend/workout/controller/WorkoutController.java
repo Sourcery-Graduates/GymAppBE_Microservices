@@ -5,6 +5,7 @@ import com.sourcery.gymapp.backend.workout.dto.ResponseWorkoutDto;
 import com.sourcery.gymapp.backend.workout.service.WorkoutService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class WorkoutController {
     private final WorkoutService workoutService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseWorkoutDto createWorkout(@Valid @RequestBody CreateWorkoutDto createWorkoutDto) {
 
         return workoutService.createWorkout(createWorkoutDto);
@@ -40,5 +42,12 @@ public class WorkoutController {
     public List<ResponseWorkoutDto> getWorkoutsByUserId() {
 
         return workoutService.getWorkoutsByUserId();
+    }
+
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteWorkout(@PathVariable("id") UUID workoutId) {
+
+        workoutService.deleteWorkout(workoutId);
     }
 }
