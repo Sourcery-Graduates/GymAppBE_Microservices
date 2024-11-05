@@ -20,4 +20,12 @@ public class WorkoutController {
 
         return workoutService.createWorkout(createWorkoutDto);
     }
+
+    @PutMapping("/{id}")
+    public ResponseWorkoutDto updateWorkout(
+            @Valid @RequestBody CreateWorkoutDto updateWorkoutDto,
+            @PathVariable("id") UUID workoutId) {
+
+        return workoutService.updateWorkout(updateWorkoutDto, workoutId);
+    }
 }

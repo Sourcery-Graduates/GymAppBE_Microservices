@@ -3,6 +3,7 @@ package com.sourcery.gymapp.backend.workout.service;
 import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutDto;
 import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutExerciseDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseWorkoutDto;
+import com.sourcery.gymapp.backend.workout.exception.UserNotAuthorizedException;
 import com.sourcery.gymapp.backend.workout.exception.WorkoutNotFoundException;
 import com.sourcery.gymapp.backend.workout.mapper.WorkoutMapper;
 import com.sourcery.gymapp.backend.workout.model.*;
@@ -35,7 +36,7 @@ public class WorkoutService {
         if (createWorkoutDto.routineId() != null) {
             routine = routineService.findRoutineById(createWorkoutDto.routineId());
         }
-        Map<UUID, Exercise> exerciseMap = new HashMap<UUID, Exercise>();
+        Map<UUID, Exercise> exerciseMap = new HashMap<>();
         if (createWorkoutDto.exercises() != null) {
             exerciseMap = exerciseService.getExerciseMapByIds(
                     createWorkoutDto.exercises()
@@ -51,9 +52,39 @@ public class WorkoutService {
         return workoutMapper.toDto(workout);
     }
 
+    @Transactional
+    public ResponseWorkoutDto updateWorkout(CreateWorkoutDto updateWorkoutDto, UUID workoutId) {
+        var workout = findWorkoutById(workoutId);
+        var currentUserId = currentUserService.getCurrentUserId();
+
+        checkIsUserAuthorized(currentUserId, workout.getUserId());
+
+        Map<UUID, Exercise> exerciseMap = new HashMap<>();
+        if (updateWorkoutDto.exercises() != null) {
+            exerciseMap = exerciseService.getExerciseMapByIds(
+                    updateWorkoutDto.exercises()
+                            .stream()
+                            .map(CreateWorkoutExerciseDto::exerciseId)
+                            .toList()
+            );
+        }
+
+        workoutMapper.updateEntity(updateWorkoutDto, workout, exerciseMap);
+        workoutRepository.save(workout);
+
+        return workoutMapper.toDto(workout);
+    }
+
     public Workout findWorkoutById(UUID id) {
 
         return workoutRepository.findById(id)
                 .orElseThrow(() -> new WorkoutNotFoundException(id));
+    }
+
+    private void checkIsUserAuthorized(UUID currentUserId, UUID workoutUserId) {
+
+        if (!workoutUserId.equals(currentUserId)) {
+            throw new UserNotAuthorizedException();
+        }
     }
 }

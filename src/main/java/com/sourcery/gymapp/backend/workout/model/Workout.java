@@ -9,15 +9,18 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "workout", schema = "workout_data")
 public class Workout extends BaseEntity {
@@ -41,6 +44,18 @@ public class Workout extends BaseEntity {
     @JoinColumn(name = "routine_id", referencedColumnName = "id")
     private Routine routine;
 
-    @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<WorkoutExercise> exercises;
+    @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<WorkoutExercise> exercises = new ArrayList<>();
+
+    public void setExercises(List<WorkoutExercise> exercises) {
+        for (WorkoutExercise exercise : this.exercises) {
+            exercise.setWorkout(null);
+        }
+        this.exercises.clear();
+
+        for (WorkoutExercise exercise : exercises) {
+            exercise.setWorkout(this);
+        }
+        this.exercises.addAll(exercises);
+    }
 }
