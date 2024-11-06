@@ -93,6 +93,7 @@ public class WorkoutService {
                 .toList();
     }
 
+    @Transactional
     public void deleteWorkout(UUID workoutId) {
         var currentUserId = currentUserService.getCurrentUserId();
         var workout = findWorkoutById(workoutId);
