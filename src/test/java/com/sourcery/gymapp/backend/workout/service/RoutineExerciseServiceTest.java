@@ -65,7 +65,8 @@ public class RoutineExerciseServiceTest {
                 routine.getId(),
                 routine.getName(),
                 routine.getDescription(),
-                routine.getCreatedAt()
+                routine.getCreatedAt(),
+                routine.getUserId()
         );
 
         createRoutineExerciseDto = ExerciseFactory.createRoutineExerciseDto();
