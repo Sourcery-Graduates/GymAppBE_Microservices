@@ -24,12 +24,25 @@ public class WorkoutMapper {
                 .stream()
                 .map(exerciseMapper::toDto)
                 .toList();
+        UUID basedOnWorkoutId = null;
+        UUID routineId = null;
+
+        if (workout.getBasedOnWorkout() != null) {
+            basedOnWorkoutId = workout.getBasedOnWorkout().getId();
+        }
+
+        if (workout.getRoutine() != null) {
+            routineId = workout.getRoutine().getId();
+        }
 
         return new ResponseWorkoutDto(
                 workout.getId(),
+                workout.getUserId(),
                 workout.getName(),
                 workout.getDate(),
                 workout.getComment(),
+                basedOnWorkoutId,
+                routineId,
                 responseWorkoutExerciseDtos
         );
     }
