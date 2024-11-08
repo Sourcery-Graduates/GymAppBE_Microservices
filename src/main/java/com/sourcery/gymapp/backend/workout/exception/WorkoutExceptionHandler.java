@@ -51,6 +51,14 @@ public class WorkoutExceptionHandler {
         return new ResponseEntity<>(response, ex.getStatus());
     }
 
+    @ExceptionHandler(WorkoutNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleWorkoutNotFoundException(WorkoutNotFoundException ex) {
+        log.error("WorkoutNotFoundException caught: {}", ex.getMessage(), ex);
+
+        ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getCode());
+        return new ResponseEntity<>(response, ex.getStatus());
+    }
+
     @ExceptionHandler(WorkoutRuntimeException.class)
     public ResponseEntity<ErrorResponse> handleRoutineRuntimeException(
             WorkoutRuntimeException ex) {
