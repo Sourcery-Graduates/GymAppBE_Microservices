@@ -1,6 +1,10 @@
 package com.sourcery.gymapp.backend.workout.mapper;
 
-import com.sourcery.gymapp.backend.workout.dto.*;
+import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutExerciseDto;
+import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutExerciseSetDto;
+import com.sourcery.gymapp.backend.workout.dto.ExerciseSimpleDto;
+import com.sourcery.gymapp.backend.workout.dto.ResponseWorkoutExerciseDto;
+import com.sourcery.gymapp.backend.workout.dto.ResponseWorkoutExerciseSetDto;
 import com.sourcery.gymapp.backend.workout.model.Exercise;
 import com.sourcery.gymapp.backend.workout.model.Workout;
 import com.sourcery.gymapp.backend.workout.model.WorkoutExercise;
