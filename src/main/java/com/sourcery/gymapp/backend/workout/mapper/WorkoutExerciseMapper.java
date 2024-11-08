@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Map;
+import java.util.UUID;
 
 @Component
 public class WorkoutExerciseMapper {
@@ -24,6 +26,7 @@ public class WorkoutExerciseMapper {
         var responseWorkoutExerciseSetDtos = workoutExercise.getSets()
                 .stream()
                 .map(this::toResponseWorkoutSetDto)
+                .sorted(Comparator.comparingInt(ResponseWorkoutExerciseSetDto::setNumber))
                 .toList();
 
         return new ResponseWorkoutExerciseDto(
@@ -41,6 +44,7 @@ public class WorkoutExerciseMapper {
             Workout workout) {
 
         var workoutExercise = new WorkoutExercise();
+        workoutExercise.setId(createWorkoutExerciseDto.id());
         workoutExercise.setOrderNumber(createWorkoutExerciseDto.orderNumber());
         workoutExercise.setNotes(createWorkoutExerciseDto.notes());
         workoutExercise.setExercise(exercise);
@@ -49,7 +53,6 @@ public class WorkoutExerciseMapper {
             workoutExercise.setSets(
                     createWorkoutExerciseDto.sets()
                             .stream()
-                            .sorted(Comparator.comparingInt(CreateWorkoutExerciseSetDto::setNumber))
                             .map(workoutExerciseSetDto -> toWorkoutSetEntity(workoutExerciseSetDto, workoutExercise))
                             .toList()
             );
@@ -58,6 +61,27 @@ public class WorkoutExerciseMapper {
         }
 
         return workoutExercise;
+    }
+
+    public void updateEntity(
+            CreateWorkoutExerciseDto workoutExerciseDto,
+            WorkoutExercise workoutExercise,
+            Exercise exercise
+    ) {
+        workoutExercise.setOrderNumber(workoutExerciseDto.orderNumber());
+        workoutExercise.setNotes(workoutExerciseDto.notes());
+        workoutExercise.setExercise(exercise);
+    }
+
+    public void updateWorkoutExerciseSet(
+            CreateWorkoutExerciseSetDto workoutExerciseSetDto,
+            WorkoutExerciseSet workoutExerciseSet
+    ) {
+        workoutExerciseSet.setSetNumber(workoutExerciseSetDto.setNumber());
+        workoutExerciseSet.setReps(workoutExerciseSetDto.reps());
+        workoutExerciseSet.setWeight(workoutExerciseSetDto.weight());
+        workoutExerciseSet.setRestTime(workoutExerciseSetDto.restTime());
+        workoutExerciseSet.setComment(workoutExerciseSetDto.comment());
     }
 
     private ResponseWorkoutExerciseSetDto toResponseWorkoutSetDto(WorkoutExerciseSet workoutExerciseSet) {
@@ -71,11 +95,12 @@ public class WorkoutExerciseMapper {
         );
     }
 
-    private WorkoutExerciseSet toWorkoutSetEntity(
+    public WorkoutExerciseSet toWorkoutSetEntity(
             CreateWorkoutExerciseSetDto createWorkoutExerciseSetDto,
             WorkoutExercise workoutExercise) {
 
         var workoutExerciseSet = new WorkoutExerciseSet();
+        workoutExerciseSet.setId(createWorkoutExerciseSetDto.id());
         workoutExerciseSet.setWorkoutExercise(workoutExercise);
         workoutExerciseSet.setSetNumber(createWorkoutExerciseSetDto.setNumber());
         workoutExerciseSet.setReps(createWorkoutExerciseSetDto.reps());

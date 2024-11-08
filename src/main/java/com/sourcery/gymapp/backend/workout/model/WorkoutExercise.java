@@ -55,4 +55,14 @@ public class WorkoutExercise extends BaseEntity {
         }
         this.sets.addAll(sets);
     }
+
+    public void addSet(WorkoutExerciseSet set) {
+        this.sets.add(set);
+        set.setWorkoutExercise(this);
+    }
+
+    public void removeSet(WorkoutExerciseSet set) {
+        this.sets.remove(set);
+        set.setWorkoutExercise(null);
+    }
 }

@@ -9,6 +9,8 @@ import java.util.UUID;
 
 public record CreateWorkoutExerciseDto(
 
+        UUID id,
+
         @NotNull
         UUID exerciseId,
 
