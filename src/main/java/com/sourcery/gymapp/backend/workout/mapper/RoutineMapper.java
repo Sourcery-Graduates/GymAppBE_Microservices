@@ -15,7 +15,7 @@ public class RoutineMapper {
             routine.getName(),
             routine.getDescription(),
             routine.getCreatedAt(),
-            routine.getUserId().toString()
+            routine.getUserId()
         );
     }
 
