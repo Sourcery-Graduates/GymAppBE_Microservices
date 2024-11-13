@@ -66,15 +66,6 @@ public class WorkoutMapper {
         return workout;
     }
 
-    public void updateEntity(
-            CreateWorkoutDto dto,
-            Workout workout) {
-
-        workout.setName(dto.name());
-        workout.setDate(dto.date());
-        workout.setComment(dto.comment());
-    }
-
     private void mapToWorkoutExerciseList(CreateWorkoutDto dto, Workout workout, Map<UUID, Exercise> exerciseMap) {
         if (dto.exercises() != null) {
             workout.setExercises(

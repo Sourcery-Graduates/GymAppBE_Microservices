@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,13 +63,8 @@ public class WorkoutService {
 
         checkIsUserAuthorized(currentUserId, workout.getUserId());
 
-        workoutMapper.updateEntity(updateWorkoutDto, workout);
-
-        if (updateWorkoutDto.exercises() != null) {
-            workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
-        } else {
-            workout.setExercises(new ArrayList<>());
-        }
+        updateWorkoutFields(updateWorkoutDto, workout);
+        workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
 
         workoutRepository.save(workout);
 
@@ -115,5 +109,14 @@ public class WorkoutService {
         if (!workoutUserId.equals(currentUserId)) {
             throw new UserNotAuthorizedException();
         }
+    }
+
+    private void updateWorkoutFields(
+            CreateWorkoutDto dto,
+            Workout workout) {
+
+        workout.setName(dto.name());
+        workout.setDate(dto.date());
+        workout.setComment(dto.comment());
     }
 }

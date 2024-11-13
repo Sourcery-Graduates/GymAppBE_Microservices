@@ -62,14 +62,4 @@ public class WorkoutExerciseMapper {
 
         return workoutExercise;
     }
-
-    public void updateEntity(
-            CreateWorkoutExerciseDto workoutExerciseDto,
-            WorkoutExercise workoutExercise,
-            Exercise exercise
-    ) {
-        workoutExercise.setOrderNumber(workoutExerciseDto.orderNumber());
-        workoutExercise.setNotes(workoutExerciseDto.notes());
-        workoutExercise.setExercise(exercise);
-    }
 }

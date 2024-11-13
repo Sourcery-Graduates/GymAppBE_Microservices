@@ -35,15 +35,4 @@ public class WorkoutExerciseSetMapper {
 
         return workoutExerciseSet;
     }
-
-    public void updateEntity(
-            CreateWorkoutExerciseSetDto workoutExerciseSetDto,
-            WorkoutExerciseSet workoutExerciseSet
-    ) {
-        workoutExerciseSet.setSetNumber(workoutExerciseSetDto.setNumber());
-        workoutExerciseSet.setReps(workoutExerciseSetDto.reps());
-        workoutExerciseSet.setWeight(workoutExerciseSetDto.weight());
-        workoutExerciseSet.setRestTime(workoutExerciseSetDto.restTime());
-        workoutExerciseSet.setComment(workoutExerciseSetDto.comment());
-    }
 }
