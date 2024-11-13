@@ -17,3 +17,7 @@ databaseChangeLog:
   - include:
       file: ./v1.2-workout-changelog.sql
       relativeToChangelogFile: true
+
+  - include:
+      file: ./v4.0-routine-cascade-delete.sql
+      relativeToChangelogFile: true
