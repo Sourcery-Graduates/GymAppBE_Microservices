@@ -21,7 +21,6 @@ public class RoutineMapper {
 
     public Routine toEntity(CreateRoutineDto routineDto, UUID userId) {
         Routine routine = new Routine();
-        routine.setId(UUID.randomUUID());
         routine.setName(routineDto.name());
         routine.setDescription(routineDto.description());
         routine.setUserId(userId);
