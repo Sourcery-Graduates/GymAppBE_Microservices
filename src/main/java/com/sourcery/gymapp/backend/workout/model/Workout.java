@@ -44,7 +44,7 @@ public class Workout extends BaseEntity {
     @JoinColumn(name = "routine_id", referencedColumnName = "id")
     private Routine routine;
 
-    @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<WorkoutExercise> exercises = new ArrayList<>();
 
     public void setExercises(List<WorkoutExercise> exercises) {
