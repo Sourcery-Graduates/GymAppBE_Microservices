@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public class RoutineFactory {
 
-    public static Routine createRoutine(String name, String description, LocalDateTime createdAt, UUID userId) {
+    public static Routine createRoutine(String name, String description, LocalDateTime createdAt, UUID userId, long likesCount) {
         Routine routine = new Routine();
 
         routine.setId(UUID.randomUUID());
@@ -18,6 +18,7 @@ public class RoutineFactory {
         routine.setDescription(description);
         routine.setCreatedAt(createdAt);
         routine.setUserId(userId);
+        routine.setLikesCount(likesCount);
         return routine;
     }
 
@@ -26,7 +27,8 @@ public class RoutineFactory {
                 name,
                 description,
                 LocalDateTime.now(),
-                UUID.randomUUID()
+                UUID.randomUUID(),
+                0L
         );
     }
 
@@ -35,7 +37,8 @@ public class RoutineFactory {
                 name,
                 "Test Description",
                 LocalDateTime.now(),
-                UUID.randomUUID()
+                UUID.randomUUID(),
+                0L
         );
     }
 
@@ -44,7 +47,8 @@ public class RoutineFactory {
                 "Test Routine",
                 "Test Description",
                 LocalDateTime.now(),
-                UUID.randomUUID()
+                UUID.randomUUID(),
+                0L
         );
     }
 
@@ -62,13 +66,15 @@ public class RoutineFactory {
         );
     }
 
-    public static ResponseRoutineDto createResponseRoutineDto(UUID id, String name, String description, LocalDateTime createdAt, UUID userId) {
+    public static ResponseRoutineDto createResponseRoutineDto(UUID id, String name, String description, LocalDateTime createdAt, UUID userId, long likesCount) {
         return new ResponseRoutineDto(
                 id,
                 name,
                 description,
                 createdAt,
-                userId
+                userId,
+                likesCount
+
         );
     }
 
@@ -78,7 +84,8 @@ public class RoutineFactory {
                 "Test Routine",
                 "Test Description",
                 LocalDateTime.now(),
-                UUID.fromString("00000000-0000-0000-0000-000000000000")
+                UUID.fromString("00000000-0000-0000-0000-000000000000"),
+                0L
         );
     }
 }

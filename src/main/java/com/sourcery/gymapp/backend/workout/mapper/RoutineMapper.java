@@ -11,11 +11,12 @@ import java.util.UUID;
 public class RoutineMapper {
     public ResponseRoutineDto toDto(Routine routine) {
         return new ResponseRoutineDto(
-            routine.getId(),
-            routine.getName(),
-            routine.getDescription(),
-            routine.getCreatedAt(),
-            routine.getUserId()
+                routine.getId(),
+                routine.getName(),
+                routine.getDescription(),
+                routine.getCreatedAt(),
+                routine.getUserId(),
+                routine.getLikesCount()
         );
     }
 

@@ -33,7 +33,7 @@ public class RoutineService {
         }
         Routine routine = routineMapper.toEntity(routineDto, currentUserId);
 
-        routineRepository.save(routine);
+        routine = routineRepository.save(routine);
 
         return routineMapper.toDto(routine);
     }
@@ -64,7 +64,7 @@ public class RoutineService {
 
         routineMapper.updateEntity(routine, routineDto);
 
-        routineRepository.save(routine);
+        routine = routineRepository.save(routine);
 
         return routineMapper.toDto(routine);
     }

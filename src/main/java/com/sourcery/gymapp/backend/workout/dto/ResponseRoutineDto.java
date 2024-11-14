@@ -9,6 +9,7 @@ public record ResponseRoutineDto(
         String name,
         String description,
         LocalDateTime createdAt,
-        UUID userId
+        UUID userId,
+        long likesCount
 ) {
 }
