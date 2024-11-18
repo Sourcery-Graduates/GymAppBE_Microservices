@@ -66,14 +66,15 @@ public class RoutineFactory {
         );
     }
 
-    public static ResponseRoutineDto createResponseRoutineDto(UUID id, String name, String description, LocalDateTime createdAt, UUID userId, long likesCount) {
+    public static ResponseRoutineDto createResponseRoutineDto(UUID id, String name, String description, LocalDateTime createdAt, UUID userId, long likesCount, boolean isLikedByCurrentUser) {
         return new ResponseRoutineDto(
                 id,
                 name,
                 description,
                 createdAt,
                 userId,
-                likesCount
+                likesCount,
+                isLikedByCurrentUser
 
         );
     }
@@ -85,7 +86,8 @@ public class RoutineFactory {
                 "Test Description",
                 LocalDateTime.now(),
                 UUID.fromString("00000000-0000-0000-0000-000000000000"),
-                0L
+                0L,
+                true
         );
     }
 }

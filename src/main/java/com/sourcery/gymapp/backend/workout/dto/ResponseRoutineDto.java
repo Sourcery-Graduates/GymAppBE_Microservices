@@ -10,6 +10,7 @@ public record ResponseRoutineDto(
         String description,
         LocalDateTime createdAt,
         UUID userId,
-        long likesCount
+        long likesCount,
+        boolean isLikedByCurrentUser
 ) {
 }

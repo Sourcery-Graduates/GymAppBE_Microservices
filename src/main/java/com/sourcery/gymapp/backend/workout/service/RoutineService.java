@@ -3,6 +3,7 @@ package com.sourcery.gymapp.backend.workout.service;
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.RoutinePageDto;
+import com.sourcery.gymapp.backend.workout.dto.RoutineWithLikeStatusProjection;
 import com.sourcery.gymapp.backend.workout.exception.RoutineNotFoundException;
 import com.sourcery.gymapp.backend.workout.exception.UserNotAuthorizedException;
 import com.sourcery.gymapp.backend.workout.exception.UserNotFoundException;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+// TODO: each pageable routine should be returned with isLikedByCurrentUser
 @Service
 @RequiredArgsConstructor
 public class RoutineService {
@@ -40,18 +42,24 @@ public class RoutineService {
 
 
     public ResponseRoutineDto getRoutineById(UUID routineId) {
-        Routine routine = findRoutineById(routineId);
+        UUID currentUserId = currentUserService.getCurrentUserId();
+        RoutineWithLikeStatusProjection projection =
+                routineRepository.findRoutineWithLikeStatusByRoutineId(routineId, currentUserId);
 
-        return routineMapper.toDto(routine);
+        if (projection == null) {
+            throw new RoutineNotFoundException(routineId);
+        }
+
+        return routineMapper.toDto(projection.getRoutine(), projection.isLikedByCurrentUser());
     }
 
     public List<ResponseRoutineDto> getRoutinesByUserId() {
         UUID currentUserId = currentUserService.getCurrentUserId();
+        List<RoutineWithLikeStatusProjection> projections =
+                routineRepository.findRoutinesWithLikeStatusByUserId(currentUserId);
 
-        List<Routine> routines = routineRepository.findByUserId(currentUserId);
-
-        return routines.stream()
-                .map(routineMapper::toDto)
+        return projections.stream()
+                .map(projection -> routineMapper.toDto(projection.getRoutine(), projection.isLikedByCurrentUser()))
                 .toList();
     }
 
@@ -80,30 +88,25 @@ public class RoutineService {
     }
 
     public Routine findRoutineById(UUID id) {
-
         return routineRepository.findById(id).orElseThrow(() -> new RoutineNotFoundException(id));
     }
 
+    @Transactional(readOnly = true)
     public RoutinePageDto searchRoutines(String name, Pageable pageable) {
-        Page<Routine> routinePage;
+        UUID currentUserId = currentUserService.getCurrentUserId();
+        Page<RoutineWithLikeStatusProjection> routinePage = name == null || name.isBlank()
+                ? routineRepository.findAllWithLikeStatus(currentUserId, pageable)
+                : routineRepository.findRoutinesWithLikeStatusByName(currentUserId, name, pageable);
 
-        if (name == null || name.isBlank()) {
-            routinePage = getAllRoutines(pageable);
-        } else {
-            routinePage = routineRepository.findByNameIgnoreCaseContaining(name, pageable);
-        }
-
-        List<ResponseRoutineDto> routines = routinePage.map(routineMapper::toDto).getContent();
+        List<ResponseRoutineDto> routines = routinePage.getContent().stream()
+                .map(projection -> routineMapper.toDto(projection.getRoutine(), projection.isLikedByCurrentUser()))
+                .toList();
 
         return new RoutinePageDto(
                 routinePage.getTotalPages(),
                 routinePage.getTotalElements(),
                 routines
         );
-    }
-
-    private Page<Routine> getAllRoutines(Pageable pageable) {
-        return routineRepository.findAll(pageable);
     }
 
     private void checkIsUserAuthorized(UUID currentUserId, UUID routineUserId) {
