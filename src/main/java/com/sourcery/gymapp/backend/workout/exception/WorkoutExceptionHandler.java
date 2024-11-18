@@ -101,4 +101,20 @@ public class WorkoutExceptionHandler {
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(LikeNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleLikeNotFoundException(LikeNotFoundException ex) {
+        log.error("LikeNotFoundException caught: {}", ex.getMessage(), ex);
+
+        ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getCode());
+        return new ResponseEntity<>(response, ex.getStatus());
+    }
+
+    @ExceptionHandler(LikeAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleLikeAlreadyExistsException(LikeAlreadyExistsException ex) {
+        log.error("LikeAlreadyExistsException caught: {}", ex.getMessage(), ex);
+
+        ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getCode());
+        return new ResponseEntity<>(response, ex.getStatus());
+    }
 }

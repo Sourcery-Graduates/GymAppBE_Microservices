@@ -13,7 +13,9 @@ public enum ErrorCode {
     USER_NOT_FOUND("User not found"),
     USER_NOT_AUTHENTICATED("User not authenticated"),
     USER_NOT_AUTHORIZED("User not authorized"),
-    VALIDATION_ERROR("Validation error");
+    VALIDATION_ERROR("Validation error"),
+    LIKE_ALREADY_EXISTS("Like already exists"),
+    LIKE_NOT_FOUND("Like not found");
 
     private final String code;
 }
