@@ -23,7 +23,7 @@ public class WorkoutExerciseSetService {
             CreateWorkoutExerciseDto createWorkoutExerciseDto,
             WorkoutExercise workoutExercise) {
 
-        if (createWorkoutExerciseDto.sets() != null) {
+        if (createWorkoutExerciseDto.sets() != null && !createWorkoutExerciseDto.sets().isEmpty()) {
             Set<UUID> updateWorkoutExerciseSetDtoIds = createWorkoutExerciseDto.sets().stream()
                     .map(CreateWorkoutExerciseSetDto::id)
                     .collect(Collectors.toSet());

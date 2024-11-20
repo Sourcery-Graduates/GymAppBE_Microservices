@@ -4,6 +4,7 @@ import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutDto;
 import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutExerciseDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseWorkoutDto;
 import com.sourcery.gymapp.backend.workout.exception.UserNotAuthorizedException;
+import com.sourcery.gymapp.backend.workout.exception.UserNotFoundException;
 import com.sourcery.gymapp.backend.workout.exception.WorkoutNotFoundException;
 import com.sourcery.gymapp.backend.workout.mapper.WorkoutMapper;
 import com.sourcery.gymapp.backend.workout.model.Exercise;
@@ -32,6 +33,10 @@ public class WorkoutService {
     @Transactional
     public ResponseWorkoutDto createWorkout(CreateWorkoutDto createWorkoutDto) {
         var currentUserId = currentUserService.getCurrentUserId();
+        if (currentUserId == null) {
+            throw new UserNotFoundException();
+        }
+
         Workout basedOnWorkout = null;
         if (createWorkoutDto.basedOnWorkoutId() != null) {
             basedOnWorkout = findWorkoutById(createWorkoutDto.basedOnWorkoutId());
@@ -51,7 +56,7 @@ public class WorkoutService {
         }
 
         var workout = workoutMapper.toEntity(createWorkoutDto, currentUserId, basedOnWorkout, routine, exerciseMap);
-        workoutRepository.save(workout);
+        workout = workoutRepository.save(workout);
 
         return workoutMapper.toDto(workout);
     }
@@ -66,7 +71,7 @@ public class WorkoutService {
         updateWorkoutFields(updateWorkoutDto, workout);
         workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
 
-        workoutRepository.save(workout);
+        workout = workoutRepository.save(workout);
 
         return workoutMapper.toDto(workout);
     }
@@ -79,6 +84,9 @@ public class WorkoutService {
 
     public List<ResponseWorkoutDto> getWorkoutsByUserId() {
         var currentUserId = currentUserService.getCurrentUserId();
+        if (currentUserId == null) {
+            throw new UserNotFoundException();
+        }
 
         List<Workout> workouts = workoutRepository.findByUserId(currentUserId);
 
@@ -89,8 +97,8 @@ public class WorkoutService {
 
     @Transactional
     public void deleteWorkout(UUID workoutId) {
-        var currentUserId = currentUserService.getCurrentUserId();
         var workout = findWorkoutById(workoutId);
+        var currentUserId = currentUserService.getCurrentUserId();
 
         checkIsUserAuthorized(currentUserId, workout.getUserId());
 

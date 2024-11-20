@@ -25,7 +25,7 @@ public class WorkoutExerciseService {
     private final WorkoutExerciseMapper workoutExerciseMapper;
 
     public void updateWorkoutExercises(CreateWorkoutDto updateWorkoutDto, Workout workout) {
-        if (updateWorkoutDto.exercises() != null) {
+        if (updateWorkoutDto.exercises() != null && !updateWorkoutDto.exercises().isEmpty()) {
             Set<UUID> updateWorkoutExerciseDtoIds = updateWorkoutDto.exercises().stream()
                     .map(CreateWorkoutExerciseDto::id)
                     .collect(Collectors.toSet());
