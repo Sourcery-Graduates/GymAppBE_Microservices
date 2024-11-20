@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  backend-modulith:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      - SPRING_PROFILES_ACTIVE=deployment
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:14-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_DB: gym_app_db
+      POSTGRES_USER: gym_app_user
+      POSTGRES_PASSWORD: gym_app_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_gym_app_data:/var/lib/postgresql/data
+      - ./src/main/resources/db/changelog/changes/workout_data/exercises_data:/var/lib/postgresql/import-data
+    networks:
+      - app-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin_pass
+    ports:
+      - "8000:80"
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_gym_app_data:
+
+networks:
+  app-network:
+    driver: bridge
