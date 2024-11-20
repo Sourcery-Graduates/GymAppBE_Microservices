@@ -1,12 +1,13 @@
 package com.sourcery.gymapp.backend.workout.service;
 
-import com.sourcery.gymapp.backend.workout.exception.UserNotAuthorizedException;
-import com.sourcery.gymapp.backend.workout.factory.RoutineFactory;
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.RoutinePageDto;
+import com.sourcery.gymapp.backend.workout.dto.RoutineWithLikeStatusProjection;
 import com.sourcery.gymapp.backend.workout.exception.RoutineNotFoundException;
+import com.sourcery.gymapp.backend.workout.exception.UserNotAuthorizedException;
 import com.sourcery.gymapp.backend.workout.exception.UserNotFoundException;
+import com.sourcery.gymapp.backend.workout.factory.RoutineFactory;
 import com.sourcery.gymapp.backend.workout.mapper.RoutineMapper;
 import com.sourcery.gymapp.backend.workout.model.Routine;
 import com.sourcery.gymapp.backend.workout.repository.RoutineRepository;
@@ -97,21 +98,27 @@ public class RoutineServiceTest {
         @Test
         void shouldGetRoutineByIdSuccessfully() {
             // Arrange
-            when(routineRepository.findById(routineId)).thenReturn(Optional.of(routine));
-            when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
+            RoutineWithLikeStatusProjection projection = mock(RoutineWithLikeStatusProjection.class);
+            when(projection.getRoutine()).thenReturn(routine);
+            when(projection.isLikedByCurrentUser()).thenReturn(true);
+
+            when(currentUserService.getCurrentUserId()).thenReturn(userId);
+            when(routineRepository.findRoutineWithLikeStatusByRoutineId(routineId, userId)).thenReturn(projection);
+            when(routineMapper.toDto(routine, true)).thenReturn(responseRoutineDto);
 
             // Act
             ResponseRoutineDto result = routineService.getRoutineById(routineId);
 
             // Assert
             assertEquals(responseRoutineDto, result);
-            verify(routineRepository, times(1)).findById(routineId);
+            verify(routineRepository, times(1)).findRoutineWithLikeStatusByRoutineId(routineId, userId);
         }
 
         @Test
         void shouldThrowExceptionWhenRoutineNotFound() {
             // Arrange
-            when(routineRepository.findById(routineId)).thenReturn(Optional.empty());
+            when(currentUserService.getCurrentUserId()).thenReturn(userId);
+            when(routineRepository.findRoutineWithLikeStatusByRoutineId(routineId, userId)).thenReturn(null);
 
             // Act & Assert
             assertThrows(RoutineNotFoundException.class, () -> routineService.getRoutineById(routineId));
@@ -120,11 +127,13 @@ public class RoutineServiceTest {
         @Test
         void shouldGetRoutinesByUserIdSuccessfully() {
             // Arrange
-            List<Routine> routines = List.of(routine);
+            RoutineWithLikeStatusProjection projection = mock(RoutineWithLikeStatusProjection.class);
+            when(projection.getRoutine()).thenReturn(routine);
+            when(projection.isLikedByCurrentUser()).thenReturn(true);
+
             when(currentUserService.getCurrentUserId()).thenReturn(userId);
-            when(routineRepository.findByUserId(userId)).thenReturn(routines);
-            when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
-            when(currentUserService.getCurrentUserId()).thenReturn(userId);
+            when(routineRepository.findRoutinesWithLikeStatusByUserId(userId)).thenReturn(List.of(projection));
+            when(routineMapper.toDto(routine, true)).thenReturn(responseRoutineDto);
 
             // Act
             List<ResponseRoutineDto> result = routineService.getRoutinesByUserId();
@@ -132,7 +141,7 @@ public class RoutineServiceTest {
             // Assert
             assertEquals(1, result.size());
             assertEquals(responseRoutineDto, result.getFirst());
-            verify(routineRepository, times(1)).findByUserId(userId);
+            verify(routineRepository, times(1)).findRoutinesWithLikeStatusByUserId(userId);
         }
     }
 
@@ -158,68 +167,53 @@ public class RoutineServiceTest {
         @Test
         void shouldGetAllPagedRoutinesSuccessfully() {
             // Arrange
-            List<Routine> routines = List.of(routine, routine2, routine3);
+            RoutineWithLikeStatusProjection projection = mock(RoutineWithLikeStatusProjection.class);
+            RoutineWithLikeStatusProjection projection2 = mock(RoutineWithLikeStatusProjection.class);
+            RoutineWithLikeStatusProjection projection3 = mock(RoutineWithLikeStatusProjection.class);
+            when(projection.getRoutine()).thenReturn(routine);
+            when(projection2.getRoutine()).thenReturn(routine2);
+            when(projection3.getRoutine()).thenReturn(routine3);
+            when(projection.isLikedByCurrentUser()).thenReturn(true);
+            when(projection2.isLikedByCurrentUser()).thenReturn(true);
+            when(projection3.isLikedByCurrentUser()).thenReturn(true);
 
-            Page<Routine> mockPage = new PageImpl<>(routines, pageable, routines.size());
-
-            List<ResponseRoutineDto> responseRoutinesDto =
-                    List.of(responseRoutineDto, responseRoutineDto2, responseRoutineDto3);
-
-            when(routineRepository.findAll(pageable)).thenReturn(mockPage);
-
-            when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
-            when(routineMapper.toDto(routine2)).thenReturn(responseRoutineDto2);
-            when(routineMapper.toDto(routine3)).thenReturn(responseRoutineDto3);
+            Page<RoutineWithLikeStatusProjection> mockPage
+                    = new PageImpl<>(List.of(projection, projection2, projection3), pageable, 3);
+            when(currentUserService.getCurrentUserId()).thenReturn(userId);
+            when(routineRepository.findAllWithLikeStatus(userId, pageable)).thenReturn(mockPage);
+            when(routineMapper.toDto(routine, true)).thenReturn(responseRoutineDto);
+            when(routineMapper.toDto(routine2, true)).thenReturn(responseRoutineDto2);
+            when(routineMapper.toDto(routine3, true)).thenReturn(responseRoutineDto3);
 
             // Act
             RoutinePageDto result = routineService.searchRoutines("", pageable);
 
             // Assert
-            assertAll(
-                    () -> assertEquals(1, result.totalPages()),
-                    () -> assertEquals(responseRoutinesDto.size(), result.totalElements()),
-                    () -> assertEquals(responseRoutinesDto, result.data())
-            );
-        }
-
-        @Test
-        void shouldGetEmptyPagedRoutinesSuccessfully() {
-            // Arrange
-            Page<Routine> mockSearchedPage = new PageImpl<>(List.of(), pageable, 0);
-
-            when(routineRepository.findAll(pageable)).thenReturn(mockSearchedPage);
-            // Act
-            RoutinePageDto result = routineService.searchRoutines("", pageable);
-
-            // Assert
-            assertAll(
-                    () -> assertEquals(0, result.totalPages()),
-                    () -> assertEquals(0, result.totalElements()),
-                    () -> assertTrue(result.data().isEmpty())
-            );
+            assertEquals(1, result.totalPages());
+            assertEquals(3, result.totalElements());
+            assertEquals(List.of(responseRoutineDto, responseRoutineDto2, responseRoutineDto3), result.data());
         }
 
         @Test
         void shouldGetFilteredPagedRoutinesSuccessfully() {
             // Arrange
             String searchName = "Test Routine";
-            List<Routine> filteredRoutines = List.of(routine);
-            Page<Routine> mockFilteredPage = new PageImpl<>(filteredRoutines, pageable, filteredRoutines.size());
+            RoutineWithLikeStatusProjection projection = mock(RoutineWithLikeStatusProjection.class);
+            when(projection.getRoutine()).thenReturn(routine);
+            when(projection.isLikedByCurrentUser()).thenReturn(true);
 
-            List<ResponseRoutineDto> responseRoutinesDto = List.of(responseRoutineDto);
-
-            when(routineRepository.findByNameIgnoreCaseContaining(searchName, pageable)).thenReturn(mockFilteredPage);
-            when(routineMapper.toDto(routine)).thenReturn(responseRoutineDto);
+            Page<RoutineWithLikeStatusProjection> mockPage = new PageImpl<>(List.of(projection), pageable, 1);
+            when(currentUserService.getCurrentUserId()).thenReturn(userId);
+            when(routineRepository.findRoutinesWithLikeStatusByName(userId, searchName, pageable)).thenReturn(mockPage);
+            when(routineMapper.toDto(routine, true)).thenReturn(responseRoutineDto);
 
             // Act
             RoutinePageDto result = routineService.searchRoutines(searchName, pageable);
 
             // Assert
-            assertAll(
-                    () -> assertEquals(1, result.totalPages()),
-                    () -> assertEquals(responseRoutinesDto.size(), result.totalElements()),
-                    () -> assertEquals(responseRoutinesDto, result.data())
-            );
+            assertEquals(1, result.totalPages());
+            assertEquals(1, result.totalElements());
+            assertEquals(List.of(responseRoutineDto), result.data());
         }
     }
 

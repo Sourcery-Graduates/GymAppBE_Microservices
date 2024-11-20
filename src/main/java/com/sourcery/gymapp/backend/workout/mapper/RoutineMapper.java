@@ -10,12 +10,18 @@ import java.util.UUID;
 @Component
 public class RoutineMapper {
     public ResponseRoutineDto toDto(Routine routine) {
+        return this.toDto(routine, false);
+    }
+
+    public ResponseRoutineDto toDto(Routine routine, boolean likedByCurrentUser) {
         return new ResponseRoutineDto(
-            routine.getId(),
-            routine.getName(),
-            routine.getDescription(),
-            routine.getCreatedAt(),
-            routine.getUserId()
+                routine.getId(),
+                routine.getName(),
+                routine.getDescription(),
+                routine.getCreatedAt(),
+                routine.getUserId(),
+                routine.getLikesCount(),
+                likedByCurrentUser
         );
     }
 

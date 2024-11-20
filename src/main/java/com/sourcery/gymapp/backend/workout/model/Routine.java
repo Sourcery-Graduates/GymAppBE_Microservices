@@ -24,4 +24,7 @@ public class Routine extends BaseEntity {
 
     @Size(max = 3000)
     private String description;
+
+    @Column(nullable = false)
+    private long likesCount;
 }
