@@ -33,26 +33,6 @@ spring:
       path: /swagger-ui.html
 
 ---
-spring:
-  config:
-    activate:
-      on-profile: test
-
-  datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: password
-
-  jpa:
-    hibernate:
-      ddl-auto: none
-    show-sql: false
-
-  liquibase:
-    enabled: false
-
----
 jwt:
   public-key: |
     -----BEGIN PUBLIC KEY-----
