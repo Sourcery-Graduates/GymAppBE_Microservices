@@ -1,0 +1,153 @@
+package com.sourcery.gymapp.backend.workout.service;
+
+import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutDto;
+import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutExerciseDto;
+import com.sourcery.gymapp.backend.workout.exception.ExerciseNotFoundException;
+import com.sourcery.gymapp.backend.workout.factory.ExerciseFactory;
+import com.sourcery.gymapp.backend.workout.factory.WorkoutExerciseFactory;
+import com.sourcery.gymapp.backend.workout.factory.WorkoutFactory;
+import com.sourcery.gymapp.backend.workout.mapper.WorkoutExerciseMapper;
+import com.sourcery.gymapp.backend.workout.model.Exercise;
+import com.sourcery.gymapp.backend.workout.model.Workout;
+import com.sourcery.gymapp.backend.workout.model.WorkoutExercise;
+import com.sourcery.gymapp.backend.workout.repository.ExerciseRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+public class WorkoutExerciseServiceTest {
+
+    @Mock
+    private ExerciseRepository exerciseRepository;
+
+    @Mock
+    private WorkoutExerciseSetService workoutExerciseSetService;
+
+    @Mock
+    private WorkoutExerciseMapper workoutExerciseMapper;
+
+    @InjectMocks
+    private WorkoutExerciseService workoutExerciseService;
+
+    private Workout workout;
+    private CreateWorkoutDto updateWorkoutDto;
+    private WorkoutExercise existingWorkoutExercise;
+    private CreateWorkoutExerciseDto createWorkoutExerciseDto;
+    private Exercise exercise;
+
+    @BeforeEach
+    public void setup() {
+        workout = WorkoutFactory.createWorkout();
+        exercise = ExerciseFactory.createExercise();
+        createWorkoutExerciseDto = WorkoutExerciseFactory.createCreateWorkoutExerciseDto(exercise.getId());
+        existingWorkoutExercise = WorkoutExerciseFactory.createWorkoutExercise(exercise);
+        existingWorkoutExercise.setId(createWorkoutExerciseDto.id());
+        workout.addExercise(existingWorkoutExercise);
+        updateWorkoutDto = WorkoutFactory.createCreateWorkoutDto(
+                null,
+                null,
+                List.of(createWorkoutExerciseDto)
+        );
+    }
+
+    @Test
+    void shouldUpdateWorkoutExercisesSuccessfully() {
+        Exercise newExercise = ExerciseFactory.createExercise();
+        CreateWorkoutExerciseDto updateWorkoutExerciseDto = new CreateWorkoutExerciseDto(
+                createWorkoutExerciseDto.id(), newExercise.getId(), 2, "New Notes", null
+        );
+        updateWorkoutDto = WorkoutFactory.createCreateWorkoutDto(
+                null,
+                null,
+                List.of(updateWorkoutExerciseDto)
+        );
+
+        when(exerciseRepository.findById(newExercise.getId()))
+                .thenReturn(Optional.of(newExercise));
+
+        workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
+
+        assertAll(
+                () -> assertEquals(1, workout.getExercises().size()),
+                () -> assertEquals(workout.getExercises().getFirst().getExercise(), newExercise),
+                () -> assertEquals(workout.getExercises().getFirst().getOrderNumber(), updateWorkoutExerciseDto.orderNumber()),
+                () -> assertEquals(workout.getExercises().getFirst().getNotes(), updateWorkoutExerciseDto.notes())
+        );
+        verify(workoutExerciseSetService, times(1)).updateSets(updateWorkoutExerciseDto, existingWorkoutExercise);
+        verify(exerciseRepository).findById(newExercise.getId());
+
+    }
+
+    @Test
+    void shouldAddNewWorkoutExercisesSuccessfully() {
+        Exercise newExercise = ExerciseFactory.createExercise();
+        WorkoutExercise newWorkoutExercise = WorkoutExerciseFactory.createWorkoutExercise(newExercise);
+        CreateWorkoutExerciseDto newWorkoutExerciseDto = new CreateWorkoutExerciseDto(
+                newWorkoutExercise.getId(), newExercise.getId(), 2, "New Notes", null
+        );
+
+        updateWorkoutDto = WorkoutFactory.createCreateWorkoutDto(
+                null,
+                null,
+                List.of(createWorkoutExerciseDto, newWorkoutExerciseDto)
+        );
+
+        when(exerciseRepository.findById(newWorkoutExerciseDto.exerciseId()))
+                .thenReturn(Optional.of(newExercise));
+        when(workoutExerciseMapper.toEntity(eq(newWorkoutExerciseDto), any(Exercise.class), eq(workout)))
+                .thenReturn(newWorkoutExercise);
+
+        workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
+
+        assertEquals(2, workout.getExercises().size());
+        verify(workoutExerciseSetService, times(1)).updateSets(createWorkoutExerciseDto, existingWorkoutExercise);
+        verify(exerciseRepository).findById(newWorkoutExerciseDto.exerciseId());
+        verify(workoutExerciseMapper).toEntity(eq(newWorkoutExerciseDto), any(Exercise.class), eq(workout));
+    }
+
+    @Test
+    void shouldRemoveWorkoutExercisesSuccessfully() {
+        updateWorkoutDto = WorkoutFactory.createCreateWorkoutDto(
+                null,
+                null,
+                List.of()
+        );
+
+        workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
+
+        assertTrue(workout.getExercises().isEmpty());
+        verify(workoutExerciseSetService, never()).updateSets(any(), any());
+        verify(exerciseRepository, never()).findById(any());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenExerciseNotFound() {
+        workout.removeExercise(existingWorkoutExercise);
+        when(exerciseRepository.findById(createWorkoutExerciseDto.exerciseId()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(ExerciseNotFoundException.class, () ->
+                workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout)
+        );
+
+        verify(exerciseRepository).findById(createWorkoutExerciseDto.exerciseId());
+    }
+}
