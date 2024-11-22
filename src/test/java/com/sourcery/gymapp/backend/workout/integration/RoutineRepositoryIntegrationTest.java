@@ -6,7 +6,6 @@ import com.sourcery.gymapp.backend.workout.repository.RoutineRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,7 +15,6 @@ class RoutineRepositoryIntegrationTest extends BaseIntegrationTest {
     private RoutineRepository routineRepository;
 
     @Test
-    @WithMockUser(username = "test_user")
     void testInsertIfNotExists() {
         Routine routine = RoutineFactory.createRoutine();
 

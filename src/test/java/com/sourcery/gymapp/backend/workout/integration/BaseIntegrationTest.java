@@ -11,7 +11,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -24,6 +26,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Tag("integration")
 @Testcontainers
 @AutoConfigureMockMvc
+@WithMockUser(username = "test_user")
+@Transactional
 public abstract class BaseIntegrationTest {
 
     @Container
@@ -33,7 +37,7 @@ public abstract class BaseIntegrationTest {
                     .withCopyFileToContainer(
                             MountableFile.forHostPath("./src/main/resources/db/changelog/changes/workout_data/exercises_data/formatted_exercises.json"),
                             "/var/lib/postgresql/import-data/formatted_exercises.json"
-                    );;
+                    );
 
     @Autowired
     protected JdbcTemplate jdbcTemplate;
@@ -64,6 +68,5 @@ public abstract class BaseIntegrationTest {
     @AfterEach
     public void tearDown() {
         jdbcTemplate.execute("DO $$ DECLARE r RECORD; BEGIN FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'workout_data') LOOP EXECUTE 'TRUNCATE TABLE workout_data.' || r.tablename || ' CASCADE'; END LOOP; END $$;");
-        System.out.println("tearDown() works");
     }
 }
