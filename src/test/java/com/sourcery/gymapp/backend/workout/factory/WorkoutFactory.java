@@ -75,6 +75,22 @@ public class WorkoutFactory {
         );
     }
 
+    public static Workout createWorkout(
+            Workout basedOnWorkout,
+            Routine routine,
+            List<WorkoutExercise> exercises
+    ) {
+        return createWorkout(
+                UUID.randomUUID(),
+                "Test Name",
+                new Date(124, Calendar.JANUARY, 1),
+                "Test Comment",
+                basedOnWorkout,
+                routine,
+                exercises
+        );
+    }
+
     public static Workout createWorkout() {
         return createWorkout(
                 "Test Name",
@@ -113,6 +129,21 @@ public class WorkoutFactory {
                 exercises,
                 null,
                 null
+        );
+    }
+
+    public static CreateWorkoutDto createCreateWorkoutDto(
+            UUID routineId,
+            UUID basedOnWorkoutId,
+            List<CreateWorkoutExerciseDto> exercises
+    ) {
+        return new CreateWorkoutDto(
+                "Test Name",
+                new Date(124, Calendar.JANUARY, 1),
+                "Test Comment",
+                exercises,
+                routineId,
+                basedOnWorkoutId
         );
     }
 

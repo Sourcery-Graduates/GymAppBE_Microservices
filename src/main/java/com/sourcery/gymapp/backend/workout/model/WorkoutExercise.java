@@ -22,7 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = "workout")
 @Entity
 @Table(name = "workout_exercise", schema = "workout_data")
 public class WorkoutExercise extends BaseEntity {
