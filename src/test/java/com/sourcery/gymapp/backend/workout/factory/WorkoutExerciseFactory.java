@@ -1,6 +1,7 @@
 package com.sourcery.gymapp.backend.workout.factory;
 
 import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutExerciseDto;
+import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutExerciseSetDto;
 import com.sourcery.gymapp.backend.workout.dto.ExerciseSimpleDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseWorkoutExerciseDto;
 import com.sourcery.gymapp.backend.workout.model.Exercise;
@@ -26,13 +27,23 @@ public class WorkoutExerciseFactory {
         );
     }
 
-    public static CreateWorkoutExerciseDto createCreateWorkoutExerciseDto(UUID exerciseId) {
+    public static CreateWorkoutExerciseDto createCreateWorkoutExerciseDto(
+            UUID exerciseId,
+            List<CreateWorkoutExerciseSetDto> sets
+    ) {
         return new CreateWorkoutExerciseDto(
                 UUID.randomUUID(),
                 exerciseId,
                 1,
                 "Test Notes",
-                null
+                sets
+        );
+    }
+
+    public static CreateWorkoutExerciseDto createCreateWorkoutExerciseDto(UUID exerciseId) {
+        return createCreateWorkoutExerciseDto(
+                exerciseId,
+                List.of()
         );
     }
 

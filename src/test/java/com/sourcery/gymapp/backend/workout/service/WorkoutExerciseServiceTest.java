@@ -51,12 +51,11 @@ public class WorkoutExerciseServiceTest {
     private CreateWorkoutDto updateWorkoutDto;
     private WorkoutExercise existingWorkoutExercise;
     private CreateWorkoutExerciseDto createWorkoutExerciseDto;
-    private Exercise exercise;
 
     @BeforeEach
     public void setup() {
+        Exercise exercise = ExerciseFactory.createExercise();
         workout = WorkoutFactory.createWorkout();
-        exercise = ExerciseFactory.createExercise();
         createWorkoutExerciseDto = WorkoutExerciseFactory.createCreateWorkoutExerciseDto(exercise.getId());
         existingWorkoutExercise = WorkoutExerciseFactory.createWorkoutExercise(exercise);
         existingWorkoutExercise.setId(createWorkoutExerciseDto.id());
