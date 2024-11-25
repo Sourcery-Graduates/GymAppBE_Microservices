@@ -102,7 +102,6 @@ public class WorkoutService {
 
         checkIsUserAuthorized(currentUserId, workout.getUserId());
 
-        workoutRepository.setBasedOnWorkoutToNull(workout);
         workoutRepository.delete(workout);
     }
 

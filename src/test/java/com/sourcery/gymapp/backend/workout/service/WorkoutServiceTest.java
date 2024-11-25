@@ -223,7 +223,6 @@ public class WorkoutServiceTest {
         void shouldDeleteWorkoutSuccessfully() {
             when(currentUserService.getCurrentUserId()).thenReturn(userId);
             when(workoutRepository.findById(workoutId)).thenReturn(Optional.of(workout));
-            doNothing().when(workoutRepository).setBasedOnWorkoutToNull(workout);
             doNothing().when(workoutRepository).delete(workout);
 
             workoutService.deleteWorkout(workoutId);
