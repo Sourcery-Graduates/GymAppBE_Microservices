@@ -86,6 +86,7 @@ public class WorkoutExerciseServiceTest {
 
         assertAll(
                 () -> assertEquals(1, workout.getExercises().size()),
+                () -> assertEquals(workout.getExercises().getFirst().getId(), existingWorkoutExercise.getId()),
                 () -> assertEquals(workout.getExercises().getFirst().getExercise(), newExercise),
                 () -> assertEquals(workout.getExercises().getFirst().getOrderNumber(), updateWorkoutExerciseDto.orderNumber()),
                 () -> assertEquals(workout.getExercises().getFirst().getNotes(), updateWorkoutExerciseDto.notes())
@@ -135,6 +136,32 @@ public class WorkoutExerciseServiceTest {
         assertTrue(workout.getExercises().isEmpty());
         verify(workoutExerciseSetService, never()).updateSets(any(), any());
         verify(exerciseRepository, never()).findById(any());
+    }
+
+    @Test
+    void shouldHandleRemovingAndAddingAtTheSameTimeSuccessfully() {
+        Exercise newExercise = ExerciseFactory.createExercise();
+        WorkoutExercise newWorkoutExercise = WorkoutExerciseFactory.createWorkoutExercise(newExercise);
+        CreateWorkoutExerciseDto newWorkoutExerciseDto = new CreateWorkoutExerciseDto(
+                newWorkoutExercise.getId(), newExercise.getId(), 2, "New Notes", null
+        );
+
+        updateWorkoutDto = WorkoutFactory.createCreateWorkoutDto(
+                null,
+                null,
+                List.of(newWorkoutExerciseDto)
+        );
+
+        when(exerciseRepository.findById(newWorkoutExerciseDto.exerciseId()))
+                .thenReturn(Optional.of(newExercise));
+        when(workoutExerciseMapper.toEntity(eq(newWorkoutExerciseDto), any(Exercise.class), eq(workout)))
+                .thenReturn(newWorkoutExercise);
+
+        workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
+
+        assertEquals(1, workout.getExercises().size());
+        verify(exerciseRepository).findById(newWorkoutExerciseDto.exerciseId());
+        verify(workoutExerciseMapper).toEntity(eq(newWorkoutExerciseDto), any(Exercise.class), eq(workout));
     }
 
     @Test
