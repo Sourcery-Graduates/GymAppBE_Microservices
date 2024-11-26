@@ -10,7 +10,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -39,7 +38,6 @@ class RoutineLikeRepositoryIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user")
     void testInsertIfNotExists() {
         Optional<UUID> firstInsert = routineLikeRepository.insertIfNotExists(routineId, userId);
 
