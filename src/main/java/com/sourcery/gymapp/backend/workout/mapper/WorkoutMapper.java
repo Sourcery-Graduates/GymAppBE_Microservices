@@ -1,7 +1,6 @@
 package com.sourcery.gymapp.backend.workout.mapper;
 
 import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutDto;
-import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutExerciseDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseWorkoutDto;
 import com.sourcery.gymapp.backend.workout.model.Exercise;
 import com.sourcery.gymapp.backend.workout.model.Routine;
@@ -10,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -71,7 +69,6 @@ public class WorkoutMapper {
             workout.setExercises(
                     dto.exercises()
                             .stream()
-                            .sorted(Comparator.comparingInt(CreateWorkoutExerciseDto::orderNumber))
                             .map(createWorkoutExerciseDto -> {
                                 var exercise = exerciseMap.get(createWorkoutExerciseDto.exerciseId());
 

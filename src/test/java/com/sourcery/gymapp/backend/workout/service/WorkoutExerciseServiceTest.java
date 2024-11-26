@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 public class WorkoutExerciseServiceTest {
 
     @Mock
-    private ExerciseRepository exerciseRepository;
+    private ExerciseService exerciseService;
 
     @Mock
     private WorkoutExerciseSetService workoutExerciseSetService;
@@ -79,8 +79,8 @@ public class WorkoutExerciseServiceTest {
                 List.of(updateWorkoutExerciseDto)
         );
 
-        when(exerciseRepository.findById(newExercise.getId()))
-                .thenReturn(Optional.of(newExercise));
+        when(exerciseService.findExerciseById(newExercise.getId()))
+                .thenReturn(newExercise);
 
         workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
 
@@ -92,7 +92,7 @@ public class WorkoutExerciseServiceTest {
                 () -> assertEquals(workout.getExercises().getFirst().getNotes(), updateWorkoutExerciseDto.notes())
         );
         verify(workoutExerciseSetService, times(1)).updateSets(updateWorkoutExerciseDto, existingWorkoutExercise);
-        verify(exerciseRepository).findById(newExercise.getId());
+        verify(exerciseService).findExerciseById(newExercise.getId());
 
     }
 
@@ -110,8 +110,8 @@ public class WorkoutExerciseServiceTest {
                 List.of(createWorkoutExerciseDto, newWorkoutExerciseDto)
         );
 
-        when(exerciseRepository.findById(newWorkoutExerciseDto.exerciseId()))
-                .thenReturn(Optional.of(newExercise));
+        when(exerciseService.findExerciseById(newWorkoutExerciseDto.exerciseId()))
+                .thenReturn(newExercise);
         when(workoutExerciseMapper.toEntity(eq(newWorkoutExerciseDto), any(Exercise.class), eq(workout)))
                 .thenReturn(newWorkoutExercise);
 
@@ -119,7 +119,7 @@ public class WorkoutExerciseServiceTest {
 
         assertEquals(2, workout.getExercises().size());
         verify(workoutExerciseSetService, times(1)).updateSets(createWorkoutExerciseDto, existingWorkoutExercise);
-        verify(exerciseRepository).findById(newWorkoutExerciseDto.exerciseId());
+        verify(exerciseService).findExerciseById(newWorkoutExerciseDto.exerciseId());
         verify(workoutExerciseMapper).toEntity(eq(newWorkoutExerciseDto), any(Exercise.class), eq(workout));
     }
 
@@ -135,7 +135,7 @@ public class WorkoutExerciseServiceTest {
 
         assertTrue(workout.getExercises().isEmpty());
         verify(workoutExerciseSetService, never()).updateSets(any(), any());
-        verify(exerciseRepository, never()).findById(any());
+        verify(exerciseService, never()).findExerciseById(any());
     }
 
     @Test
@@ -152,28 +152,15 @@ public class WorkoutExerciseServiceTest {
                 List.of(newWorkoutExerciseDto)
         );
 
-        when(exerciseRepository.findById(newWorkoutExerciseDto.exerciseId()))
-                .thenReturn(Optional.of(newExercise));
+        when(exerciseService.findExerciseById(newWorkoutExerciseDto.exerciseId()))
+                .thenReturn(newExercise);
         when(workoutExerciseMapper.toEntity(eq(newWorkoutExerciseDto), any(Exercise.class), eq(workout)))
                 .thenReturn(newWorkoutExercise);
 
         workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
 
         assertEquals(1, workout.getExercises().size());
-        verify(exerciseRepository).findById(newWorkoutExerciseDto.exerciseId());
+        verify(exerciseService).findExerciseById(newWorkoutExerciseDto.exerciseId());
         verify(workoutExerciseMapper).toEntity(eq(newWorkoutExerciseDto), any(Exercise.class), eq(workout));
-    }
-
-    @Test
-    void shouldThrowExceptionWhenExerciseNotFound() {
-        workout.removeExercise(existingWorkoutExercise);
-        when(exerciseRepository.findById(createWorkoutExerciseDto.exerciseId()))
-                .thenReturn(Optional.empty());
-
-        assertThrows(ExerciseNotFoundException.class, () ->
-                workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout)
-        );
-
-        verify(exerciseRepository).findById(createWorkoutExerciseDto.exerciseId());
     }
 }

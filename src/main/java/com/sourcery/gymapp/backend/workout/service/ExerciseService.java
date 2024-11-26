@@ -57,4 +57,9 @@ public class ExerciseService {
                 exercises
         );
     }
+
+    public Exercise findExerciseById(UUID id) {
+        return exerciseRepository.findById(id)
+                .orElseThrow(() -> new ExerciseNotFoundException(id));
+    }
 }

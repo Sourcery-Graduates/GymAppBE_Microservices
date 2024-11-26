@@ -7,6 +7,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -42,6 +43,7 @@ public class WorkoutExercise extends BaseEntity {
     private Workout workout;
 
     @OneToMany(mappedBy = "workoutExercise", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OrderBy("setNumber ASC")
     private List<WorkoutExerciseSet> sets = new ArrayList<>();
 
     public void setSets(List<WorkoutExerciseSet> sets) {

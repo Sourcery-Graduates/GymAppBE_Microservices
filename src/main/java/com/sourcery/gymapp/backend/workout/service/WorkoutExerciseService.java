@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class WorkoutExerciseService {
-    private final ExerciseRepository exerciseRepository;
+    private final ExerciseService exerciseService;
     private final WorkoutExerciseSetService workoutExerciseSetService;
     private final WorkoutExerciseMapper workoutExerciseMapper;
 
@@ -67,7 +67,7 @@ public class WorkoutExerciseService {
     ) {
         for (CreateWorkoutExerciseDto workoutExerciseDto : updateWorkoutDto.exercises()) {
             if (updateWorkoutExerciseDtoIds.contains(workoutExerciseDto.id())) {
-                var exercise = findExerciseById(workoutExerciseDto.exerciseId());
+                var exercise = exerciseService.findExerciseById(workoutExerciseDto.exerciseId());
                 var newWorkoutExercise = workoutExerciseMapper.toEntity(workoutExerciseDto, exercise, workout);
                 workout.addExercise(newWorkoutExercise);
             }
@@ -93,7 +93,7 @@ public class WorkoutExerciseService {
         if (updateWorkoutExerciseDto.exerciseId().equals(workoutExercise.getExercise().getId())) {
             exercise = workoutExercise.getExercise();
         } else {
-            exercise = findExerciseById(updateWorkoutExerciseDto.exerciseId());
+            exercise = exerciseService.findExerciseById(updateWorkoutExerciseDto.exerciseId());
         }
 
         return exercise;
@@ -107,10 +107,5 @@ public class WorkoutExerciseService {
                 .filter(exerciseDto -> exerciseDto.id() != null && exerciseDto.id().equals(workoutExercise.getId()))
                 .findFirst()
                 .orElseThrow();
-    }
-
-    private Exercise findExerciseById(UUID id) {
-        return exerciseRepository.findById(id)
-                .orElseThrow(() -> new ExerciseNotFoundException(id));
     }
 }

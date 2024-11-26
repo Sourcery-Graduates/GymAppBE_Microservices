@@ -11,6 +11,7 @@ import com.sourcery.gymapp.backend.workout.model.Exercise;
 import com.sourcery.gymapp.backend.workout.model.Routine;
 import com.sourcery.gymapp.backend.workout.model.Workout;
 import com.sourcery.gymapp.backend.workout.repository.WorkoutRepository;
+import com.sourcery.gymapp.backend.workout.util.AuthorizationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,7 +67,7 @@ public class WorkoutService {
         var workout = findWorkoutById(workoutId);
         var currentUserId = currentUserService.getCurrentUserId();
 
-        checkIsUserAuthorized(currentUserId, workout.getUserId());
+        AuthorizationUtil.checkIsUserAuthorized(currentUserId, workout.getUserId());
 
         updateWorkoutFields(updateWorkoutDto, workout);
         workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
@@ -100,7 +101,7 @@ public class WorkoutService {
         var workout = findWorkoutById(workoutId);
         var currentUserId = currentUserService.getCurrentUserId();
 
-        checkIsUserAuthorized(currentUserId, workout.getUserId());
+        AuthorizationUtil.checkIsUserAuthorized(currentUserId, workout.getUserId());
 
         workoutRepository.delete(workout);
     }
@@ -109,13 +110,6 @@ public class WorkoutService {
 
         return workoutRepository.findById(id)
                 .orElseThrow(() -> new WorkoutNotFoundException(id));
-    }
-
-    private void checkIsUserAuthorized(UUID currentUserId, UUID workoutUserId) {
-
-        if (!workoutUserId.equals(currentUserId)) {
-            throw new UserNotAuthorizedException();
-        }
     }
 
     private void updateWorkoutFields(
