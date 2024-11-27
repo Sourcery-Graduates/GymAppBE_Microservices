@@ -18,6 +18,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -85,10 +87,34 @@ public class WorkoutExerciseSetServiceTest {
     }
 
     @Test
-    void shouldAddNewWorkoutExerciseSetSuccessfully() {
+    void shouldAddNewWorkoutExerciseSetSuccessfully_WhenRandomIdProvided() {
         WorkoutExerciseSet newWorkoutExerciseSet = WorkoutExerciseSetFactory.createWorkoutExerciseSet();
         CreateWorkoutExerciseSetDto newWorkoutExerciseSetDto = new CreateWorkoutExerciseSetDto(
                 newWorkoutExerciseSet.getId(),
+                2,
+                12,
+                new BigDecimal(80),
+                120,
+                "New comment"
+        );
+        CreateWorkoutExerciseDto updateWorkoutExerciseDto = WorkoutExerciseFactory.createCreateWorkoutExerciseDto(
+                createWorkoutExerciseDto.exerciseId(),
+                List.of(createWorkoutExerciseSetDto, newWorkoutExerciseSetDto)
+        );
+        when(workoutExerciseSetMapper.toEntity(newWorkoutExerciseSetDto, workoutExercise)).thenReturn(newWorkoutExerciseSet);
+
+        workoutExerciseSetService.updateSets(updateWorkoutExerciseDto, workoutExercise);
+
+        assertEquals(2, workoutExercise.getSets().size());
+        verify(workoutExerciseSetMapper).toEntity(newWorkoutExerciseSetDto, workoutExercise);
+    }
+
+    @Test
+    void shouldAddNewWorkoutExerciseSetSuccessfully_WhenNullIdProvided() {
+        WorkoutExerciseSet newWorkoutExerciseSet = WorkoutExerciseSetFactory.createWorkoutExerciseSet();
+        newWorkoutExerciseSet.setId(null);
+        CreateWorkoutExerciseSetDto newWorkoutExerciseSetDto = new CreateWorkoutExerciseSetDto(
+                null,
                 2,
                 12,
                 new BigDecimal(80),
@@ -143,6 +169,54 @@ public class WorkoutExerciseSetServiceTest {
                 () -> assertEquals(1, workoutExercise.getSets().size()),
                 () -> assertEquals(workoutExercise.getSets().getFirst().getId(), newWorkoutExerciseSet.getId()),
                 () -> assertEquals(workoutExercise.getSets().getFirst().getWorkoutExercise(), workoutExercise)
+        );
+        verify(workoutExerciseSetMapper).toEntity(newWorkoutExerciseSetDto, workoutExercise);
+    }
+
+    @Test
+    void shouldHandleAddingAndUpdatingAtTheSameTimeSuccessfully() {
+        WorkoutExerciseSet updateWorkoutExerciseSet = WorkoutExerciseSetFactory.createWorkoutExerciseSet();
+        updateWorkoutExerciseSet.setId(existingWorkoutExerciseSet.getId());
+        CreateWorkoutExerciseSetDto updateWorkoutExerciseSetDto = new CreateWorkoutExerciseSetDto(
+                existingWorkoutExerciseSet.getId(),
+                2,
+                12,
+                new BigDecimal(80),
+                120,
+                "Updated comment"
+        );
+        WorkoutExerciseSet newWorkoutExerciseSet = WorkoutExerciseSetFactory.createWorkoutExerciseSet();
+        CreateWorkoutExerciseSetDto newWorkoutExerciseSetDto = new CreateWorkoutExerciseSetDto(
+                newWorkoutExerciseSet.getId(),
+                3,
+                10,
+                new BigDecimal(90),
+                100,
+                "New comment"
+        );
+        CreateWorkoutExerciseDto updateWorkoutExerciseDto = WorkoutExerciseFactory.createCreateWorkoutExerciseDto(
+                createWorkoutExerciseDto.exerciseId(),
+                List.of(updateWorkoutExerciseSetDto, newWorkoutExerciseSetDto)
+        );
+        when(workoutExerciseSetMapper.toEntity(newWorkoutExerciseSetDto, workoutExercise)).thenReturn(newWorkoutExerciseSet);
+
+        workoutExerciseSetService.updateSets(updateWorkoutExerciseDto, workoutExercise);
+        WorkoutExerciseSet updatedWorkoutExerciseSet = workoutExercise.getSets().stream()
+                .filter(workoutExerciseSet -> workoutExerciseSet.getId().equals(updateWorkoutExerciseSet.getId()))
+                .findFirst()
+                .orElseThrow();
+
+        assertAll(
+                () -> assertEquals(2, workoutExercise.getSets().size()),
+                () -> assertEquals(workoutExercise.getSets().stream().map(WorkoutExerciseSet::getId).collect(Collectors.toSet()),
+                        Set.of(existingWorkoutExerciseSet.getId(), newWorkoutExerciseSet.getId())),
+                () -> assertEquals(updatedWorkoutExerciseSet.getId(), existingWorkoutExerciseSet.getId()),
+                () -> assertEquals(updatedWorkoutExerciseSet.getSetNumber(), updateWorkoutExerciseSetDto.setNumber()),
+                () -> assertEquals(updatedWorkoutExerciseSet.getReps(), updateWorkoutExerciseSetDto.reps()),
+                () -> assertEquals(updatedWorkoutExerciseSet.getWeight(), updateWorkoutExerciseSetDto.weight()),
+                () -> assertEquals(updatedWorkoutExerciseSet.getRestTime(), updateWorkoutExerciseSetDto.restTime()),
+                () -> assertEquals(updatedWorkoutExerciseSet.getComment(), updateWorkoutExerciseSetDto.comment()),
+                () -> assertEquals(updatedWorkoutExerciseSet.getWorkoutExercise(), workoutExercise)
         );
         verify(workoutExerciseSetMapper).toEntity(newWorkoutExerciseSetDto, workoutExercise);
     }

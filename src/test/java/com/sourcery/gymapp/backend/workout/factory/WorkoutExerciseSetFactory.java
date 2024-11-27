@@ -11,6 +11,7 @@ public class WorkoutExerciseSetFactory {
 
     public static WorkoutExerciseSet createWorkoutExerciseSet() {
         WorkoutExerciseSet set = new WorkoutExerciseSet();
+        set.setId(UUID.randomUUID());
         set.setSetNumber(1);
         set.setReps(5);
         set.setWeight(new BigDecimal(100));
