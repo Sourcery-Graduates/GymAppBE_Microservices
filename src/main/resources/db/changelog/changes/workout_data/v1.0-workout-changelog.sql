@@ -1,3 +1,6 @@
+--liquibase formatted sql
+
+--changeset ValentynBondarenko:create_workout_data_exercise
 CREATE TABLE workout_data.exercise
 (
     id          UUID                     NOT NULL,
@@ -18,6 +21,7 @@ CREATE TABLE workout_data.exercise
     CONSTRAINT pk_exercise PRIMARY KEY (id)
 );
 
+--changeset ValentynBondarenko:create_workout_data_routine
 CREATE TABLE workout_data.routine
 (
     id          UUID                     NOT NULL,
@@ -31,6 +35,7 @@ CREATE TABLE workout_data.routine
     CONSTRAINT pk_routine PRIMARY KEY (id)
 );
 
+--changeset ValentynBondarenko:create_workout_data_routine_exercise
 CREATE TABLE workout_data.routine_exercise
 (
     id                UUID                     NOT NULL,
@@ -49,6 +54,7 @@ CREATE TABLE workout_data.routine_exercise
     CONSTRAINT pk_routine_exercise PRIMARY KEY (id)
 );
 
+--changeset ValentynBondarenko:create_workout_data_workout
 CREATE TABLE workout_data.workout
 (
     id                  UUID                     NOT NULL,
@@ -65,6 +71,7 @@ CREATE TABLE workout_data.workout
     CONSTRAINT pk_workout PRIMARY KEY (id)
 );
 
+--changeset ValentynBondarenko:create_workout_data_workout_exercise
 CREATE TABLE workout_data.workout_exercise
 (
     id           UUID                     NOT NULL,
@@ -79,6 +86,7 @@ CREATE TABLE workout_data.workout_exercise
     CONSTRAINT pk_workout_exercise PRIMARY KEY (id)
 );
 
+--changeset ValentynBondarenko:create_workout_data_workout_exercise_set
 CREATE TABLE workout_data.workout_exercise_set
 (
     id                  UUID                     NOT NULL,
@@ -95,23 +103,30 @@ CREATE TABLE workout_data.workout_exercise_set
     CONSTRAINT pk_workout_exercise_set PRIMARY KEY (id)
 );
 
+--changeset ValentynBondarenko:alter-table_workout_data_routine_exercise
 ALTER TABLE workout_data.routine_exercise
     ADD CONSTRAINT FK_ROUTINE_EXERCISE_ON_EXERCISE FOREIGN KEY (exercise_id) REFERENCES workout_data.exercise (id);
 
+--changeset ValentynBondarenko:alter-table_workout_data_routine_exercise_2
 ALTER TABLE workout_data.routine_exercise
     ADD CONSTRAINT FK_ROUTINE_EXERCISE_ON_ROUTINE FOREIGN KEY (routine_id) REFERENCES workout_data.routine (id);
 
+--changeset ValentynBondarenko:alter-table_workout_data_workout_exercise
 ALTER TABLE workout_data.workout_exercise
     ADD CONSTRAINT FK_WORKOUT_EXERCISE_ON_EXERCISE FOREIGN KEY (exercise_id) REFERENCES workout_data.exercise (id);
 
+--changeset ValentynBondarenko:alter-table_workout_data_workout_exercise_2
 ALTER TABLE workout_data.workout_exercise
     ADD CONSTRAINT FK_WORKOUT_EXERCISE_ON_WORKOUT FOREIGN KEY (workout_id) REFERENCES workout_data.workout (id);
 
+--changeset ValentynBondarenko:alter-table_workout_data_workout_exercise_set
 ALTER TABLE workout_data.workout_exercise_set
     ADD CONSTRAINT FK_WORKOUT_EXERCISE_SET_ON_WORKOUT_EXERCISE FOREIGN KEY (workout_exercise_id) REFERENCES workout_data.workout_exercise (id);
 
+--changeset ValentynBondarenko:alter-table_workout_data_workout
 ALTER TABLE workout_data.workout
     ADD CONSTRAINT FK_WORKOUT_ON_BASED_ON_WORKOUT FOREIGN KEY (based_on_workout_id) REFERENCES workout_data.workout (id);
 
+--changeset ValentynBondarenko:alter-table_workout_data_workout_2
 ALTER TABLE workout_data.workout
     ADD CONSTRAINT FK_WORKOUT_ON_ROUTINE FOREIGN KEY (routine_id) REFERENCES workout_data.routine (id);
