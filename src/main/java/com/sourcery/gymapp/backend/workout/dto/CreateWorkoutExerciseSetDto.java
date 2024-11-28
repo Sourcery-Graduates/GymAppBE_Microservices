@@ -6,8 +6,11 @@ import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public record CreateWorkoutExerciseSetDto(
+
+        UUID id,
 
         @Positive
         @NotNull

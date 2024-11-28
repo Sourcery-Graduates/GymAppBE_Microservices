@@ -7,6 +7,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
@@ -44,7 +45,8 @@ public class Workout extends BaseEntity {
     @JoinColumn(name = "routine_id", referencedColumnName = "id")
     private Routine routine;
 
-    @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OrderBy("orderNumber ASC")
     private List<WorkoutExercise> exercises = new ArrayList<>();
 
     public void setExercises(List<WorkoutExercise> exercises) {
@@ -57,5 +59,15 @@ public class Workout extends BaseEntity {
             exercise.setWorkout(this);
         }
         this.exercises.addAll(exercises);
+    }
+
+    public void addExercise(WorkoutExercise exercise) {
+        exercise.setWorkout(this);
+        this.exercises.add(exercise);
+    }
+
+    public void removeExercise(WorkoutExercise exercise) {
+        this.exercises.remove(exercise);
+        exercise.setWorkout(null);
     }
 }
