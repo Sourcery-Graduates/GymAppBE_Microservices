@@ -1,5 +1,6 @@
 package com.sourcery.gymapp.backend.workout.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -20,6 +21,7 @@ public record CreateWorkoutDto(
         @Size(max = 255)
         String comment,
 
+        @Valid
         List<CreateWorkoutExerciseDto> exercises,
 
         UUID routineId,

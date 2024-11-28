@@ -35,7 +35,7 @@ public class WorkoutController {
         return workoutService.updateWorkout(updateWorkoutDto, workoutId);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseWorkoutDto getWorkoutById(@PathVariable("id") UUID workoutId) {
 
         return workoutService.getWorkoutById(workoutId);

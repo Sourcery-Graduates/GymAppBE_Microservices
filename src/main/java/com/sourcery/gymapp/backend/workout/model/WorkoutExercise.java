@@ -7,6 +7,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -22,7 +23,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = "workout")
 @Entity
 @Table(name = "workout_exercise", schema = "workout_data")
 public class WorkoutExercise extends BaseEntity {
@@ -42,6 +43,7 @@ public class WorkoutExercise extends BaseEntity {
     private Workout workout;
 
     @OneToMany(mappedBy = "workoutExercise", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OrderBy("setNumber ASC")
     private List<WorkoutExerciseSet> sets = new ArrayList<>();
 
     public void setSets(List<WorkoutExerciseSet> sets) {
@@ -54,5 +56,15 @@ public class WorkoutExercise extends BaseEntity {
             set.setWorkoutExercise(this);
         }
         this.sets.addAll(sets);
+    }
+
+    public void addSet(WorkoutExerciseSet set) {
+        this.sets.add(set);
+        set.setWorkoutExercise(this);
+    }
+
+    public void removeSet(WorkoutExerciseSet set) {
+        this.sets.remove(set);
+        set.setWorkoutExercise(null);
     }
 }
