@@ -13,8 +13,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,7 +31,7 @@ public class Workout extends BaseEntity {
     @Size(max = 255)
     private String name;
 
-    private Date date;
+    private ZonedDateTime date;
 
     @Size(max = 255)
     private String comment;
@@ -44,7 +44,7 @@ public class Workout extends BaseEntity {
     @JoinColumn(name = "routine_id", referencedColumnName = "id")
     private Routine routine;
 
-    @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<WorkoutExercise> exercises = new ArrayList<>();
 
     public void setExercises(List<WorkoutExercise> exercises) {
