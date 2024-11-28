@@ -7,8 +7,9 @@ import com.sourcery.gymapp.backend.workout.model.Routine;
 import com.sourcery.gymapp.backend.workout.model.Workout;
 import com.sourcery.gymapp.backend.workout.model.WorkoutExercise;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +18,7 @@ public class WorkoutFactory {
     public static Workout createWorkout(
             UUID userId,
             String name,
-            Date date,
+            ZonedDateTime date,
             String comment,
             Workout basedOnWorkout,
             Routine routine,
@@ -41,7 +42,7 @@ public class WorkoutFactory {
     public static Workout createWorkout(
             UUID userId,
             String name,
-            Date date,
+            ZonedDateTime date,
             String comment,
             Workout basedOnWorkout,
             Routine routine,
@@ -61,7 +62,7 @@ public class WorkoutFactory {
 
     public static Workout createWorkout(
             String name,
-            Date date,
+            ZonedDateTime date,
             String comment
     ) {
         return createWorkout(
@@ -83,7 +84,8 @@ public class WorkoutFactory {
         return createWorkout(
                 UUID.randomUUID(),
                 "Test Name",
-                new Date(124, Calendar.JANUARY, 1),
+                LocalDateTime.of(2024, 1, 1, 0, 0)
+                        .atZone(ZoneOffset.UTC),
                 "Test Comment",
                 basedOnWorkout,
                 routine,
@@ -94,14 +96,15 @@ public class WorkoutFactory {
     public static Workout createWorkout() {
         return createWorkout(
                 "Test Name",
-                new Date(124, Calendar.JANUARY, 1),
+                LocalDateTime.of(2024, 1, 1, 0, 0)
+                        .atZone(ZoneOffset.UTC),
                 "Test Comment"
         );
     }
 
     public static CreateWorkoutDto createCreateWorkoutDto(
             String name,
-            Date date,
+            ZonedDateTime date,
             String comment,
             UUID routineId,
             UUID basedOnWorkoutId
@@ -118,7 +121,7 @@ public class WorkoutFactory {
 
     public static CreateWorkoutDto createCreateWorkoutDto(
             String name,
-            Date date,
+            ZonedDateTime date,
             String comment,
             List<CreateWorkoutExerciseDto> exercises
     ) {
@@ -139,7 +142,8 @@ public class WorkoutFactory {
     ) {
         return new CreateWorkoutDto(
                 "Test Name",
-                new Date(124, Calendar.JANUARY, 1),
+                LocalDateTime.of(2024, 1, 1, 0, 0)
+                        .atZone(ZoneOffset.UTC),
                 "Test Comment",
                 exercises,
                 routineId,
@@ -150,7 +154,8 @@ public class WorkoutFactory {
     public static CreateWorkoutDto createCreateWorkoutDto() {
         return createCreateWorkoutDto(
                 "Test Name",
-                new Date(124, Calendar.JANUARY, 1),
+                LocalDateTime.of(2024, 1, 1, 0, 0)
+                        .atZone(ZoneOffset.UTC),
                 "Test Comment",
                 null
         );
@@ -161,7 +166,8 @@ public class WorkoutFactory {
                 UUID.randomUUID(),
                 UUID.randomUUID(),
                 "Test Name",
-                new Date(124, Calendar.JANUARY, 1),
+                LocalDateTime.of(2024, 1, 1, 0, 0)
+                        .atZone(ZoneOffset.UTC),
                 "Test Comment",
                 UUID.randomUUID(),
                 UUID.randomUUID(),
