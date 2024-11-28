@@ -1,5 +1,6 @@
 --liquibase formatted sql
 
+--changeset PiotrBaranowski:table_userprofiles.profiles_Create_if_not_exists
 CREATE TABLE IF NOT EXISTS user_profiles.profiles(
     id UUID PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),

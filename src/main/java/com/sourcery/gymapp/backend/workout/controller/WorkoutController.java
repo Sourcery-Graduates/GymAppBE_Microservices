@@ -40,7 +40,7 @@ public class WorkoutController {
         return workoutService.updateWorkout(updateWorkoutDto, workoutId);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseWorkoutDto getWorkoutById(@PathVariable("id") UUID workoutId) {
 
         return workoutService.getWorkoutById(workoutId);
@@ -52,7 +52,7 @@ public class WorkoutController {
         return workoutService.getWorkoutsByUserId();
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteWorkout(@PathVariable("id") UUID workoutId) {
 

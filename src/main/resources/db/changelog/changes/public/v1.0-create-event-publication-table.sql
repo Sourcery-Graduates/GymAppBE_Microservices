@@ -1,3 +1,6 @@
+--liquibase formatted sql
+
+--changeset ValentynBondarenko:create-table-event-publication-if_not-exists
 CREATE TABLE IF NOT EXISTS public.event_publication
 (
     id UUID NOT NULL,  -- UUID for event publication ID
@@ -9,6 +12,6 @@ CREATE TABLE IF NOT EXISTS public.event_publication
     CONSTRAINT event_publication_pkey PRIMARY KEY (id)  -- Primary key constraint on ID
     );
 
--- Ensure the table is owned by the appropriate user
+--changeset ValentynBondarenko:alter-table-event-publication-change-owner-to-gym-user
 ALTER TABLE IF EXISTS public.event_publication
     OWNER TO gym_app_user;

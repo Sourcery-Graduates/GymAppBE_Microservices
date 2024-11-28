@@ -1,3 +1,5 @@
+--liquibase formatted sql
+
 --changeset TymofiiSkrypko:drop-old-constraint-fk_routine_exercise_on_routine
 ALTER TABLE workout_data.routine_exercise
     DROP CONSTRAINT FK_ROUTINE_EXERCISE_ON_ROUTINE;

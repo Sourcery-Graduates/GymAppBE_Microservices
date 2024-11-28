@@ -1,12 +1,17 @@
+--liquibase formatted sql
+
+--changeset ValentynBondarenko:create-temp-exercise-data-table
 CREATE TABLE temp_exercise_data (
     exercise_data TEXT
 );
 
+--changeset ValentynBondarenko:copy-exercise-data
 COPY temp_exercise_data (exercise_data)
     FROM '/var/lib/postgresql/import-data/formatted_exercises.json'
     WITH (FORMAT text);
 
 
+--changeset ValentynBondarenko:insert-exercise-data
 INSERT INTO workout_data.exercise (
     id, created_at, modified_at, created_by, modified_by, name, force, level, mechanic, equipment, description, category, primary_muscles, secondary_muscles, images
 )
@@ -41,4 +46,5 @@ SELECT
 FROM temp_exercise_data;
 
 
+--changeset ValentynBondarenko:drop-temp-exercise-data-table
 DROP TABLE temp_exercise_data;
