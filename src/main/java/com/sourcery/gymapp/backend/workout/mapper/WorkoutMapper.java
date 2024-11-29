@@ -1,7 +1,6 @@
 package com.sourcery.gymapp.backend.workout.mapper;
 
 import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutDto;
-import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutExerciseDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseWorkoutDto;
 import com.sourcery.gymapp.backend.workout.model.Exercise;
 import com.sourcery.gymapp.backend.workout.model.Routine;
@@ -10,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -24,12 +22,25 @@ public class WorkoutMapper {
                 .stream()
                 .map(exerciseMapper::toDto)
                 .toList();
+        UUID basedOnWorkoutId = null;
+        UUID routineId = null;
+
+        if (workout.getBasedOnWorkout() != null) {
+            basedOnWorkoutId = workout.getBasedOnWorkout().getId();
+        }
+
+        if (workout.getRoutine() != null) {
+            routineId = workout.getRoutine().getId();
+        }
 
         return new ResponseWorkoutDto(
                 workout.getId(),
+                workout.getUserId(),
                 workout.getName(),
                 workout.getDate(),
                 workout.getComment(),
+                basedOnWorkoutId,
+                routineId,
                 responseWorkoutExerciseDtos
         );
     }
@@ -53,23 +64,11 @@ public class WorkoutMapper {
         return workout;
     }
 
-    public void updateEntity(
-            CreateWorkoutDto dto,
-            Workout workout,
-            Map<UUID, Exercise> exerciseMap) {
-
-        workout.setName(dto.name());
-        workout.setDate(dto.date());
-        workout.setComment(dto.comment());
-        mapToWorkoutExerciseList(dto, workout, exerciseMap);
-    }
-
     private void mapToWorkoutExerciseList(CreateWorkoutDto dto, Workout workout, Map<UUID, Exercise> exerciseMap) {
         if (dto.exercises() != null) {
             workout.setExercises(
                     dto.exercises()
                             .stream()
-                            .sorted(Comparator.comparingInt(CreateWorkoutExerciseDto::orderNumber))
                             .map(createWorkoutExerciseDto -> {
                                 var exercise = exerciseMap.get(createWorkoutExerciseDto.exerciseId());
 

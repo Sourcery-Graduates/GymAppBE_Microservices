@@ -9,5 +9,6 @@ import java.util.UUID;
 
 @Repository
 public interface WorkoutRepository extends JpaRepository<Workout, UUID> {
+
     List<Workout> findByUserId(UUID userId);
 }

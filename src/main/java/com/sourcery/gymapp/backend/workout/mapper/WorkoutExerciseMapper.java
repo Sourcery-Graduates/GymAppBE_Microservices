@@ -1,21 +1,21 @@
 package com.sourcery.gymapp.backend.workout.mapper;
 
 import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutExerciseDto;
-import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutExerciseSetDto;
 import com.sourcery.gymapp.backend.workout.dto.ExerciseSimpleDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseWorkoutExerciseDto;
-import com.sourcery.gymapp.backend.workout.dto.ResponseWorkoutExerciseSetDto;
 import com.sourcery.gymapp.backend.workout.model.Exercise;
 import com.sourcery.gymapp.backend.workout.model.Workout;
 import com.sourcery.gymapp.backend.workout.model.WorkoutExercise;
-import com.sourcery.gymapp.backend.workout.model.WorkoutExerciseSet;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 
+@RequiredArgsConstructor
 @Component
 public class WorkoutExerciseMapper {
+    private final WorkoutExerciseSetMapper workoutExerciseSetMapper;
+
     public ResponseWorkoutExerciseDto toDto(WorkoutExercise workoutExercise) {
         var exerciseSimpleDto = new ExerciseSimpleDto(
                 workoutExercise.getExercise().getId(),
@@ -23,7 +23,7 @@ public class WorkoutExerciseMapper {
         );
         var responseWorkoutExerciseSetDtos = workoutExercise.getSets()
                 .stream()
-                .map(this::toResponseWorkoutSetDto)
+                .map(workoutExerciseSetMapper::toDto)
                 .toList();
 
         return new ResponseWorkoutExerciseDto(
@@ -41,6 +41,7 @@ public class WorkoutExerciseMapper {
             Workout workout) {
 
         var workoutExercise = new WorkoutExercise();
+        workoutExercise.setId(createWorkoutExerciseDto.id());
         workoutExercise.setOrderNumber(createWorkoutExerciseDto.orderNumber());
         workoutExercise.setNotes(createWorkoutExerciseDto.notes());
         workoutExercise.setExercise(exercise);
@@ -49,8 +50,7 @@ public class WorkoutExerciseMapper {
             workoutExercise.setSets(
                     createWorkoutExerciseDto.sets()
                             .stream()
-                            .sorted(Comparator.comparingInt(CreateWorkoutExerciseSetDto::setNumber))
-                            .map(workoutExerciseSetDto -> toWorkoutSetEntity(workoutExerciseSetDto, workoutExercise))
+                            .map(workoutExerciseSetDto -> workoutExerciseSetMapper.toEntity(workoutExerciseSetDto, workoutExercise))
                             .toList()
             );
         } else {
@@ -58,31 +58,5 @@ public class WorkoutExerciseMapper {
         }
 
         return workoutExercise;
-    }
-
-    private ResponseWorkoutExerciseSetDto toResponseWorkoutSetDto(WorkoutExerciseSet workoutExerciseSet) {
-        return new ResponseWorkoutExerciseSetDto(
-                workoutExerciseSet.getId(),
-                workoutExerciseSet.getSetNumber(),
-                workoutExerciseSet.getReps(),
-                workoutExerciseSet.getWeight(),
-                workoutExerciseSet.getRestTime(),
-                workoutExerciseSet.getComment()
-        );
-    }
-
-    private WorkoutExerciseSet toWorkoutSetEntity(
-            CreateWorkoutExerciseSetDto createWorkoutExerciseSetDto,
-            WorkoutExercise workoutExercise) {
-
-        var workoutExerciseSet = new WorkoutExerciseSet();
-        workoutExerciseSet.setWorkoutExercise(workoutExercise);
-        workoutExerciseSet.setSetNumber(createWorkoutExerciseSetDto.setNumber());
-        workoutExerciseSet.setReps(createWorkoutExerciseSetDto.reps());
-        workoutExerciseSet.setWeight(createWorkoutExerciseSetDto.weight());
-        workoutExerciseSet.setRestTime(createWorkoutExerciseSetDto.restTime());
-        workoutExerciseSet.setComment(createWorkoutExerciseSetDto.comment());
-
-        return workoutExerciseSet;
     }
 }
