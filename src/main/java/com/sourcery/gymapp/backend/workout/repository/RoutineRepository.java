@@ -23,12 +23,14 @@ public interface RoutineRepository extends JpaRepository<Routine, UUID> {
     @Query("SELECT r AS routine, " +
             "CASE WHEN l.userId = :userId THEN true ELSE false END AS likedByCurrentUser " +
             "FROM Routine r LEFT JOIN RoutineLike l ON r.id = l.routineId AND l.userId = :userId " +
-            "WHERE r.userId = :userId")
+            "WHERE r.userId = :userId " +
+            "ORDER BY LOWER(r.name)")
     List<RoutineWithLikeStatusProjection> findRoutinesWithLikeStatusByUserId(UUID userId);
 
     @Query("SELECT r AS routine, " +
             "CASE WHEN l.userId = :userId THEN true ELSE false END AS likedByCurrentUser " +
-            "FROM Routine r LEFT JOIN RoutineLike l ON r.id = l.routineId AND l.userId = :userId")
+            "FROM Routine r LEFT JOIN RoutineLike l ON r.id = l.routineId AND l.userId = :userId " +
+            "ORDER BY LOWER(r.name)")
     Page<RoutineWithLikeStatusProjection> findAllWithLikeStatus(UUID userId, Pageable pageable);
 
     @Query("SELECT r AS routine, " +
