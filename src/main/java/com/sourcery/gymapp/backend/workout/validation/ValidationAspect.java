@@ -13,7 +13,7 @@ import java.util.List;
 
 @Aspect
 @Component
-public class ValidationAspectConfig {
+public class ValidationAspect {
 
     @Around("@annotation(ValidateOrderNumbers)")
     public Object validateOrder(ProceedingJoinPoint joinPoint) throws Throwable {
