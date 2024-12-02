@@ -40,6 +40,19 @@ public class WorkoutExerciseFactory {
         );
     }
 
+    public static CreateWorkoutExerciseDto createCreateWorkoutExerciseDto(
+            Integer orderNumber,
+            List<CreateWorkoutExerciseSetDto> sets
+    ) {
+        return new CreateWorkoutExerciseDto(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                orderNumber,
+                "Test Notes",
+                sets
+        );
+    }
+
     public static CreateWorkoutExerciseDto createCreateWorkoutExerciseDto(UUID exerciseId) {
         return createCreateWorkoutExerciseDto(
                 exerciseId,
