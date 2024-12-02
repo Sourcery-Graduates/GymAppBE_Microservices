@@ -69,7 +69,7 @@ public class ValidationAspectTest {
     }
 
     @Test
-    void shouldNotValidateWhenNoExercisesArePresent() throws Throwable {
+    void shouldProceedSuccessfullyWhenNoExercisesArePresent() throws Throwable {
         CreateWorkoutDto workoutDto = WorkoutFactory.createCreateWorkoutDto(null, null, null);
 
         when(joinPoint.getArgs()).thenReturn(new Object[]{workoutDto});
@@ -81,7 +81,7 @@ public class ValidationAspectTest {
     }
 
     @Test
-    void shouldNotValidateWhenExercisesHaveEmptySets() throws Throwable {
+    void shouldProceedSuccessfullyWhenExercisesHaveEmptySets() throws Throwable {
         CreateWorkoutExerciseDto exercise = WorkoutExerciseFactory.createCreateWorkoutExerciseDto(1, null);
         CreateWorkoutDto workoutDto = WorkoutFactory.createCreateWorkoutDto(null, null, List.of(exercise));
 

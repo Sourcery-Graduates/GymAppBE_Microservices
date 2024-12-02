@@ -1,6 +1,6 @@
 package com.sourcery.gymapp.backend.workout.service;
 
-import com.sourcery.gymapp.backend.workout.validation.ValidateOrderNumbers;
+import com.sourcery.gymapp.backend.workout.validation.ValidateOrderNumbersInCreateWorkoutDto;
 import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutDto;
 import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutExerciseDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseWorkoutDto;
@@ -32,7 +32,7 @@ public class WorkoutService {
     private final WorkoutExerciseService workoutExerciseService;
 
     @Transactional
-    @ValidateOrderNumbers
+    @ValidateOrderNumbersInCreateWorkoutDto
     public ResponseWorkoutDto createWorkout(CreateWorkoutDto createWorkoutDto) {
         var currentUserId = currentUserService.getCurrentUserId();
         if (currentUserId == null) {
@@ -64,7 +64,7 @@ public class WorkoutService {
     }
 
     @Transactional
-    @ValidateOrderNumbers
+    @ValidateOrderNumbersInCreateWorkoutDto
     public ResponseWorkoutDto updateWorkout(CreateWorkoutDto updateWorkoutDto, UUID workoutId) {
         var workout = findWorkoutById(workoutId);
         var currentUserId = currentUserService.getCurrentUserId();
