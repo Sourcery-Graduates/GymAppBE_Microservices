@@ -42,4 +42,15 @@ public class WorkoutExerciseSetFactory {
                 "Test Comment"
         );
     }
+
+    public static CreateWorkoutExerciseSetDto createCreateWorkoutExerciseSetDto(Integer setNumber) {
+        return new CreateWorkoutExerciseSetDto(
+                UUID.randomUUID(),
+                setNumber,
+                5,
+                new BigDecimal(100),
+                60,
+                "Test Comment"
+        );
+    }
 }

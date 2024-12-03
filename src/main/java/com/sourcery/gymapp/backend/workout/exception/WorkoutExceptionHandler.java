@@ -117,4 +117,12 @@ public class WorkoutExceptionHandler {
         ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getCode());
         return new ResponseEntity<>(response, ex.getStatus());
     }
+
+    @ExceptionHandler(WrongOrderException.class)
+    public ResponseEntity<ErrorResponse> handleWrongOrderException(WrongOrderException ex) {
+        log.error("WrongOrderException caught: {}", ex.getMessage(), ex);
+
+        ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getCode());
+        return new ResponseEntity<>(response, ex.getStatus());
+    }
 }
