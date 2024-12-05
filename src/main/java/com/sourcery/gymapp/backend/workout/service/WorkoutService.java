@@ -105,6 +105,11 @@ public class WorkoutService {
 
     public ResponseWorkoutGridGroupedByDate getWorkoutGridGroupByDate(ZonedDateTime startDate, ZonedDateTime endDate) {
         UUID currentUserId = currentUserService.getCurrentUserId();
+
+        if (currentUserId == null) {
+            throw new UserNotFoundException();
+        }
+
         HashMap<String, List<ResponseWorkoutDto>> workoutMap = new HashMap<>();
         DateTimeFormatter dateWithoutTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
