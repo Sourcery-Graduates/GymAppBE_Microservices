@@ -1,7 +1,7 @@
 FROM gradle:8.5-jdk21 AS build
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
-RUN gradle build -x test --no-daemon
+RUN gradle build -x test -x integrationTest --no-daemon
 
 FROM openjdk:21-slim AS production
 EXPOSE 8080

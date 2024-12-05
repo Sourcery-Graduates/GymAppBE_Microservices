@@ -10,6 +10,7 @@ databaseChangeLog:
   - include:
       file: ./v3.0-import-exercise-data.sql
       relativeToChangelogFile: true
+      labels: exclude-test
 
   - include:
       file: ./v1.1-workout-changelog.sql
