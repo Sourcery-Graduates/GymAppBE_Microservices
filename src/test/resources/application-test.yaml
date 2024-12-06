@@ -18,3 +18,8 @@ spring:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.yaml
     label-filter: "!exclude-test"
+
+logging:
+  level:
+    org.springframework: DEBUG
+    org.springframework.context: TRACE
