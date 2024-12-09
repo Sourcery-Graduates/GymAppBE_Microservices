@@ -16,7 +16,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class RoutineLikeRepositoryIntegrationTest extends BaseIntegrationJPATest {
+class RoutineLikeRepositoryIntegrationTest extends BaseWorkoutIntegrationJPATest {
     @Autowired
     private EntityManager entityManager;
 

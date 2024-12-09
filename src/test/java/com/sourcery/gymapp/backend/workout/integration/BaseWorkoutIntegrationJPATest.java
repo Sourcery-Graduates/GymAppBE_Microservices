@@ -38,7 +38,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @ActiveProfiles("test")
 @Tag("integration")
 @Testcontainers
-public abstract class BaseIntegrationJPATest {
+public abstract class BaseWorkoutIntegrationJPATest {
     private static final PostgreSQLContainer<?> postgresContainer = SingletonPostgresContainer.getInstance();
 
     @Autowired

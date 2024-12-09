@@ -14,7 +14,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
 
-public class ExerciseRepositoryIntegrationTest extends BaseIntegrationJPATest {
+public class ExerciseRepositoryIntegrationTest extends BaseWorkoutIntegrationJPATest {
 
     @Autowired
     private ExerciseRepository exerciseRepository;
