@@ -42,6 +42,22 @@ public class WorkoutFactory {
     public static Workout createWorkout(
             UUID userId,
             String name,
+            ZonedDateTime date
+    ) {
+        return createWorkout(
+                userId,
+                name,
+                date,
+                "comment",
+                null,
+                null,
+                List.of()
+        );
+    }
+
+    public static Workout createWorkout(
+            UUID userId,
+            String name,
             ZonedDateTime date,
             String comment,
             Workout basedOnWorkout,

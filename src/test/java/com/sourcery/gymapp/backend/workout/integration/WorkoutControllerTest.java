@@ -38,39 +38,43 @@ public class WorkoutControllerTest extends BaseWorkoutIntegrationTest {
         ZonedDateTime startDate = LocalDateTime.of(2024, 1, 1, 0, 0).atZone(ZoneId.of("UTC"));
         ZonedDateTime endDate = LocalDateTime.of(2024, 1, 31, 23, 59).atZone(ZoneId.of("UTC"));
 
+        UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+
         Workout workout1 = WorkoutFactory.createWorkout(
+                userId,
                 "workout1",
                 LocalDateTime.of(2024, 1, 22, 13, 14)
-                .atZone(ZoneOffset.UTC), "workout1");
+                .atZone(ZoneOffset.UTC));
         Workout workout2 = WorkoutFactory.createWorkout(
+                userId,
                 "workout2",
                 LocalDateTime.of(2024, 1, 22, 15, 55)
-                .atZone(ZoneOffset.UTC), "workout2");
+                .atZone(ZoneOffset.UTC));
         Workout workout3 = WorkoutFactory.createWorkout(
+                userId,
                 "workout3",
                 LocalDateTime.of(2024, 1, 31, 23, 59)
-                .atZone(ZoneOffset.UTC), "workout3");
-
+                .atZone(ZoneOffset.UTC));
         Workout workout4 = WorkoutFactory.createWorkout(
+                userId,
                 "workout4",
                 LocalDateTime.of(2024, 2, 1, 0, 0)
-                        .atZone(ZoneOffset.UTC), "workout4");
+                        .atZone(ZoneOffset.UTC));
+        Workout workout5 = WorkoutFactory.createWorkout(
+                UUID.randomUUID(),
+                "workout5",
+                LocalDateTime.of(2024, 1, 13, 0, 0)
+                        .atZone(ZoneOffset.UTC));
 
         ResponseWorkoutDto workoutDto1 = workoutMapper.toDto(workout1);
         ResponseWorkoutDto workoutDto2 = workoutMapper.toDto(workout2);
         ResponseWorkoutDto workoutDto3 = workoutMapper.toDto(workout3);
 
-        UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000001");
-
         DateTimeFormatter dateWithoutTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
         @BeforeEach
         void setUpWorkouts() {
-            workout1.setUserId(userId);
-            workout2.setUserId(userId);
-            workout3.setUserId(userId);
-            workout4.setUserId(userId);
-
-            workoutRepository.saveAll(List.of(workout1, workout2, workout3, workout4));
+            workoutRepository.saveAll(List.of(workout1, workout2, workout3, workout4, workout5));
         }
 
         @Test
