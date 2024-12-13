@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,7 +16,7 @@ public record CreateWorkoutDto(
         String name,
 
         @NotNull
-        Date date,
+        ZonedDateTime date,
 
         @Size(max = 255)
         String comment,

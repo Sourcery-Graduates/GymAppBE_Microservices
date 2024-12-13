@@ -1,9 +1,7 @@
 package com.sourcery.gymapp.backend.workout.service;
 
+import com.sourcery.gymapp.backend.workout.dto.*;
 import com.sourcery.gymapp.backend.workout.validation.ValidateOrderNumbersInCreateWorkoutDto;
-import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutDto;
-import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutExerciseDto;
-import com.sourcery.gymapp.backend.workout.dto.ResponseWorkoutDto;
 import com.sourcery.gymapp.backend.workout.exception.UserNotFoundException;
 import com.sourcery.gymapp.backend.workout.exception.WorkoutNotFoundException;
 import com.sourcery.gymapp.backend.workout.mapper.WorkoutMapper;
@@ -13,13 +11,13 @@ import com.sourcery.gymapp.backend.workout.model.Workout;
 import com.sourcery.gymapp.backend.workout.repository.WorkoutRepository;
 import com.sourcery.gymapp.backend.workout.util.AuthorizationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -91,7 +89,8 @@ public class WorkoutService {
             throw new UserNotFoundException();
         }
 
-        List<Workout> workouts = workoutRepository.findByUserId(currentUserId);
+        List<Workout> workouts = workoutRepository.findByUserId(currentUserId,
+                Sort.by(Sort.Order.asc("date"), Sort.Order.asc("name")));
 
         return workouts.stream()
                 .map(workoutMapper::toDto)
@@ -106,6 +105,37 @@ public class WorkoutService {
         AuthorizationUtil.checkIsUserAuthorized(currentUserId, workout.getUserId());
 
         workoutRepository.delete(workout);
+    }
+
+    public ResponseWorkoutGridGroupedByDate getWorkoutGridGroupByDate(ZonedDateTime startDate,
+                                                                      ZonedDateTime endDate) {
+        UUID currentUserId = currentUserService.getCurrentUserId();
+
+        if (currentUserId == null) {
+            throw new UserNotFoundException();
+        }
+
+        HashMap<String, List<ResponseWorkoutDto>> workoutMap = new HashMap<>();
+        DateTimeFormatter dateWithoutTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        List<Workout> workouts = workoutRepository.findByUserIdAndDateBetween(
+                currentUserId,
+                startDate,
+                endDate,
+                Sort.by(
+                        Sort.Order.asc("date"),
+                        Sort.Order.asc("name")
+                )
+        );
+
+        workouts.forEach(workout ->
+                workoutMap.computeIfAbsent(
+                                workout.getDate().format(dateWithoutTimeFormatter),
+                                key -> new ArrayList<>()
+                        )
+                        .add(workoutMapper.toDto(workout))
+        );
+        return new ResponseWorkoutGridGroupedByDate(workoutMap);
     }
 
     public Workout findWorkoutById(UUID id) {

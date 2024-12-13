@@ -14,8 +14,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,7 +32,7 @@ public class Workout extends BaseEntity {
     @Size(max = 255)
     private String name;
 
-    private Date date;
+    private ZonedDateTime date;
 
     @Size(max = 255)
     private String comment;

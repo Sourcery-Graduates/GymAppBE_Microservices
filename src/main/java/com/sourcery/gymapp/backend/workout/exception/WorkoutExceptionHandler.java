@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
 
@@ -124,5 +125,14 @@ public class WorkoutExceptionHandler {
 
         ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getCode());
         return new ResponseEntity<>(response, ex.getStatus());
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleWrongArgumentTypeException(MethodArgumentTypeMismatchException ex) {
+        log.error("{} caught: {}", ex.getClass().getName(), ex.getMessage(), ex);
+
+        ErrorResponse response = new ErrorResponse("%s: %s".formatted(ex.getName(), ex.getMessage()), ErrorCode.METHOD_ARGUMENT_TYPE_MISMATCH);
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+
     }
 }
