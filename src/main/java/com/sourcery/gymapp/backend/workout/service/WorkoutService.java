@@ -89,7 +89,8 @@ public class WorkoutService {
             throw new UserNotFoundException();
         }
 
-        List<Workout> workouts = workoutRepository.findByUserId(currentUserId, Sort.by(Sort.Order.asc("date"), Sort.Order.asc( "name")));
+        List<Workout> workouts = workoutRepository.findByUserId(currentUserId,
+                Sort.by(Sort.Order.asc("date"), Sort.Order.asc("name")));
 
         return workouts.stream()
                 .map(workoutMapper::toDto)
@@ -106,7 +107,8 @@ public class WorkoutService {
         workoutRepository.delete(workout);
     }
 
-    public ResponseWorkoutGridGroupedByDate getWorkoutGridGroupByDate(ZonedDateTime startDate, ZonedDateTime endDate) {
+    public ResponseWorkoutGridGroupedByDate getWorkoutGridGroupByDate(ZonedDateTime startDate,
+                                                                      ZonedDateTime endDate) {
         UUID currentUserId = currentUserService.getCurrentUserId();
 
         if (currentUserId == null) {
@@ -128,8 +130,8 @@ public class WorkoutService {
 
         workouts.forEach(workout ->
                 workoutMap.computeIfAbsent(
-                        workout.getDate().format(dateWithoutTimeFormatter),
-                        key -> new ArrayList<>()
+                                workout.getDate().format(dateWithoutTimeFormatter),
+                                key -> new ArrayList<>()
                         )
                         .add(workoutMapper.toDto(workout))
         );

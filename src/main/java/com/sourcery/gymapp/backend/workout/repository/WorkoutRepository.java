@@ -14,5 +14,6 @@ public interface WorkoutRepository extends JpaRepository<Workout, UUID> {
 
     List<Workout> findByUserId(UUID userId, Sort sort);
 
-    List<Workout> findByUserIdAndDateBetween(UUID userId, ZonedDateTime startDate, ZonedDateTime endDate, Sort sort);
+    List<Workout> findByUserIdAndDateBetween(UUID userId, ZonedDateTime startDate,
+                                             ZonedDateTime endDate, Sort sort);
 }
