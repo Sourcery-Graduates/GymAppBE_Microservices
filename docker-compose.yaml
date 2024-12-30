@@ -40,6 +40,8 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_SERVER_ID: 1
       ZOOKEEPER_SERVERS: zoo1:2888:3888
+    networks:
+      - app-network
 
 
   kafka1:
@@ -59,6 +61,8 @@ services:
       KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
     depends_on:
       - zoo1
+    networks:
+      - app-network
 
   kafka2:
     image: confluentinc/cp-kafka:7.3.2
@@ -77,6 +81,8 @@ services:
       KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
     depends_on:
       - zoo1
+    networks:
+      - app-network
 
 
   kafka3:
@@ -96,6 +102,8 @@ services:
       KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
     depends_on:
       - zoo1
+    networks:
+      - app-network
 
 volumes:
   postgres_gym_app_data:
