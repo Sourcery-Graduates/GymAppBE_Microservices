@@ -38,6 +38,20 @@ spring:
         exposure:
           include: health
 
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+      key-deserializer: org.apache.kafka.common.serialization.IntegerDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      group-id: library-events-listener-group
+    producer:
+      bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+      key-serializer: org.apache.kafka.common.serialization.IntegerSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+  topics:
+    account-register: "userProfile.create-account"
+    retry: "common.RETRY"
+    dead-letter: "common.DLT"
 ---
 jwt:
   public-key: |
