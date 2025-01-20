@@ -1,5 +1,6 @@
 package com.sourcery.gymapp.backend.workout.service;
 
+import com.sourcery.gymapp.backend.workout.exception.UserNotAuthorizedException;
 import com.sourcery.gymapp.backend.workout.validation.ValidateOrderNumbersInCreateWorkoutDto;
 import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutDto;
 import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutExerciseDto;
@@ -21,6 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Service class for managing workout operations.
+ * Handles business logic for workouts including CRUD operations and validation.
+ */
 @Service
 @RequiredArgsConstructor
 public class WorkoutService {
@@ -31,6 +36,13 @@ public class WorkoutService {
     private final WorkoutMapper workoutMapper;
     private final WorkoutExerciseService workoutExerciseService;
 
+    /**
+     * Creates a new workout for the current user.
+     *
+     * @param createWorkoutDto DTO containing workout details
+     * @return created workout details
+     * @throws UserNotFoundException if current user not found
+     */
     @Transactional
     @ValidateOrderNumbersInCreateWorkoutDto
     public ResponseWorkoutDto createWorkout(CreateWorkoutDto createWorkoutDto) {
@@ -63,6 +75,15 @@ public class WorkoutService {
         return workoutMapper.toDto(workout);
     }
 
+    /**
+     * Updates an existing workout.
+     *
+     * @param updateWorkoutDto DTO containing updated details
+     * @param workoutId ID of workout to update
+     * @return updated workout details
+     * @throws WorkoutNotFoundException if workout not found
+     * @throws UserNotAuthorizedException if user not authorized
+     */
     @Transactional
     @ValidateOrderNumbersInCreateWorkoutDto
     public ResponseWorkoutDto updateWorkout(CreateWorkoutDto updateWorkoutDto, UUID workoutId) {
