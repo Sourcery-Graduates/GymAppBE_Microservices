@@ -18,7 +18,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RoutineRepositoryIntegrationTest extends BaseIntegrationTest {
+public class RoutineRepositoryIntegrationTest extends BaseWorkoutIntegrationJPATest {
 
     @Autowired
     private RoutineRepository routineRepository;

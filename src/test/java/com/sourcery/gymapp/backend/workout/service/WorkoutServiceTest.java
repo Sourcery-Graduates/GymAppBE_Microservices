@@ -18,9 +18,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -45,9 +46,6 @@ public class WorkoutServiceTest {
 
     @Mock
     private WorkoutCurrentUserService currentUserService;
-
-    @Mock
-    private ExerciseService exerciseService;
 
     @Mock
     private WorkoutMapper workoutMapper;
@@ -101,7 +99,8 @@ public class WorkoutServiceTest {
         void shouldThrowExceptionWhenBasedOnWorkoutNotFound() {
             createWorkoutDto = WorkoutFactory.createCreateWorkoutDto(
                     "Test Name",
-                    new Date(124, Calendar.JANUARY, 1),
+                    LocalDateTime.of(2024, 1, 1, 0, 0)
+                            .atZone(ZoneOffset.UTC),
                     "Test Comment",
                     null,
                     workoutId
@@ -117,7 +116,8 @@ public class WorkoutServiceTest {
             UUID routineId = UUID.randomUUID();
             createWorkoutDto = WorkoutFactory.createCreateWorkoutDto(
                     "Test Name",
-                    new Date(124, Calendar.JANUARY, 1),
+                    LocalDateTime.of(2024, 1, 1, 0, 0)
+                            .atZone(ZoneOffset.UTC),
                     "Test Comment",
                     routineId,
                     null
@@ -137,7 +137,8 @@ public class WorkoutServiceTest {
         void shouldUpdateWorkoutSuccessfully() {
             CreateWorkoutDto updateWorkoutDto = WorkoutFactory.createCreateWorkoutDto(
                     "Updated Name",
-                    new Date(124, Calendar.JANUARY, 2),
+                    LocalDateTime.of(2024, 1, 2, 0, 0)
+                            .atZone(ZoneOffset.UTC),
                     "Updated Comment",
                     List.of()
             );
@@ -198,8 +199,12 @@ public class WorkoutServiceTest {
 
         @Test
         void shouldGetWorkoutsByUserIdSuccessfully() {
+            Sort sort = Sort.by(
+                    Sort.Order.asc("date"),
+                    Sort.Order.asc("name")
+            );
             when(currentUserService.getCurrentUserId()).thenReturn(userId);
-            when(workoutRepository.findByUserId(userId)).thenReturn(List.of(workout));
+            when(workoutRepository.findByUserId(userId, sort)).thenReturn(List.of(workout));
             when(workoutMapper.toDto(workout)).thenReturn(responseWorkoutDto);
 
             List<ResponseWorkoutDto> result = workoutService.getWorkoutsByUserId();

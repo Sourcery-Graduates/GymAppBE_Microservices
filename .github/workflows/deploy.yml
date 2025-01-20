@@ -1,0 +1,42 @@
+name: Deploy Workflow
+
+on:
+  workflow_run:
+    workflows: [ "Java CI with Gradle" ]
+    types:
+      - completed
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    if: (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
+
+    steps: # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up JDK for Gradle (optional if needed)
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      # Step 3: Build the Docker image
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/gymapp-backend-modulith:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/gymapp-backend-modulith:latest
+
+      # Step 4: Send the POST method to run the script on deployment-server
+      - name: Send deployment request
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: '${{ secrets.AWS_ELB_IP_DEPLOY_URL }}'
+          method: 'POST'
