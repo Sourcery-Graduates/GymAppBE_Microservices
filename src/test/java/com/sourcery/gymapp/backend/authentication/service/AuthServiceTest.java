@@ -6,6 +6,7 @@ import com.sourcery.gymapp.backend.authentication.dto.UserDetailsDto;
 import com.sourcery.gymapp.backend.authentication.exception.UserAlreadyExistsException;
 import com.sourcery.gymapp.backend.authentication.jwt.GymAppJwtProvider;
 import com.sourcery.gymapp.backend.authentication.mapper.UserMapper;
+import com.sourcery.gymapp.backend.authentication.producer.AuthKafkaProducer;
 import com.sourcery.gymapp.backend.authentication.repository.UserRepository;
 import com.sourcery.gymapp.backend.authentication.exception.UserNotAuthenticatedException;
 import java.util.UUID;
@@ -33,6 +34,9 @@ class AuthServiceTest {
 
     @Mock
     private GymAppJwtProvider jwtProvider;
+
+    @Mock
+    private AuthKafkaProducer authKafkaProducer;
 
     @InjectMocks
     private AuthService authService;

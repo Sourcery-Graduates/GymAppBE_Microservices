@@ -1,6 +1,6 @@
 package com.sourcery.gymapp.backend.userProfile.mapper;
 
-import com.sourcery.gymapp.backend.authentication.model.User;
+import com.sourcery.gymapp.backend.events.RegistrationEvent;
 import com.sourcery.gymapp.backend.userProfile.dto.UserProfileDto;
 import com.sourcery.gymapp.backend.userProfile.model.UserProfile;
 import lombok.RequiredArgsConstructor;
@@ -41,11 +41,11 @@ public class UserProfileMapper {
         return userProfile;
     }
 
-    public UserProfileDto toDto(User user) {
+    public UserProfileDto toDto(RegistrationEvent event) {
         return new UserProfileDto(
-                user.getUsername(),
-                user.getUsername(),
-                user.getUsername(),
+                event.username(),
+                event.username(),
+                event.username(),
                 "My cool bio",
                 null,
                 "",

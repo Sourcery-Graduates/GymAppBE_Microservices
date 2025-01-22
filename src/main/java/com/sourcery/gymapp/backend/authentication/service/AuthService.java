@@ -10,7 +10,7 @@ import com.sourcery.gymapp.backend.authentication.model.User;
 import com.sourcery.gymapp.backend.authentication.producer.AuthKafkaProducer;
 import com.sourcery.gymapp.backend.authentication.repository.UserRepository;
 import com.sourcery.gymapp.backend.authentication.exception.UserNotAuthenticatedException;
-import com.sourcery.gymapp.backend.common.domain.RegistrationEvent;
+import com.sourcery.gymapp.backend.events.RegistrationEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -57,13 +57,7 @@ public class AuthService {
         registrationRequest.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
         var user = userRepository.save(userMapper.toEntity(registrationRequest));
 
-        kafkaEventsProducer.sendRegistrationEvent(createRegistrationEvent(user));
-    }
-
-    private RegistrationEvent createRegistrationEvent(User user) {
-        return new RegistrationEvent(
-                user.getId(),
-                user
-        );
+        RegistrationEvent event = userMapper.toRegistrationEvent(user);
+        kafkaEventsProducer.sendRegistrationEvent(event);
     }
 }

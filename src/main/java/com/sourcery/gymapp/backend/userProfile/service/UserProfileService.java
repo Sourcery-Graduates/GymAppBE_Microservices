@@ -1,6 +1,6 @@
 package com.sourcery.gymapp.backend.userProfile.service;
 
-import com.sourcery.gymapp.backend.authentication.model.User;
+import com.sourcery.gymapp.backend.events.RegistrationEvent;
 import com.sourcery.gymapp.backend.userProfile.dto.UserProfileDto;
 import com.sourcery.gymapp.backend.userProfile.exception.UserProfileNotFoundException;
 import com.sourcery.gymapp.backend.userProfile.exception.UserProfileRuntimeException;
@@ -53,15 +53,15 @@ public class UserProfileService {
     }
 
     @Transactional
-    public void createUserProfileAfterRegistration(User user) {
+    public void createUserProfileAfterRegistration(RegistrationEvent event) {
         userProfileRepository
-                .findUserProfileByUserId(user.getId())
+                .findUserProfileByUserId(event.userId())
                 .ifPresent((UserProfile userProfile) -> {
                     throw new UserProfileRuntimeException("Profile already exists");
                 });
 
-        UserProfileDto dto = userProfileMapper.toDto(user);
-        UserProfile entity = userProfileMapper.toEntity(dto, user.getId(), null);
+        UserProfileDto dto = userProfileMapper.toDto(event);
+        UserProfile entity = userProfileMapper.toEntity(dto, event.userId(), null);
         userProfileRepository.save(entity);
     }
 

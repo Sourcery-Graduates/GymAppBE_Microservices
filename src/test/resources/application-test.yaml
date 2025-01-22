@@ -18,3 +18,9 @@ spring:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.yaml
     label-filter: "!exclude-test"
+
+  kafka:
+    topics:
+      account-register: "userProfile.create-account"
+      retry: "common.RETRY"
+      dead-letter: "common.DLT"

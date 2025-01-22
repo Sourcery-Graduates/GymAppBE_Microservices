@@ -2,7 +2,7 @@ package com.sourcery.gymapp.backend.userProfile.consumer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sourcery.gymapp.backend.common.domain.RegistrationEvent;
+import com.sourcery.gymapp.backend.events.RegistrationEvent;
 import com.sourcery.gymapp.backend.globalconfig.AuditorConfig;
 import com.sourcery.gymapp.backend.userProfile.service.UserProfileService;
 import lombok.AllArgsConstructor;
@@ -26,8 +26,8 @@ public class UserProfileKafkaConsumer {
             AuditorConfig.AuditorAwareImpl.enableKafkaProcessing();
 
             var data = objectMapper.readValue(record.value(), RegistrationEvent.class);
-            userProfileService.createUserProfileAfterRegistration(data.user());
-            log.info("Registration event received: " + data.eventID());
+            userProfileService.createUserProfileAfterRegistration(data);
+            log.info("Registration event received: " + data.eventId());
 
         } finally {
             AuditorConfig.AuditorAwareImpl.disableKafkaProcessing();

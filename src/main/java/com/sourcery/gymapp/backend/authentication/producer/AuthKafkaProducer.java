@@ -1,9 +1,8 @@
 package com.sourcery.gymapp.backend.authentication.producer;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sourcery.gymapp.backend.common.domain.RegistrationEvent;
+import com.sourcery.gymapp.backend.events.RegistrationEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -27,11 +26,10 @@ public class AuthKafkaProducer {
     }
 
     public CompletableFuture<SendResult<UUID, String>> sendRegistrationEvent(RegistrationEvent event) {
-        var key = event.eventID();
+        var key = event.eventId();
         String value = null;
         try {
             value = objectMapper.writeValueAsString(event);
-            log.info(event.toString());
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -48,15 +46,10 @@ public class AuthKafkaProducer {
     }
 
     private void handleSuccess(UUID key, String value, SendResult<UUID, String> result) {
-        log.info("Successfully sent library event: \n key: {}\n value: {}\n partition No: {}\n",
-                key,
-                value,
-                result.getRecordMetadata().partition());
+        log.info("Successfully sent registration event: \n key: {}\n value: {}\n", key, value);
     }
 
     private void handleException(UUID key, String value, Throwable error) {
         log.error("Error sending library event: {}", error.getMessage(), error);
     }
 }
-
-
