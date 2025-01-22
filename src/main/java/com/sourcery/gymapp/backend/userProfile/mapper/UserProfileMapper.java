@@ -1,8 +1,11 @@
 package com.sourcery.gymapp.backend.userProfile.mapper;
 
+import com.sourcery.gymapp.backend.authentication.model.User;
 import com.sourcery.gymapp.backend.userProfile.dto.UserProfileDto;
 import com.sourcery.gymapp.backend.userProfile.model.UserProfile;
 import lombok.RequiredArgsConstructor;
+
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
@@ -36,5 +39,17 @@ public class UserProfileMapper {
         userProfile.setSettings(dto.settings());
 
         return userProfile;
+    }
+
+    public UserProfileDto toDto(User user) {
+        return new UserProfileDto(
+                user.getUsername(),
+                user.getUsername(),
+                user.getUsername(),
+                "My cool bio",
+                null,
+                "",
+                new HashMap<>()
+        );
     }
 }

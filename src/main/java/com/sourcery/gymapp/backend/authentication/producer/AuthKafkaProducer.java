@@ -5,8 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sourcery.gymapp.backend.common.domain.RegistrationEvent;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -17,13 +15,13 @@ import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Component
-public class AuthKafkaEventsProducer {
+public class AuthKafkaProducer {
     @Value("${spring.kafka.topics.account-register}")
     private String topicName;
     private final KafkaTemplate<UUID, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
 
-    public AuthKafkaEventsProducer(KafkaTemplate<UUID, String> kafkaTemplate, ObjectMapper objectMapper) {
+    public AuthKafkaProducer(KafkaTemplate<UUID, String> kafkaTemplate, ObjectMapper objectMapper) {
         this.kafkaTemplate = kafkaTemplate;
         this.objectMapper = objectMapper;
     }
@@ -33,6 +31,7 @@ public class AuthKafkaEventsProducer {
         String value = null;
         try {
             value = objectMapper.writeValueAsString(event);
+            log.info(event.toString());
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

@@ -7,7 +7,7 @@ import com.sourcery.gymapp.backend.authentication.exception.UserAlreadyExistsExc
 import com.sourcery.gymapp.backend.authentication.jwt.GymAppJwtProvider;
 import com.sourcery.gymapp.backend.authentication.mapper.UserMapper;
 import com.sourcery.gymapp.backend.authentication.model.User;
-import com.sourcery.gymapp.backend.authentication.producer.AuthKafkaEventsProducer;
+import com.sourcery.gymapp.backend.authentication.producer.AuthKafkaProducer;
 import com.sourcery.gymapp.backend.authentication.repository.UserRepository;
 import com.sourcery.gymapp.backend.authentication.exception.UserNotAuthenticatedException;
 import com.sourcery.gymapp.backend.common.domain.RegistrationEvent;
@@ -27,7 +27,7 @@ public class AuthService {
     private final CustomUserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final GymAppJwtProvider jwtProvider;
-    private final AuthKafkaEventsProducer kafkaEventsProducer;
+    private final AuthKafkaProducer kafkaEventsProducer;
 
     @Transactional(readOnly = true)
     public UserAuthDto authenticateUser(Authentication authentication) {
