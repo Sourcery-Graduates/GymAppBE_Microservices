@@ -19,11 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Service class for managing workout routines.
- * Handles business logic for routines including CRUD operations,
- * authorization checks, and data validation.
- */
 // TODO: each pageable routine should be returned with isLikedByCurrentUser
 @Service
 @RequiredArgsConstructor
@@ -32,13 +27,6 @@ public class RoutineService {
     private final RoutineMapper routineMapper;
     private final WorkoutCurrentUserService currentUserService;
 
-    /**
-     * Creates a new workout routine for the current user.
-     *
-     * @param createRoutineDto contains routine details to create
-     * @return ResponseRoutineDto with created routine details
-     * @throws UserNotFoundException if current user not found
-     */
     @Transactional
     public ResponseRoutineDto createRoutine(CreateRoutineDto createRoutineDto) {
         UUID currentUserId = currentUserService.getCurrentUserId();
@@ -75,15 +63,6 @@ public class RoutineService {
                 .toList();
     }
 
-    /**
-     * Updates an existing routine if user is authorized.
-     *
-     * @param routineId unique identifier of routine to update
-     * @param updateRoutineDto contains updated routine details
-     * @return ResponseRoutineDto with updated routine details
-     * @throws RoutineNotFoundException if routine not found
-     * @throws UserNotAuthorizedException if user not authorized
-     */
     @Transactional
     public ResponseRoutineDto updateRoutine(UUID routineId, CreateRoutineDto updateRoutineDto) {
         UUID currentUserId = currentUserService.getCurrentUserId();
@@ -108,27 +87,10 @@ public class RoutineService {
         routineRepository.delete(routine);
     }
 
-    /**
-     * Finds a routine by its ID.
-     *
-     * @param routineId unique identifier of routine to find
-     * @return Routine entity if found
-     * @throws RoutineNotFoundException if routine not found
-     */
     public Routine findRoutineById(UUID routineId) {
         return routineRepository.findById(routineId).orElseThrow(() -> new RoutineNotFoundException(routineId));
     }
 
-    /**
-     * Searches for routines by name with pagination and like status.
-     * If name is null or blank, returns all routines for the current user.
-     * Includes information about whether each routine is liked by the current user.
-     *
-     * @param name search term for routine name, can be null or blank
-     * @param pageable pagination and sorting parameters
-     * @return RoutinePageDto containing paginated routines with like status
-     * @throws UserNotFoundException if current user not found
-     */
     @Transactional(readOnly = true)
     public RoutinePageDto searchRoutines(String name, Pageable pageable) {
         UUID currentUserId = currentUserService.getCurrentUserId();
@@ -147,14 +109,6 @@ public class RoutineService {
         );
     }
 
-    /**
-     * Verifies if the current user is authorized to modify the routine.
-     * Used for update and delete operations.
-     *
-     * @param currentUserId ID of the current user
-     * @param routineUserId ID of the user who owns the routine
-     * @throws UserNotAuthorizedException if current user is not the owner
-     */
     private void checkIsUserAuthorized(UUID currentUserId, UUID routineUserId) {
         if (!routineUserId.equals(currentUserId)) {
             throw new UserNotAuthorizedException();

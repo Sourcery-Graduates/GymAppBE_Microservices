@@ -79,37 +79,6 @@ The API documentation is available through Swagger UI:
 - URL: `http://localhost:8080/swagger-ui.html`
 - OpenAPI JSON: `http://localhost:8080/api-docs`
 
-### Main API Endpoints
-
-#### Workouts
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/api/workout/workout` | Get all workouts for current user | Yes |
-| POST | `/api/workout/workout` | Create a new workout | Yes |
-| GET | `/api/workout/workout/{id}` | Get workout details by ID | Yes |
-| PUT | `/api/workout/workout/{id}` | Update existing workout | Yes |
-| DELETE | `/api/workout/workout/{id}` | Delete workout | Yes |
-| GET | `/api/workout/workout/date` | Get workouts by date range | Yes |
-
-#### Routines
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/api/workout/routine` | Get all routines for current user | Yes |
-| POST | `/api/workout/routine` | Create a new routine | Yes |
-| GET | `/api/workout/routine/{id}` | Get routine details by ID | Yes |
-| PUT | `/api/workout/routine/{id}` | Update existing routine | Yes |
-| DELETE | `/api/workout/routine/{id}` | Delete routine | Yes |
-
-#### Exercises
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/api/workout/exercise` | Get list of available exercises | Yes |
-| GET | `/api/workout/exercise/{id}` | Get exercise details by ID | Yes |
-| GET | `/api/workout/exercise/search` | Search exercises by criteria | Yes |
-
-For detailed API documentation and request/response examples, please visit the Swagger UI documentation at:
-`http://localhost:8080/swagger-ui.html`
-
 ## Testing
 
 Run unit tests:
