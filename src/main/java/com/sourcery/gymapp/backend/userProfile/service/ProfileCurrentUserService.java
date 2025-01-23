@@ -14,7 +14,7 @@ public class ProfileCurrentUserService {
 
     public UUID getCurrentUserId() {
         if (AuditorConfig.AuditorAwareImpl.getKafkaProcessing()) {
-            return AuditorConfig.AuditorAwareImpl.SYSTEM_USER_UUID;
+            return AuditorConfig.AuditorAwareImpl.getSystemUserUUID();
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

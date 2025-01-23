@@ -21,14 +21,15 @@ public class UserProfileKafkaConsumer {
     private final ObjectMapper objectMapper;
 
     @KafkaListener(topics = {"${spring.kafka.topics.account-register}"}, groupId = "user-profile-listener-group")
-    public void onMessage(ConsumerRecord<UUID, String> record) throws JsonProcessingException {
+    public void onMessage(ConsumerRecord<UUID, String> record) {
         try {
             AuditorConfig.AuditorAwareImpl.enableKafkaProcessing();
 
             var data = objectMapper.readValue(record.value(), RegistrationEvent.class);
             userProfileService.createUserProfileAfterRegistration(data);
-            log.info("Registration event received: " + data.eventId());
-
+            log.info("Registration event processed: {}", data.eventId());
+        } catch (Exception e) {
+            log.error("Error processing registration event: {}", e.getMessage(), e);
         } finally {
             AuditorConfig.AuditorAwareImpl.disableKafkaProcessing();
         }

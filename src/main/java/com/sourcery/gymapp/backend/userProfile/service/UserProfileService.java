@@ -54,11 +54,10 @@ public class UserProfileService {
 
     @Transactional
     public void createUserProfileAfterRegistration(RegistrationEvent event) {
-        userProfileRepository
-                .findUserProfileByUserId(event.userId())
-                .ifPresent((UserProfile userProfile) -> {
-                    throw new UserProfileRuntimeException("Profile already exists");
-                });
+        boolean profileExists = userProfileRepository.existsById(event.userId());
+        if (profileExists) {
+            throw new UserProfileRuntimeException("Profile already exists");
+        }
 
         UserProfileDto dto = userProfileMapper.toDto(event);
         UserProfile entity = userProfileMapper.toEntity(dto, event.userId(), null);

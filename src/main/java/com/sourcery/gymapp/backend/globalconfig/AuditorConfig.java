@@ -38,7 +38,7 @@ public class AuditorConfig {
     @RequiredArgsConstructor
     public static class AuditorAwareImpl implements AuditorAware<UUID> {
         private final CurrentUserService currentUserService;
-        public static final UUID SYSTEM_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+        private static final UUID SYSTEM_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
         private static final String registrationPath = "/api/auth/register";
         private static final ThreadLocal<Boolean> isKafkaProcessing = ThreadLocal.withInitial(() -> false);
 
@@ -84,6 +84,10 @@ public class AuditorConfig {
 
         public static boolean getKafkaProcessing() {
             return isKafkaProcessing.get();
+        }
+
+        public static UUID getSystemUserUUID() {
+            return SYSTEM_USER_UUID;
         }
     }
 }
