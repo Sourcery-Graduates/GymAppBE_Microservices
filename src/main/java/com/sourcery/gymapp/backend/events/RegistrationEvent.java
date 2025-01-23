@@ -6,8 +6,6 @@ import java.util.UUID;
 
 public record RegistrationEvent(
         @NotNull
-        UUID eventId,
-        @NotNull
         UUID userId,
         @NotNull
         String username

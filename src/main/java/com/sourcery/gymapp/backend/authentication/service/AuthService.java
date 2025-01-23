@@ -6,7 +6,6 @@ import com.sourcery.gymapp.backend.authentication.dto.UserDetailsDto;
 import com.sourcery.gymapp.backend.authentication.exception.UserAlreadyExistsException;
 import com.sourcery.gymapp.backend.authentication.jwt.GymAppJwtProvider;
 import com.sourcery.gymapp.backend.authentication.mapper.UserMapper;
-import com.sourcery.gymapp.backend.authentication.model.User;
 import com.sourcery.gymapp.backend.authentication.producer.AuthKafkaProducer;
 import com.sourcery.gymapp.backend.authentication.repository.UserRepository;
 import com.sourcery.gymapp.backend.authentication.exception.UserNotAuthenticatedException;
@@ -57,7 +56,6 @@ public class AuthService {
         }
 
         registrationRequest.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-        kafkaTemplate.executeInTransaction()
         var user = userRepository.save(userMapper.toEntity(registrationRequest));
 
         RegistrationEvent event = userMapper.toRegistrationEvent(user);

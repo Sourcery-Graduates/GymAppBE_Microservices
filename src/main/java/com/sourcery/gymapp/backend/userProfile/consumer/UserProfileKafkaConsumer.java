@@ -1,6 +1,5 @@
 package com.sourcery.gymapp.backend.userProfile.consumer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sourcery.gymapp.backend.events.RegistrationEvent;
 import com.sourcery.gymapp.backend.globalconfig.AuditorConfig;
@@ -27,7 +26,7 @@ public class UserProfileKafkaConsumer {
 
             var data = objectMapper.readValue(record.value(), RegistrationEvent.class);
             userProfileService.createUserProfileAfterRegistration(data);
-            log.info("Registration event processed: {}", data.eventId());
+            log.info("Registration event processed: {}", record.key());
         } catch (Exception e) {
             log.error("Error processing registration event: {}", e.getMessage(), e);
         } finally {

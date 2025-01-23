@@ -66,7 +66,6 @@ public class UserMapper {
     public RegistrationEvent toRegistrationEvent(User user) {
         return new RegistrationEvent(
                 user.getId(),
-                user.getId(),
                 user.getUsername()
         );
     }

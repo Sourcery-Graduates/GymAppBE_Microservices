@@ -27,7 +27,7 @@ public class AuthKafkaProducer {
     }
 
     public CompletableFuture<SendResult<UUID, String>> sendRegistrationEvent(RegistrationEvent event) {
-        var key = event.eventId();
+        var key = event.userId();
         String value = null;
         try {
             value = objectMapper.writeValueAsString(event);
