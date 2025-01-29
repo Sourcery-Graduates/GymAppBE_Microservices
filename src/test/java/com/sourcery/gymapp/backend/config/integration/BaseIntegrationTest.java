@@ -1,12 +1,18 @@
 package com.sourcery.gymapp.backend.config.integration;
 
 import com.sourcery.gymapp.backend.authentication.jwt.JwtConfig;
+import com.sourcery.gymapp.backend.authentication.service.AuthService;
 import org.junit.jupiter.api.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.test.context.ActiveProfiles;
@@ -28,9 +34,18 @@ public abstract class BaseIntegrationTest {
     @Autowired
     protected WebTestClient webTestClient;
 
+    @MockBean
+    JavaMailSender javaMailSender;
+
     protected static String jwtToken;
     protected static String username = "testUser";
     protected static String userId = "00000000-0000-0000-0000-000000000001";
+    protected static String email = "testUser@user.com";
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);  // Initialize mocks
+    }
     @BeforeAll
     public static void setup(@Autowired JwtConfig jwtConfig) {
 
@@ -40,6 +55,7 @@ public abstract class BaseIntegrationTest {
                 .issuedAt(Instant.ofEpochSecond(1733490155))
                 .claim("userId", userId)
                 .claim("username", username)
+                .claim("email", email)
                 .expiresAt(Instant.now().plusSeconds(3600))
                 .build();
 

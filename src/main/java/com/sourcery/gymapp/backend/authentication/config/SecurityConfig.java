@@ -1,6 +1,7 @@
 package com.sourcery.gymapp.backend.authentication.config;
 
 import com.sourcery.gymapp.backend.authentication.service.CustomUserDetailsService;
+
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -61,10 +62,10 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "api/auth/register",
+                                "/api/auth/register/**",
                                 "/actuator/health"
                         ).permitAll()
-                        .anyRequest().authenticated()
+                      .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.decoder(jwtDecoder))

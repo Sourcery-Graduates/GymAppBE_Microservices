@@ -26,6 +26,7 @@ public class UserMapper {
         userDetailsDto.setRoles(getUserRoles(user));
         userDetailsDto.setPermissions(getUserPermissions(user));
         userDetailsDto.setEmail(user.getEmail());
+        userDetailsDto.setEnabled(user.isEnabled());
         return userDetailsDto;
     }
 
@@ -49,6 +50,7 @@ public class UserMapper {
     public UserAuthDto toAuthDto(UserDetailsDto userDetailsDto, String token) {
         return new UserAuthDto(token,
                 userDetailsDto.getUsername(),
+                userDetailsDto.getEmail(),
                 userDetailsDto.getRoles(),
                 userDetailsDto.getPermissions());
     }

@@ -20,5 +20,6 @@ public class TestJwtToken extends BaseIntegrationTest {
         assertEquals(decodedJwt.getSubject(), username);
         assertEquals(decodedJwt.getClaim("userId"), userId);
         assertEquals(decodedJwt.getClaim("username"), username);
+        assertEquals(decodedJwt.getClaim("email"), email);
     }
 }
