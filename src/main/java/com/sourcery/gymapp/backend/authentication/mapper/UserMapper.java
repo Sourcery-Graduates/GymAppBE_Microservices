@@ -63,10 +63,13 @@ public class UserMapper {
         return user;
     }
 
-    public RegistrationEvent toRegistrationEvent(User user) {
+    public RegistrationEvent toRegistrationEvent(User user, RegistrationRequest registrationRequest) {
         return new RegistrationEvent(
                 user.getId(),
-                user.getUsername()
+                user.getUsername(),
+                registrationRequest.getFirstName(),
+                registrationRequest.getLastName(),
+                registrationRequest.getLocation()
         );
     }
 }

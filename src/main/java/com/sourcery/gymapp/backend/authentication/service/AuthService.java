@@ -58,7 +58,7 @@ public class AuthService {
         registrationRequest.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
         var user = userRepository.save(userMapper.toEntity(registrationRequest));
 
-        RegistrationEvent event = userMapper.toRegistrationEvent(user);
+        RegistrationEvent event = userMapper.toRegistrationEvent(user, registrationRequest);
         kafkaEventsProducer.sendRegistrationEvent(event);
     }
 }

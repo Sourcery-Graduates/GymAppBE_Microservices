@@ -79,6 +79,8 @@ class AuthServiceTest {
         registrationRequest.setUsername("testUser");
         registrationRequest.setPassword("password123");
         registrationRequest.setEmail("test@example.com");
+        registrationRequest.setFirstName("test");
+        registrationRequest.setLastName("user");
 
         when(userRepository.existsByUsername("testUser")).thenReturn(false);
         when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");

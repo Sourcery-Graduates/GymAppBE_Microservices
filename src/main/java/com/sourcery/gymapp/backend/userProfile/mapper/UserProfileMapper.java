@@ -44,11 +44,11 @@ public class UserProfileMapper {
     public UserProfileDto toDto(RegistrationEvent event) {
         return new UserProfileDto(
                 event.username(),
-                event.username(),
-                event.username(),
+                event.firstName(),
+                event.lastName(),
                 "My cool bio",
                 null,
-                "",
+                event.location(),
                 new HashMap<>()
         );
     }

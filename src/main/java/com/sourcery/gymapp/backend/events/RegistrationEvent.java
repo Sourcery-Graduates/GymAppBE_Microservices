@@ -8,6 +8,11 @@ public record RegistrationEvent(
         @NotNull
         UUID userId,
         @NotNull
-        String username
+        String username,
+        @NotNull
+        String firstName,
+        @NotNull
+        String lastName,
+        String location
 ) {
 }
