@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -54,6 +57,15 @@ public class WorkoutController {
         workoutService.deleteWorkout(workoutId);
     }
 
+    @Operation(
+        summary = "Get workouts grouped by date",
+        description = "Retrieves user's workouts within specified date range, grouped by date"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully retrieved workouts"),
+        @ApiResponse(responseCode = "400", description = "Invalid date format"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication is required")
+    })
     @GetMapping("/date")
     public ResponseWorkoutGridGroupedByDate getWorkoutGridByDate(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime startDate,

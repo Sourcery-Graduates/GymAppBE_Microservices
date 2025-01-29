@@ -28,12 +28,12 @@ public class RoutineService {
     private final WorkoutCurrentUserService currentUserService;
 
     @Transactional
-    public ResponseRoutineDto createRoutine(CreateRoutineDto routineDto) {
+    public ResponseRoutineDto createRoutine(CreateRoutineDto createRoutineDto) {
         UUID currentUserId = currentUserService.getCurrentUserId();
         if (currentUserId == null) {
             throw new UserNotFoundException();
         }
-        Routine routine = routineMapper.toEntity(routineDto, currentUserId);
+        Routine routine = routineMapper.toEntity(createRoutineDto, currentUserId);
 
         routine = routineRepository.save(routine);
 
@@ -64,13 +64,13 @@ public class RoutineService {
     }
 
     @Transactional
-    public ResponseRoutineDto updateRoutine(UUID routineId, CreateRoutineDto routineDto) {
+    public ResponseRoutineDto updateRoutine(UUID routineId, CreateRoutineDto updateRoutineDto) {
         UUID currentUserId = currentUserService.getCurrentUserId();
         Routine routine = findRoutineById(routineId);
 
         checkIsUserAuthorized(currentUserId, routine.getUserId());
 
-        routineMapper.updateEntity(routine, routineDto);
+        routineMapper.updateEntity(routine, updateRoutineDto);
 
         routine = routineRepository.save(routine);
 
@@ -87,8 +87,8 @@ public class RoutineService {
         routineRepository.delete(routine);
     }
 
-    public Routine findRoutineById(UUID id) {
-        return routineRepository.findById(id).orElseThrow(() -> new RoutineNotFoundException(id));
+    public Routine findRoutineById(UUID routineId) {
+        return routineRepository.findById(routineId).orElseThrow(() -> new RoutineNotFoundException(routineId));
     }
 
     @Transactional(readOnly = true)
@@ -110,7 +110,6 @@ public class RoutineService {
     }
 
     private void checkIsUserAuthorized(UUID currentUserId, UUID routineUserId) {
-
         if (!routineUserId.equals(currentUserId)) {
             throw new UserNotAuthorizedException();
         }
