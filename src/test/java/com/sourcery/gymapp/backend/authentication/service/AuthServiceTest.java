@@ -247,8 +247,8 @@ class AuthServiceTest {
         @Nested
         @DisplayName("Password change")
         public class PasswordChange {
-            String password1Param = "password1";
-            String password2Param = "password2";
+            String passwordParam = "password1";
+            String repeatedPasswordParam = "password2";
             String tokenParam = "token";
 
             @Test
@@ -256,7 +256,7 @@ class AuthServiceTest {
 
                 when(emailTokenRepository.findByToken(tokenParam)).thenReturn(Optional.empty());
 
-                assertThrows(PasswordResetTokenNotFoundException.class, () -> authService.passwordChange(password1Param, password2Param, tokenParam));
+                assertThrows(PasswordResetTokenNotFoundException.class, () -> authService.passwordChange(passwordParam, repeatedPasswordParam, tokenParam));
             }
 
             @Test
@@ -266,7 +266,7 @@ class AuthServiceTest {
 
                 when(emailTokenRepository.findByToken(tokenParam)).thenReturn(Optional.of(emailToken));
 
-                ResponseEntity<String> response = authService.passwordChange(password1Param, password2Param, tokenParam);
+                ResponseEntity<String> response = authService.passwordChange(passwordParam, repeatedPasswordParam, tokenParam);
 
                 assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
                 assertEquals("Wrong token type was %s, expected %s".formatted(emailToken.getType(), TokenType.PASSWORD_RECOVERY), response.getBody());
@@ -281,7 +281,7 @@ class AuthServiceTest {
                 when(emailTokenRepository.findByToken(tokenParam)).thenReturn(Optional.of(emailToken));
                 doNothing().when(emailTokenRepository).delete(any());
 
-                ResponseEntity<String> response = authService.passwordChange(password1Param, password2Param, tokenParam);
+                ResponseEntity<String> response = authService.passwordChange(passwordParam, repeatedPasswordParam, tokenParam);
 
                 verify(emailTokenRepository, times(1)).delete(any());
                 assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -296,7 +296,7 @@ class AuthServiceTest {
 
                 when(emailTokenRepository.findByToken(tokenParam)).thenReturn(Optional.of(emailToken));
 
-                ResponseEntity<String> response = authService.passwordChange(password1Param, password2Param, tokenParam);
+                ResponseEntity<String> response = authService.passwordChange(passwordParam, repeatedPasswordParam, tokenParam);
 
                 assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
                 assertEquals("Given passwords have to match each other", response.getBody());
@@ -316,7 +316,7 @@ class AuthServiceTest {
                 when(userRepository.save(any())).thenReturn(user);
                 doNothing().when(emailTokenRepository).delete(any());
 
-                ResponseEntity<String> response = authService.passwordChange(password1Param, password1Param, tokenParam);
+                ResponseEntity<String> response = authService.passwordChange(passwordParam, passwordParam, tokenParam);
 
                 verify(passwordEncoder, times(1)).encode(anyString());
                 verify(userRepository, times(1)).save(any());

@@ -40,7 +40,7 @@ public class AuthController {
 
     @PostMapping("/password/change")
     public ResponseEntity<String> passwordChange(@Valid @RequestBody PasswordChangeDto passwordChangeDto) {
-        return authService.passwordChange(passwordChangeDto.password1(), passwordChangeDto.password2(), passwordChangeDto.token());
+        return authService.passwordChange(passwordChangeDto.password(), passwordChangeDto.repeatedPassword(), passwordChangeDto.token());
     }
 
 }

@@ -105,7 +105,7 @@ public class AuthService {
         return ResponseEntity.ok().body("Password reset link was sent to your email!");
     }
 
-    public ResponseEntity<String> passwordChange(String password1, String password2, String token) {
+    public ResponseEntity<String> passwordChange(String password, String repeatedPassword, String token) {
         EmailToken emailToken =  emailTokenRepository.findByToken(token)
                 .orElseThrow(PasswordResetTokenNotFoundException::new);
 
@@ -118,12 +118,12 @@ public class AuthService {
             return ResponseEntity.badRequest().body("Link already expired, please send another password change request");
         }
 
-        if (!password1.equals(password2)) {
+        if (!password.equals(repeatedPassword)) {
             return ResponseEntity.badRequest().body("Given passwords have to match each other");
         }
 
         User user = emailToken.getUser();
-        user.setPassword(passwordEncoder.encode(password1));
+        user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
         emailTokenRepository.delete(emailToken);
 
