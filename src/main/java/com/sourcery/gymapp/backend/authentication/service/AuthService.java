@@ -3,27 +3,30 @@ package com.sourcery.gymapp.backend.authentication.service;
 import com.sourcery.gymapp.backend.authentication.dto.RegistrationRequest;
 import com.sourcery.gymapp.backend.authentication.dto.UserAuthDto;
 import com.sourcery.gymapp.backend.authentication.dto.UserDetailsDto;
+import com.sourcery.gymapp.backend.authentication.event.PasswordResetEvent;
 import com.sourcery.gymapp.backend.authentication.event.RegistrationCompleteEvent;
-import com.sourcery.gymapp.backend.authentication.exception.RegistrationTokenNotFoundException;
-import com.sourcery.gymapp.backend.authentication.exception.UserAlreadyExistsException;
+import com.sourcery.gymapp.backend.authentication.exception.*;
 import com.sourcery.gymapp.backend.authentication.jwt.GymAppJwtProvider;
 import com.sourcery.gymapp.backend.authentication.mapper.UserMapper;
 import com.sourcery.gymapp.backend.authentication.model.TokenType;
 import com.sourcery.gymapp.backend.authentication.model.User;
 import com.sourcery.gymapp.backend.authentication.repository.EmailTokenRepository;
 import com.sourcery.gymapp.backend.authentication.repository.UserRepository;
-import com.sourcery.gymapp.backend.authentication.exception.UserNotAuthenticatedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.sourcery.gymapp.backend.authentication.model.EmailToken;
+
+import java.time.ZonedDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -32,7 +35,7 @@ public class AuthService {
     private final CustomUserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final GymAppJwtProvider jwtProvider;
-    private final ApplicationEventPublisher registrationPublisher;
+    private final ApplicationEventPublisher applicationPublisher;
     private final EmailTokenRepository emailTokenRepository;
 
     @Value("${frontend.base_url}")
@@ -66,7 +69,7 @@ public class AuthService {
 
         userRepository.save(user);
 
-        registrationPublisher.publishEvent(new RegistrationCompleteEvent(user, applicationURL));
+        applicationPublisher.publishEvent(new RegistrationCompleteEvent(user, applicationURL));
     }
 
     @Transactional
@@ -88,5 +91,42 @@ public class AuthService {
         emailTokenRepository.delete(emailToken);
 
         return ResponseEntity.ok("Account verified successfully");
+    }
+
+    @Transactional
+    public ResponseEntity<String> passwordResetRequest(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Can't find user by email " + email));
+        if (!user.isEnabled()){
+            throw new UserAccountNotVerifiedException("Verify your account via email before resetting password!");
+        }
+
+        applicationPublisher.publishEvent(new PasswordResetEvent(user, applicationURL));
+
+        return ResponseEntity.ok().body("Password reset link was sent to your email!");
+    }
+
+    public ResponseEntity<String> passwordChange(String password1, String password2, String token) {
+        EmailToken emailToken =  emailTokenRepository.findByToken(token)
+                .orElseThrow(PasswordResetTokenNotFoundException::new);
+
+        if (emailToken.getType() != TokenType.PASSWORD_RECOVERY) {
+            return ResponseEntity.badRequest().body("Wrong token type was %s, expected %s".formatted(emailToken.getType(), TokenType.PASSWORD_RECOVERY));
+        }
+
+        if (emailToken.getExpirationTime().isBefore(ZonedDateTime.now()) ) {
+            emailTokenRepository.delete(emailToken);
+            return ResponseEntity.badRequest().body("Link already expired, please send another password change request");
+        }
+
+        if (!password1.equals(password2)) {
+            return ResponseEntity.badRequest().body("Given passwords have to match each other");
+        }
+
+        User user = emailToken.getUser();
+        user.setPassword(passwordEncoder.encode(password1));
+        userRepository.save(user);
+        emailTokenRepository.delete(emailToken);
+
+        return ResponseEntity.ok("Password has been changed!");
     }
 }

@@ -7,4 +7,9 @@ public class UserAccountNotVerifiedException  extends AuthenticationRuntimeExcep
     public UserAccountNotVerifiedException() {
         super("Verify your account via email link before logging in", ErrorCode.USER_ACCOUNT_NOT_VERIFIED, HttpStatus.UNAUTHORIZED);
     }
+
+    public UserAccountNotVerifiedException(String message) {
+        super(message, ErrorCode.USER_ACCOUNT_NOT_VERIFIED, HttpStatus.UNAUTHORIZED);
+    }
+
 }

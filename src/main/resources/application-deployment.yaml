@@ -93,3 +93,4 @@ jwt:
 frontend:
   base_url: "https://app.workout-app.online"
   registration_verification_path: "/registerVerification?token="
+  password_reset_path: "/passwordReset?token="

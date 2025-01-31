@@ -40,7 +40,7 @@ public class AuditorConfig {
     public static class AuditorAwareImpl implements AuditorAware<UUID> {
         private final CurrentUserService currentUserService;
         private static final UUID SYSTEM_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
-        private static final List<String> systemAuditorEndpointsPaths = List.of("/api/auth/register", "/api/auth/register/verification");
+        private static final List<String> systemAuditorEndpointsPaths = List.of("/api/auth/register", "/api/auth/register/verification", "/api/auth/password/reset", "/api/auth/password/change");
 
         /**
          * Determines the user ID to be used for auditing.

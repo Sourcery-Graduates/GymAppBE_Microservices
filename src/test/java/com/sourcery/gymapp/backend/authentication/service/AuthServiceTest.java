@@ -3,9 +3,9 @@ package com.sourcery.gymapp.backend.authentication.service;
 import com.sourcery.gymapp.backend.authentication.dto.RegistrationRequest;
 import com.sourcery.gymapp.backend.authentication.dto.UserAuthDto;
 import com.sourcery.gymapp.backend.authentication.dto.UserDetailsDto;
+import com.sourcery.gymapp.backend.authentication.event.PasswordResetEvent;
 import com.sourcery.gymapp.backend.authentication.event.RegistrationCompleteEvent;
-import com.sourcery.gymapp.backend.authentication.exception.RegistrationTokenNotFoundException;
-import com.sourcery.gymapp.backend.authentication.exception.UserAlreadyExistsException;
+import com.sourcery.gymapp.backend.authentication.exception.*;
 import com.sourcery.gymapp.backend.authentication.jwt.GymAppJwtProvider;
 import com.sourcery.gymapp.backend.authentication.mapper.UserMapper;
 import com.sourcery.gymapp.backend.authentication.model.EmailToken;
@@ -13,8 +13,8 @@ import com.sourcery.gymapp.backend.authentication.model.TokenType;
 import com.sourcery.gymapp.backend.authentication.model.User;
 import com.sourcery.gymapp.backend.authentication.repository.EmailTokenRepository;
 import com.sourcery.gymapp.backend.authentication.repository.UserRepository;
-import com.sourcery.gymapp.backend.authentication.exception.UserNotAuthenticatedException;
 
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,6 +29,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,7 +50,7 @@ class AuthServiceTest {
     private GymAppJwtProvider jwtProvider;
 
     @Mock
-    private ApplicationEventPublisher emailPublisher;
+    private ApplicationEventPublisher applicationPublisher;
 
     @Mock
     private EmailTokenRepository emailTokenRepository;
@@ -120,13 +121,13 @@ class AuthServiceTest {
             when(passwordEncoder.encode(userPassword)).thenReturn("encodedPassword");
             when(userMapper.toEntity(registrationRequest)).thenReturn(user);
 
-            doNothing().when(emailPublisher).publishEvent(any(RegistrationCompleteEvent.class));
+            doNothing().when(applicationPublisher).publishEvent(any(RegistrationCompleteEvent.class));
             when(userRepository.save(any())).thenReturn(any());
 
             authService.register(registrationRequest);
 
             verify(userRepository, times(1)).save(any());
-            verify(emailPublisher, times(1)).publishEvent(any(RegistrationCompleteEvent.class));
+            verify(applicationPublisher, times(1)).publishEvent(any(RegistrationCompleteEvent.class));
         }
 
         @Test
@@ -200,6 +201,129 @@ class AuthServiceTest {
             verify(emailTokenRepository, times(1)).delete(any());
             assertEquals(HttpStatus.OK, response.getStatusCode());
             assertEquals("Account verified successfully", response.getBody());
+        }
+    }
+
+    @Nested
+    @DisplayName("Password reset / change")
+    public class PasswordReset {
+        @Nested
+        @DisplayName("Password reset request")
+        public class PasswordResetRequest {
+
+            @Test
+            void passwordResetRequest_withInvalidEmail() {
+                when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+
+                assertThrows(UsernameNotFoundException.class, () ->
+                authService.passwordResetRequest(anyString()));
+            }
+            
+            @Test
+            void passwordResetRequest_withUserDisabled() {
+                User user = new User();
+                user.setEnabled(false);
+                
+                when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+                
+                assertThrows(UserAccountNotVerifiedException.class, () -> authService.passwordResetRequest(anyString()));
+            }
+            
+            @Test
+            void passwordResetRequest_withValidUser() {
+                User user = new User();
+                user.setEnabled(true);
+                
+                when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+                doNothing().when(applicationPublisher).publishEvent(any(PasswordResetEvent.class));
+
+                ResponseEntity<String> response = authService.passwordResetRequest(anyString());
+
+                verify(applicationPublisher, times(1)).publishEvent(any(PasswordResetEvent.class));
+                assertEquals(HttpStatus.OK, response.getStatusCode());
+                assertEquals("Password reset link was sent to your email!", response.getBody());
+            }
+        }
+        @Nested
+        @DisplayName("Password change")
+        public class PasswordChange {
+            String password1Param = "password1";
+            String password2Param = "password2";
+            String tokenParam = "token";
+
+            @Test
+            void passwordChange_withNoToken() {
+
+                when(emailTokenRepository.findByToken(tokenParam)).thenReturn(Optional.empty());
+
+                assertThrows(PasswordResetTokenNotFoundException.class, () -> authService.passwordChange(password1Param, password2Param, tokenParam));
+            }
+
+            @Test
+            void passwordChange_withWrongTokenType() {
+                EmailToken emailToken = new EmailToken();
+                emailToken.setType(TokenType.REGISTRATION);
+
+                when(emailTokenRepository.findByToken(tokenParam)).thenReturn(Optional.of(emailToken));
+
+                ResponseEntity<String> response = authService.passwordChange(password1Param, password2Param, tokenParam);
+
+                assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+                assertEquals("Wrong token type was %s, expected %s".formatted(emailToken.getType(), TokenType.PASSWORD_RECOVERY), response.getBody());
+            }
+
+            @Test
+            void passwordChange_withTokenExpired() {
+                EmailToken emailToken = new EmailToken();
+                emailToken.setType(TokenType.PASSWORD_RECOVERY);
+                emailToken.setExpirationTime(ZonedDateTime.now().minusMinutes(15));
+
+                when(emailTokenRepository.findByToken(tokenParam)).thenReturn(Optional.of(emailToken));
+                doNothing().when(emailTokenRepository).delete(any());
+
+                ResponseEntity<String> response = authService.passwordChange(password1Param, password2Param, tokenParam);
+
+                verify(emailTokenRepository, times(1)).delete(any());
+                assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+                assertEquals("Link already expired, please send another password change request", response.getBody());
+            }
+
+            @Test
+            void passowrdChange_withPasswordsMismatching() {
+                EmailToken emailToken = new EmailToken();
+                emailToken.setType(TokenType.PASSWORD_RECOVERY);
+                emailToken.setExpirationTime(ZonedDateTime.now().plusHours(24));
+
+                when(emailTokenRepository.findByToken(tokenParam)).thenReturn(Optional.of(emailToken));
+
+                ResponseEntity<String> response = authService.passwordChange(password1Param, password2Param, tokenParam);
+
+                assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+                assertEquals("Given passwords have to match each other", response.getBody());
+            }
+
+            @Test
+            void passowrdChange_withValidInformation() {
+                User user = new User();
+                EmailToken emailToken = new EmailToken();
+                emailToken.setType(TokenType.PASSWORD_RECOVERY);
+                emailToken.setExpirationTime(ZonedDateTime.now().plusHours(24));
+                emailToken.setUser(user);
+
+
+                when(emailTokenRepository.findByToken(tokenParam)).thenReturn(Optional.of(emailToken));
+                when(passwordEncoder.encode(anyString())).thenReturn("hashedPassword");
+                when(userRepository.save(any())).thenReturn(user);
+                doNothing().when(emailTokenRepository).delete(any());
+
+                ResponseEntity<String> response = authService.passwordChange(password1Param, password1Param, tokenParam);
+
+                verify(passwordEncoder, times(1)).encode(anyString());
+                verify(userRepository, times(1)).save(any());
+                verify(emailTokenRepository, times(1)).delete(any());
+                assertEquals(HttpStatus.OK, response.getStatusCode());
+                assertEquals("Password has been changed!", response.getBody());
+            }
         }
     }
 }
