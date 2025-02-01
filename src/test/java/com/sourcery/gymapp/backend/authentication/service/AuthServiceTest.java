@@ -6,6 +6,7 @@ import com.sourcery.gymapp.backend.authentication.dto.UserDetailsDto;
 import com.sourcery.gymapp.backend.authentication.exception.UserAlreadyExistsException;
 import com.sourcery.gymapp.backend.authentication.jwt.GymAppJwtProvider;
 import com.sourcery.gymapp.backend.authentication.mapper.UserMapper;
+import com.sourcery.gymapp.backend.authentication.model.User;
 import com.sourcery.gymapp.backend.authentication.producer.AuthKafkaProducer;
 import com.sourcery.gymapp.backend.authentication.repository.UserRepository;
 import com.sourcery.gymapp.backend.authentication.exception.UserNotAuthenticatedException;
@@ -17,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -37,6 +39,9 @@ class AuthServiceTest {
 
     @Mock
     private AuthKafkaProducer authKafkaProducer;
+
+    @Mock
+    private TransactionTemplate transactionTemplate;
 
     @InjectMocks
     private AuthService authService;
@@ -82,14 +87,19 @@ class AuthServiceTest {
         registrationRequest.setFirstName("test");
         registrationRequest.setLastName("user");
 
+        User mockUser = new User();
+        mockUser.setId(UUID.randomUUID());
+
         when(userRepository.existsByUsername("testUser")).thenReturn(false);
         when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");
 
-        when(userRepository.save(any())).thenReturn(any());
+        when(userRepository.save(any())).thenReturn(mockUser);
+        when(transactionTemplate.execute(any())).thenAnswer(invocation -> userRepository.save(mockUser));
 
         authService.register(registrationRequest);
 
         verify(userRepository, times(1)).save(any());
+        verify(authKafkaProducer, times(1)).sendRegistrationEvent(any());
     }
 
     @Test
