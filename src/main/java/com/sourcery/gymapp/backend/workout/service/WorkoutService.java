@@ -32,7 +32,7 @@ public class WorkoutService {
     @Transactional
     @ValidateOrderNumbersInCreateWorkoutDto
     public ResponseWorkoutDto createWorkout(CreateWorkoutDto createWorkoutDto) {
-        var currentUserId = currentUserService.getCurrentUserId();
+        UUID currentUserId = currentUserService.getCurrentUserId();
         if (currentUserId == null) {
             throw new UserNotFoundException();
         }
@@ -65,7 +65,7 @@ public class WorkoutService {
     @ValidateOrderNumbersInCreateWorkoutDto
     public ResponseWorkoutDto updateWorkout(CreateWorkoutDto updateWorkoutDto, UUID workoutId) {
         var workout = findWorkoutById(workoutId);
-        var currentUserId = currentUserService.getCurrentUserId();
+        UUID currentUserId = currentUserService.getCurrentUserId();
 
         AuthorizationUtil.checkIsUserAuthorized(currentUserId, workout.getUserId());
 
@@ -84,7 +84,7 @@ public class WorkoutService {
     }
 
     public List<ResponseWorkoutDto> getWorkoutsByUserId() {
-        var currentUserId = currentUserService.getCurrentUserId();
+        UUID currentUserId = currentUserService.getCurrentUserId();
         if (currentUserId == null) {
             throw new UserNotFoundException();
         }
@@ -100,7 +100,7 @@ public class WorkoutService {
     @Transactional
     public void deleteWorkout(UUID workoutId) {
         var workout = findWorkoutById(workoutId);
-        var currentUserId = currentUserService.getCurrentUserId();
+        UUID currentUserId = currentUserService.getCurrentUserId();
 
         AuthorizationUtil.checkIsUserAuthorized(currentUserId, workout.getUserId());
 
