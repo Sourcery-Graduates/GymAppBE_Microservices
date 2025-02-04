@@ -51,7 +51,7 @@ public class AuditorConfig {
         @Override
         @NonNull
         public Optional<UUID> getCurrentAuditor() {
-            if(isKafkaProcessing.get()) {
+            if(KafkaProcessingContext.isKafkaProcessing()) {
                 return Optional.of(SYSTEM_USER_UUID);
             }
             if (isRegistrationEndpoint()) {
@@ -72,18 +72,6 @@ public class AuditorConfig {
                 return registrationPath.equals(requestUri);
             }
             return false;
-        }
-
-        public static void enableKafkaProcessing() {
-            isKafkaProcessing.set(true);
-        }
-
-        public static void disableKafkaProcessing() {
-            isKafkaProcessing.remove();
-        }
-
-        public static boolean getKafkaProcessing() {
-            return isKafkaProcessing.get();
         }
 
         public static UUID getSystemUserUUID() {
