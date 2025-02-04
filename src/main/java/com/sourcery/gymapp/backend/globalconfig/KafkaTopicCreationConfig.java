@@ -20,8 +20,9 @@ import java.util.Map;
 public class KafkaTopicCreationConfig {
 
     private Map<String, String> topics;
-    private static final int DEFAULT_PARTITIONS = 3;
-    private static final int DEFAULT_REPLICAS = 3;
+    private Integer partitions;
+    private Integer replicas;
+
 
     @Bean
     public KafkaAdmin.NewTopics createTopics() {
@@ -30,8 +31,8 @@ public class KafkaTopicCreationConfig {
         for (Map.Entry<String, String> entry : topics.entrySet()) {
             listOfTopics.add(
                     TopicBuilder.name(entry.getValue())
-                            .partitions(DEFAULT_PARTITIONS)
-                            .replicas(DEFAULT_REPLICAS)
+                            .partitions(replicas)
+                            .replicas(partitions)
                             .build()
             );
         }

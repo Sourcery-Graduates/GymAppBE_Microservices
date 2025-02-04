@@ -20,6 +20,16 @@ spring:
     label-filter: "!exclude-test"
 
   kafka:
+    replicas: 1
+    partitions: 1
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.UUIDDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      group-id: gym-app-listener-group
+      auto-offset-reset: latest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.UUIDSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
     topics:
       account-register: "userProfile.create-account"
       retry: "common.RETRY"

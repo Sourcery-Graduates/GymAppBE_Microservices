@@ -36,6 +36,8 @@ spring:
           include: health
 
   kafka:
+    replicas: 3
+    partitions: 3
     consumer:
       bootstrap-servers: kafka1:9092,kafka2:9093,kafka3:9094
       key-deserializer: org.apache.kafka.common.serialization.UUIDDeserializer
