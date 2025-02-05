@@ -40,6 +40,7 @@ public class AuditorConfig {
         private final CurrentUserService currentUserService;
         private static final UUID SYSTEM_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
         private static final String registrationPath = "/api/auth/register";
+        private static final ThreadLocal<Boolean> isKafkaProcessing = ThreadLocal.withInitial(() -> false);
 
         /**
          * Determines the user ID to be used for auditing.
@@ -50,6 +51,9 @@ public class AuditorConfig {
         @Override
         @NonNull
         public Optional<UUID> getCurrentAuditor() {
+            if(KafkaProcessingContext.isKafkaProcessing()) {
+                return Optional.of(SYSTEM_USER_UUID);
+            }
             if (isRegistrationEndpoint()) {
                 return Optional.of(SYSTEM_USER_UUID);
             }
@@ -68,6 +72,10 @@ public class AuditorConfig {
                 return registrationPath.equals(requestUri);
             }
             return false;
+        }
+
+        public static UUID getSystemUserUUID() {
+            return SYSTEM_USER_UUID;
         }
     }
 }

@@ -20,4 +20,15 @@ public class RegistrationRequest {
     @NotBlank(message = "Email is mandatory")
     @Email(message = "Email should be valid")
     private String email;
+
+    @NotBlank(message = "First name is mandatory")
+    @Size(max = 64, message = "First name must be at most 64 characters long")
+    private String firstName;
+
+    @NotBlank(message = "Last name is mandatory")
+    @Size(max = 64, message = "Last name must be at most 64 characters long")
+    private String lastName;
+
+    @Size(max = 128, message = "location must be at most 128 characters long")
+    private String location;
 }
