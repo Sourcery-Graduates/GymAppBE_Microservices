@@ -3,6 +3,7 @@ package com.sourcery.gymapp.backend.authentication.controller;
 import com.sourcery.gymapp.backend.authentication.dto.RegistrationRequest;
 import com.sourcery.gymapp.backend.authentication.dto.UserAuthDto;
 import com.sourcery.gymapp.backend.authentication.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,7 +25,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegistrationRequest registrationRequest) {
+    public ResponseEntity<String> register(@Valid @RequestBody RegistrationRequest registrationRequest) {
         authService.register(registrationRequest);
         return ResponseEntity.ok("User registered successfully");
     }

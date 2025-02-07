@@ -69,7 +69,8 @@ public class UserMapper {
                 registrationRequest.getUsername(),
                 registrationRequest.getFirstName(),
                 registrationRequest.getLastName(),
-                registrationRequest.getLocation()
+                registrationRequest.getLocation(),
+                registrationRequest.getBio()
         );
     }
 }

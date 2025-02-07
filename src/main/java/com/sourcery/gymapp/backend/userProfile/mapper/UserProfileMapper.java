@@ -46,7 +46,7 @@ public class UserProfileMapper {
                 event.username(),
                 event.firstName(),
                 event.lastName(),
-                "My cool bio",
+                event.bio(),
                 null,
                 event.location(),
                 new HashMap<>()

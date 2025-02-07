@@ -39,9 +39,12 @@ public class RegisterKafkaCreateProfileTest extends BaseKafkaIntegrationTest {
         RegistrationRequest request = new RegistrationRequest();
         request.setUsername("testUser");
         request.setPassword("securePassword");
+        request.setConfirmPassword("securePassword");
         request.setEmail("test@example.com");
         request.setFirstName("Test");
         request.setLastName("User");
+        request.setBio("Lorem ipsum dolor sit amet");
+
         return request;
     }
 
