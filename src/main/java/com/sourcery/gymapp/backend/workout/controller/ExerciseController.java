@@ -26,4 +26,13 @@ public class ExerciseController {
         return exerciseService.getExercisesByPrefix(prefix, pageable);
     }
 
+    @GetMapping("/primary-muscle")
+    public ExercisePageDto getPagedExercisesByPrimaryMuscle(
+            @ParameterObject @PageableDefault(size = 10, sort = "name") Pageable pageable,
+            @RequestParam(required = false) String prefix,
+            @RequestParam(required = false) String primaryMuscle) {
+
+        return exerciseService.getFilteredExercises(prefix, primaryMuscle, pageable);
+    }
+
 }

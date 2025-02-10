@@ -6,6 +6,7 @@ import com.sourcery.gymapp.backend.workout.exception.ExerciseNotFoundException;
 import com.sourcery.gymapp.backend.workout.mapper.ExerciseMapper;
 import com.sourcery.gymapp.backend.workout.model.Exercise;
 import com.sourcery.gymapp.backend.workout.repository.ExerciseRepository;
+import com.sourcery.gymapp.backend.workout.util.FormatUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,6 +57,33 @@ public class ExerciseService {
                 exercisePage.getTotalElements(),
                 exercises
         );
+    }
+
+    public ExercisePageDto getFilteredExercises(String prefix, String primaryMuscle, Pageable pageable) {
+        Page<Exercise> exercises = fetchExercisesFromRepository(prefix, primaryMuscle, pageable);
+
+        return new ExercisePageDto(
+                exercises.getTotalPages(),
+                exercises.getTotalElements(),
+                exercises.getContent().stream()
+                        .map(exerciseMapper::toDto)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    public Page<Exercise> fetchExercisesFromRepository(String prefix, String primaryMuscle, Pageable pageable) {
+        boolean hasPrefix = prefix != null && !prefix.isBlank();
+        boolean hasPrimaryMuscle = primaryMuscle != null && !primaryMuscle.isBlank();
+
+        if (hasPrimaryMuscle) {
+            String formattedMuscles = FormatUtil.wrapInCurlyBraces(primaryMuscle);
+            return hasPrefix
+                    ? exerciseRepository.findAllByPrimaryMuscleAndPrefix(formattedMuscles, prefix, pageable)
+                    : exerciseRepository.findAllByPrimaryMuscle(formattedMuscles, pageable);
+        }
+        return hasPrefix
+                ? exerciseRepository.findByPrefixOrContaining(prefix, pageable)
+                : exerciseRepository.findAll(pageable);
     }
 
     public Exercise findExerciseById(UUID id) {
