@@ -20,7 +20,6 @@ public class RegistrationRequest {
     private String password;
 
     @NotBlank(message = "Confirm password is mandatory")
-    @Size(min = 8, message = "Confirm password must be at least 8 characters long")
     private String confirmPassword;
 
     @NotBlank(message = "Email is mandatory")
