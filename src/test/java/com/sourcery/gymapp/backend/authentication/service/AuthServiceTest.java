@@ -241,7 +241,7 @@ class AuthServiceTest {
 
                 verify(applicationPublisher, times(1)).publishEvent(any(PasswordResetEvent.class));
                 assertEquals(HttpStatus.OK, response.getStatusCode());
-                assertEquals("Password reset link was sent to your email!", response.getBody());
+                assertEquals("Email with password reset was send to your email address", response.getBody());
             }
         }
         @Nested
@@ -289,7 +289,7 @@ class AuthServiceTest {
             }
 
             @Test
-            void passowrdChange_withPasswordsMismatching() {
+            void passwordChange_withPasswordsMismatching() {
                 EmailToken emailToken = new EmailToken();
                 emailToken.setType(TokenType.PASSWORD_RECOVERY);
                 emailToken.setExpirationTime(ZonedDateTime.now().plusHours(24));
@@ -303,7 +303,7 @@ class AuthServiceTest {
             }
 
             @Test
-            void passowrdChange_withValidInformation() {
+            void passwordChange_withValidInformation() {
                 User user = new User();
                 EmailToken emailToken = new EmailToken();
                 emailToken.setType(TokenType.PASSWORD_RECOVERY);
