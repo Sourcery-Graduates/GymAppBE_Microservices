@@ -9,6 +9,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AccessTokenAuthenticationToken;
@@ -17,13 +19,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CookieOAuth2TokenResponseHandler implements AuthenticationSuccessHandler {
-
     private static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
-    //TODO: below: add support for - local / remote development
-    private static final boolean SECURE_COOKIE = false; // TODO: MUST BE TRUE ON IN PROD -> to enable https
     private static final boolean HTTP_ONLY_COOKIE = true;
     private static final String COOKIE_PATH = "/";
+
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Value("${spring.profiles.active:default}")
+    private String activeProfile;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -46,7 +49,8 @@ public class CookieOAuth2TokenResponseHandler implements AuthenticationSuccessHa
     private void addRefreshTokenCookie(HttpServletResponse response, String tokenValue, Instant expiresAt) {
         Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, tokenValue);
         refreshTokenCookie.setHttpOnly(HTTP_ONLY_COOKIE);
-        refreshTokenCookie.setSecure(SECURE_COOKIE);
+        // https is enabled only in production
+        refreshTokenCookie.setSecure(isProduction());
         refreshTokenCookie.setPath(COOKIE_PATH);
         refreshTokenCookie.setMaxAge((int) Duration.between(Instant.now(), expiresAt).getSeconds());
         response.addCookie(refreshTokenCookie);
@@ -58,12 +62,14 @@ public class CookieOAuth2TokenResponseHandler implements AuthenticationSuccessHa
         tokens.put("token_type", tokenAuth.getAccessToken().getTokenType().getValue());
         tokens.put("expires_in", Duration.between(Instant.now(), tokenAuth.getAccessToken().getExpiresAt()).getSeconds());
 
-        tokenAuth.getAdditionalParameters().getOrDefault("id_token", null);
-        if (tokenAuth.getAdditionalParameters().containsKey("id_token")) {
-            tokens.put("id_token", tokenAuth.getAdditionalParameters().get("id_token"));
-        }
+        Optional.ofNullable(tokenAuth.getAdditionalParameters().get("id_token"))
+                .ifPresent(idToken -> tokens.put("id_token", idToken));
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         objectMapper.writeValue(response.getWriter(), tokens);
+    }
+
+    private boolean isProduction() {
+        return activeProfile.contains("prod");
     }
 }

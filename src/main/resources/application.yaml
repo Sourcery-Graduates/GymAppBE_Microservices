@@ -55,5 +55,3 @@ spring:
       retry: "common.RETRY"
       dead-letter: "common.DLT"
 ---
-jwt:
-

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
@@ -56,11 +57,7 @@ public class SecurityConfig {
 
         httpSecurity
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable)
-                .headers(headers -> headers
-                        // TODO: disabling HTTPS - NOT FOR PROD -> needed for local
-                        .httpStrictTransportSecurity(HeadersConfigurer.HstsConfig::disable)
-                );
+                .csrf(AbstractHttpConfigurer::disable);
 
         httpSecurity
                 .getConfigurer(OAuth2AuthorizationServerConfigurer.class)
@@ -91,6 +88,16 @@ public class SecurityConfig {
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
 
         return httpSecurity.build();
+    }
+
+    @Bean
+    @Profile("local")
+    public SecurityFilterChain localSecurityFilterChain(HttpSecurity http) throws Exception {
+        // disable https for local development
+        http.headers(headers -> headers
+                .httpStrictTransportSecurity(HeadersConfigurer.HstsConfig::disable)
+        );
+        return http.build();
     }
 
     @Bean
