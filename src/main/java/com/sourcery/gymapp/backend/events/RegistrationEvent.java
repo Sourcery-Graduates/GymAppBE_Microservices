@@ -13,6 +13,7 @@ public record RegistrationEvent(
         String firstName,
         @NotNull
         String lastName,
-        String location
+        String location,
+        String bio
 ) {
 }
