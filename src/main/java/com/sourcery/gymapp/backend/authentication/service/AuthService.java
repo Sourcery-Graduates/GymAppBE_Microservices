@@ -102,7 +102,7 @@ public class AuthService {
 
         applicationPublisher.publishEvent(new PasswordResetEvent(user, applicationURL));
 
-        return ResponseEntity.ok().body("Password reset link was sent to your email!");
+        return ResponseEntity.ok().body("Email with password reset was send to your email address");
     }
 
     public ResponseEntity<String> passwordChange(String password, String repeatedPassword, String token) {
