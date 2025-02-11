@@ -1,6 +1,6 @@
 package com.sourcery.gymapp.backend.config.integration;
 
-import com.sourcery.gymapp.backend.authentication.jwt.JwtConfig;
+import com.sourcery.gymapp.backend.authentication.config.JwkConfig;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -8,13 +8,14 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
 import java.time.Instant;
-
 
 @Testcontainers
 @ActiveProfiles("test")
@@ -27,12 +28,15 @@ public abstract class BaseIntegrationTest {
 
     @Autowired
     protected WebTestClient webTestClient;
-
     protected static String jwtToken;
+    protected static JwtDecoder jwtDecoder;
     protected static String username = "testUser";
     protected static String userId = "00000000-0000-0000-0000-000000000001";
+
     @BeforeAll
-    public static void setup(@Autowired JwtConfig jwtConfig) {
+    public static void setup(@Autowired JwkConfig jwkConfig) {
+        JwtEncoder jwtEncoder = new NimbusJwtEncoder(jwkConfig.jwkSource());
+        jwtDecoder = jwkConfig.jwtDecoder();
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
@@ -44,6 +48,6 @@ public abstract class BaseIntegrationTest {
                 .build();
 
         JwtEncoderParameters parameters = JwtEncoderParameters.from(claims);
-        jwtToken = jwtConfig.jwtEncoder().encode(parameters).getTokenValue();
+        jwtToken = jwtEncoder.encode(parameters).getTokenValue();
     }
 }

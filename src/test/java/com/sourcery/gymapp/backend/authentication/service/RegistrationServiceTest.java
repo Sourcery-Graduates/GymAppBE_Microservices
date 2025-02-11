@@ -4,7 +4,6 @@ import com.sourcery.gymapp.backend.authentication.dto.RegistrationRequest;
 import com.sourcery.gymapp.backend.authentication.dto.UserAuthDto;
 import com.sourcery.gymapp.backend.authentication.dto.UserDetailsDto;
 import com.sourcery.gymapp.backend.authentication.exception.UserAlreadyExistsException;
-import com.sourcery.gymapp.backend.authentication.jwt.GymAppJwtProvider;
 import com.sourcery.gymapp.backend.authentication.mapper.UserMapper;
 import com.sourcery.gymapp.backend.authentication.model.User;
 import com.sourcery.gymapp.backend.authentication.producer.AuthKafkaProducer;
@@ -23,10 +22,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class AuthServiceTest {
-
-    @Mock
-    private UserMapper userMapper;
+class RegistrationServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -35,47 +31,20 @@ class AuthServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @Mock
-    private GymAppJwtProvider jwtProvider;
-
-    @Mock
     private AuthKafkaProducer authKafkaProducer;
 
     @Mock
     private TransactionTemplate transactionTemplate;
 
+    @Mock
+    private UserMapper userMapper;
+
     @InjectMocks
-    private AuthService authService;
+    private RegistrationService registrationService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-    }
-
-    @Test
-    void testAuthenticateUser_withValidAuthentication() {
-        Authentication authentication = mock(Authentication.class);
-        UserDetailsDto userDetailsDto = mock(UserDetailsDto.class);
-        String token = "jwt-token";
-
-        when(authentication.getPrincipal()).thenReturn(userDetailsDto);
-        when(userDetailsDto.getUsername()).thenReturn("testUser");
-        when(userDetailsDto.getId()).thenReturn(UUID.randomUUID());
-        when(jwtProvider.generateToken(anyString(), any(UUID.class))).thenReturn(token);
-        when(userMapper.toAuthDto(userDetailsDto, token)).thenReturn(new UserAuthDto(token, "testUser", null, null));
-
-        UserAuthDto result = authService.authenticateUser(authentication);
-
-        assertNotNull(result);
-        assertEquals("jwt-token", result.token());
-        assertEquals("testUser", result.username());
-    }
-
-    @Test
-    void testAuthenticateUser_withInvalidPrincipal() {
-        Authentication authentication = mock(Authentication.class);
-        when(authentication.getPrincipal()).thenReturn("invalidPrincipal");
-
-        assertThrows(UserNotAuthenticatedException.class, () -> authService.authenticateUser(authentication));
     }
 
     @Test
@@ -96,7 +65,7 @@ class AuthServiceTest {
         when(userRepository.save(any())).thenReturn(mockUser);
         when(transactionTemplate.execute(any())).thenAnswer(invocation -> userRepository.save(mockUser));
 
-        authService.register(registrationRequest);
+        registrationService.register(registrationRequest);
 
         verify(userRepository, times(1)).save(any());
         verify(authKafkaProducer, times(1)).sendRegistrationEvent(any());
@@ -109,6 +78,6 @@ class AuthServiceTest {
 
         when(userRepository.existsByUsername("existingUser")).thenReturn(true);
 
-        assertThrows(UserAlreadyExistsException.class, () -> authService.register(registrationRequest));
+        assertThrows(UserAlreadyExistsException.class, () -> registrationService.register(registrationRequest));
     }
 }

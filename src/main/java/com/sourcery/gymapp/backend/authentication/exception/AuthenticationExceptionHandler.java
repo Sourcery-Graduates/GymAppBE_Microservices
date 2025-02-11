@@ -1,9 +1,14 @@
 package com.sourcery.gymapp.backend.authentication.exception;
 
+import java.time.Instant;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -51,5 +56,21 @@ public class AuthenticationExceptionHandler {
 
         ErrorResponse response = new ErrorResponse("Request validation error", ErrorCode.REQUEST_VALIDATION_ERROR, fields);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(OAuth2AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleOAuth2AuthenticationException(OAuth2AuthenticationException ex) {
+        log.error("OAuth2AuthenticationException caught: {}", ex.getMessage(), ex);
+        OAuth2Error error = ex.getError();
+
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        ErrorResponse response = new ErrorResponse(
+                error.getDescription(),
+                ErrorCode.OAUTH2_ERROR,
+                List.of(new FieldResponse("OAuth2", error.getErrorCode()))
+        );
+
+        return new ResponseEntity<>(response, status);
     }
 }

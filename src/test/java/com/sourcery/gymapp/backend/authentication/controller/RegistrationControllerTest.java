@@ -3,7 +3,7 @@ package com.sourcery.gymapp.backend.authentication.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sourcery.gymapp.backend.authentication.dto.RegistrationRequest;
 import com.sourcery.gymapp.backend.authentication.factory.RegistrationRequestFactory;
-import com.sourcery.gymapp.backend.authentication.service.AuthService;
+import com.sourcery.gymapp.backend.authentication.service.RegistrationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class AuthControllerTest {
+public class RegistrationControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -30,7 +30,7 @@ public class AuthControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private AuthService authService;
+    private RegistrationService registrationService;
 
 
     @Test
@@ -42,7 +42,7 @@ public class AuthControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
 
-        Mockito.verify(authService, Mockito.never()).register(Mockito.any());
+        Mockito.verify(registrationService, Mockito.never()).register(Mockito.any());
     }
 
     @Test
@@ -54,6 +54,6 @@ public class AuthControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk());
 
-        Mockito.verify(authService, Mockito.times(1)).register(Mockito.any());
+        Mockito.verify(registrationService, Mockito.times(1)).register(Mockito.any());
     }
 }
