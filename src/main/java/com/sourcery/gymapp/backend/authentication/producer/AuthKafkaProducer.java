@@ -1,0 +1,49 @@
+package com.sourcery.gymapp.backend.authentication.producer;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sourcery.gymapp.backend.authentication.exception.AuthenticationRuntimeException;
+import com.sourcery.gymapp.backend.events.RegistrationEvent;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
+import org.springframework.stereotype.Component;
+
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
+@Slf4j
+@Component
+public class AuthKafkaProducer {
+    @Value("${spring.kafka.topics.account-register}")
+    private String topicName;
+    private final KafkaTemplate<UUID, String> kafkaTemplate;
+    private final ObjectMapper objectMapper;
+
+    public AuthKafkaProducer(KafkaTemplate<UUID, String> kafkaTemplate, ObjectMapper objectMapper) {
+        this.kafkaTemplate = kafkaTemplate;
+        this.objectMapper = objectMapper;
+    }
+
+    public CompletableFuture<SendResult<UUID, String>> sendRegistrationEvent(RegistrationEvent event) {
+        var key = event.userId();
+        String value = null;
+        try {
+            value = objectMapper.writeValueAsString(event);
+        } catch (JsonProcessingException e) {
+            throw new AuthenticationRuntimeException("Couldn't convert to JSON at Kafka Producer" + e.getMessage());
+        }
+
+        var future = kafkaTemplate.send(topicName, key, value);
+
+        String finalValue = value;
+        return future.whenComplete((result, error) -> {
+            if (error != null) {
+                log.error("Error sending library event: {}", error.getMessage(), error);
+            } else {
+                log.info("Successfully sent registration event: \n key: {}\n value: {}", key, finalValue);
+            }
+        });
+    }
+}

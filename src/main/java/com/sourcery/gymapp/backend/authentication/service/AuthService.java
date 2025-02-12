@@ -11,7 +11,10 @@ import com.sourcery.gymapp.backend.authentication.mapper.UserMapper;
 import com.sourcery.gymapp.backend.authentication.model.TokenType;
 import com.sourcery.gymapp.backend.authentication.model.User;
 import com.sourcery.gymapp.backend.authentication.repository.EmailTokenRepository;
+import com.sourcery.gymapp.backend.authentication.producer.AuthKafkaProducer;
 import com.sourcery.gymapp.backend.authentication.repository.UserRepository;
+import com.sourcery.gymapp.backend.authentication.exception.UserNotAuthenticatedException;
+import com.sourcery.gymapp.backend.events.RegistrationEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -23,9 +26,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import com.sourcery.gymapp.backend.authentication.model.EmailToken;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +40,8 @@ public class AuthService {
     private final CustomUserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final GymAppJwtProvider jwtProvider;
+    private final AuthKafkaProducer kafkaEventsProducer;
+    private final TransactionTemplate transactionTemplate;
     private final ApplicationEventPublisher applicationPublisher;
     private final EmailTokenRepository emailTokenRepository;
 
@@ -61,14 +68,21 @@ public class AuthService {
 
     @Transactional
     public void register(RegistrationRequest registrationRequest) {
-        if (userRepository.existsByEmail(registrationRequest.getEmail())) {
+        User user = transactionTemplate.execute(status -> {
+            if (userRepository.existsByEmail(registrationRequest.getEmail())) {
+                return null;
+            }
+
+            registrationRequest.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
+            return userRepository.save(userMapper.toEntity(registrationRequest));
+        });
+
+        if (user == null) {
             throw new UserAlreadyExistsException();
         }
-        registrationRequest.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-        User user = userMapper.toEntity(registrationRequest);
 
-        userRepository.save(user);
-
+        RegistrationEvent event = userMapper.toRegistrationEvent(user, registrationRequest);
+        kafkaEventsProducer.sendRegistrationEvent(event);
         applicationPublisher.publishEvent(new RegistrationCompleteEvent(user, applicationURL));
     }
 
@@ -118,9 +132,6 @@ public class AuthService {
             return ResponseEntity.badRequest().body("Link already expired, please send another password change request");
         }
 
-        if (!password.equals(repeatedPassword)) {
-            return ResponseEntity.badRequest().body("Given passwords have to match each other");
-        }
 
         User user = emailToken.getUser();
         user.setPassword(passwordEncoder.encode(password));

@@ -9,6 +9,8 @@ import com.sourcery.gymapp.backend.authentication.model.User;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.sourcery.gymapp.backend.events.RegistrationEvent;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -61,5 +63,16 @@ public class UserMapper {
         user.setEmail(registrationRequest.getEmail());
         user.setPassword(registrationRequest.getPassword());
         return user;
+    }
+
+    public RegistrationEvent toRegistrationEvent(User user, RegistrationRequest registrationRequest) {
+        return new RegistrationEvent(
+                user.getId(),
+                registrationRequest.getUsername(),
+                registrationRequest.getFirstName(),
+                registrationRequest.getLastName(),
+                registrationRequest.getLocation(),
+                registrationRequest.getBio()
+        );
     }
 }

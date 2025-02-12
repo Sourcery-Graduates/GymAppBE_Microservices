@@ -25,4 +25,23 @@ public interface ExerciseRepository extends JpaRepository<Exercise, UUID> {
             nativeQuery = true)
     Page<Exercise> findByPrefixOrContaining(@Param("prefix") String prefix, Pageable pageable);
 
+
+    @Query(value = "SELECT * FROM workout_data.exercise " +
+            "WHERE primary_muscles @> CAST(:primaryMuscle AS text[])",
+            countQuery = "SELECT COUNT(*) FROM workout_data.exercise " +
+                    "WHERE primary_muscles @> CAST(:primaryMuscle AS text[])",
+            nativeQuery = true)
+    Page<Exercise> findAllByPrimaryMuscle(@Param("primaryMuscle") String primaryMuscle, Pageable pageable);
+
+    @Query(value = "SELECT * FROM workout_data.exercise " +
+            "WHERE primary_muscles @> CAST(:primaryMuscle AS text[]) " +
+            "AND (name ILIKE :prefix || '%' " +
+            "OR name ILIKE '%' || :prefix || '%')",
+            countQuery = "SELECT COUNT(*) FROM workout_data.exercise " +
+                    "WHERE primary_muscles @> CAST(:primaryMuscle AS text[]) " +
+                    "AND (name ILIKE :prefix || '%' OR name ILIKE '%' || :prefix || '%')",
+            nativeQuery = true)
+    Page<Exercise> findAllByPrimaryMuscleAndPrefix(@Param("primaryMuscle") String primaryMuscle,
+                                                   @Param("prefix") String prefix,
+                                                   Pageable pageable);
 }

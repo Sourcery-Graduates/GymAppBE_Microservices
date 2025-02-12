@@ -5,6 +5,7 @@ import com.sourcery.gymapp.backend.workout.dto.CreateWorkoutExerciseSetDto;
 import com.sourcery.gymapp.backend.workout.dto.ExerciseSimpleDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseWorkoutExerciseDto;
 import com.sourcery.gymapp.backend.workout.model.Exercise;
+import com.sourcery.gymapp.backend.workout.model.Workout;
 import com.sourcery.gymapp.backend.workout.model.WorkoutExercise;
 
 import java.util.List;
@@ -62,6 +63,17 @@ public class WorkoutExerciseFactory {
 
     public static WorkoutExercise createWorkoutExercise(Exercise exercise) {
         WorkoutExercise workoutExercise = new WorkoutExercise();
+        workoutExercise.setId(UUID.randomUUID());
+        workoutExercise.setOrderNumber(1);
+        workoutExercise.setNotes("Test Notes");
+        workoutExercise.setExercise(exercise);
+
+        return workoutExercise;
+    }
+
+    public static WorkoutExercise createWorkoutExercise(Exercise exercise, Workout workout) {
+        WorkoutExercise workoutExercise = new WorkoutExercise();
+        workoutExercise.setWorkout(workout);
         workoutExercise.setId(UUID.randomUUID());
         workoutExercise.setOrderNumber(1);
         workoutExercise.setNotes("Test Notes");

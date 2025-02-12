@@ -42,6 +42,23 @@ public class WorkoutFactory {
     public static Workout createWorkout(
             UUID userId,
             String name,
+            ZonedDateTime date,
+            Routine routine
+    ) {
+        Workout workout = new Workout();
+
+        workout.setUserId(userId);
+        workout.setName(name);
+        workout.setDate(date);
+        workout.setComment("Test Comment");
+        workout.setRoutine(routine);
+
+        return workout;
+    }
+
+    public static Workout createWorkout(
+            UUID userId,
+            String name,
             ZonedDateTime date
     ) {
         return createWorkout(

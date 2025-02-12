@@ -11,38 +11,68 @@ import java.util.UUID;
 
 public class ExerciseFactory {
 
-    public static Exercise createExercise() {
-        Exercise exercise = new Exercise();
-        exercise.setId(UUID.randomUUID());
-        exercise.setName("Test Exercise");
-        exercise.setForce("Test Force");
-        exercise.setLevel("Intermediate");
-        exercise.setMechanic("Compound");
-        exercise.setEquipment("Dumbbell");
-        exercise.setPrimaryMuscles(List.of("Chest", "Shoulders"));
-        exercise.setSecondaryMuscles(List.of("Triceps"));
-        exercise.setDescription(List.of("Step 1: Get into position.", "Step 2: Execute the exercise."));
-        exercise.setCategory("Strength");
-        exercise.setImages(List.of("image1.jpg", "image2.jpg"));
-
-        return exercise;
-    }
-
-    public static Exercise createExercise(UUID uuid, String name) {
+    public static Exercise createExercise(UUID uuid, String name, List<String> primaryMuscles, String force, String level, String mechanic, String equipment, List<String> secondaryMuscles, List<String> description, String category, List<String> images) {
         Exercise exercise = new Exercise();
         exercise.setId(uuid);
         exercise.setName(name);
-        exercise.setForce("Test Force");
-        exercise.setLevel("Intermediate");
-        exercise.setMechanic("Compound");
-        exercise.setEquipment("Dumbbell");
-        exercise.setPrimaryMuscles(List.of("Chest", "Shoulders"));
-        exercise.setSecondaryMuscles(List.of("Triceps"));
-        exercise.setDescription(List.of("Step 1: Get into position.", "Step 2: Execute the exercise."));
-        exercise.setCategory("Strength");
-        exercise.setImages(List.of("image1.jpg", "image2.jpg"));
-
+        exercise.setForce(force);
+        exercise.setLevel(level);
+        exercise.setMechanic(mechanic);
+        exercise.setEquipment(equipment);
+        exercise.setPrimaryMuscles(primaryMuscles);
+        exercise.setSecondaryMuscles(secondaryMuscles);
+        exercise.setDescription(description);
+        exercise.setCategory(category);
+        exercise.setImages(images);
         return exercise;
+    }
+
+    public static Exercise createExercise() {
+        return createExercise(
+                UUID.randomUUID(),
+                "Test Exercise",
+                List.of("chest"),
+                "test force",
+                "intermediate",
+                "compound",
+                "dumbbell",
+                List.of("chest, triceps"),
+                List.of("Step 1: Get into position.", "Step 2: Execute the exercise."),
+                "strength",
+                List.of("image1.jpg", "image2.jpg")
+        );
+    }
+
+    public static Exercise createExercise(UUID uuid, String name) {
+        return createExercise(
+                uuid,
+                name,
+                List.of("chest"),
+                "test force",
+                "intermediate",
+                "compound",
+                "dumbbell",
+                List.of("chest, triceps"),
+                List.of("Step 1: Get into position.", "Step 2: Execute the exercise."),
+                "strength",
+                List.of("image1.jpg", "image2.jpg")
+        );
+    }
+
+    public static Exercise createExercise(UUID uuid, String name, List<String> primaryMuscles) {
+        return createExercise(
+                uuid,
+                name,
+                primaryMuscles,
+                "test force",
+                "intermediate",
+                "compound",
+                "dumbbell",
+                List.of("chest, triceps"),
+                List.of("Step 1: Get into position.", "Step 2: Execute the exercise."),
+                "strength",
+                List.of("image1.jpg", "image2.jpg")
+        );
     }
 
     public static ExerciseSimpleDto createExerciseSimpleDto(

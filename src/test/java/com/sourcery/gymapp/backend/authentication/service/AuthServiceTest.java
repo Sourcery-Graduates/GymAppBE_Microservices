@@ -12,6 +12,7 @@ import com.sourcery.gymapp.backend.authentication.model.EmailToken;
 import com.sourcery.gymapp.backend.authentication.model.TokenType;
 import com.sourcery.gymapp.backend.authentication.model.User;
 import com.sourcery.gymapp.backend.authentication.repository.EmailTokenRepository;
+import com.sourcery.gymapp.backend.authentication.producer.AuthKafkaProducer;
 import com.sourcery.gymapp.backend.authentication.repository.UserRepository;
 
 import java.time.ZonedDateTime;
@@ -31,6 +32,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -48,6 +50,12 @@ class AuthServiceTest {
 
     @Mock
     private GymAppJwtProvider jwtProvider;
+
+    @Mock
+    private AuthKafkaProducer authKafkaProducer;
+
+    @Mock
+    private TransactionTemplate transactionTemplate;
 
     @Mock
     private ApplicationEventPublisher applicationPublisher;
@@ -111,8 +119,11 @@ class AuthServiceTest {
             registrationRequest.setUsername(userName);
             registrationRequest.setPassword(userPassword);
             registrationRequest.setEmail(userEmail);
+            registrationRequest.setFirstName("test");
+            registrationRequest.setLastName("user");
 
             User user = new User();
+            user.setId(UUID.randomUUID());
             user.setUsername(userName);
             user.setEmail(userEmail);
             user.setPassword(userPassword);
@@ -120,15 +131,16 @@ class AuthServiceTest {
             when(userRepository.existsByEmail(userEmail)).thenReturn(false);
             when(passwordEncoder.encode(userPassword)).thenReturn("encodedPassword");
             when(userMapper.toEntity(registrationRequest)).thenReturn(user);
-
+            when(userRepository.save(any())).thenReturn(user);
+            when(transactionTemplate.execute(any())).thenAnswer(invocation -> userRepository.save(user));
             doNothing().when(applicationPublisher).publishEvent(any(RegistrationCompleteEvent.class));
-            when(userRepository.save(any())).thenReturn(any());
 
             authService.register(registrationRequest);
 
             verify(userRepository, times(1)).save(any());
+            verify(authKafkaProducer, times(1)).sendRegistrationEvent(any());
             verify(applicationPublisher, times(1)).publishEvent(any(RegistrationCompleteEvent.class));
-        }
+    }
 
         @Test
         void testRegister_withExistingUser() {
@@ -218,22 +230,22 @@ class AuthServiceTest {
                 assertThrows(UsernameNotFoundException.class, () ->
                 authService.passwordResetRequest(anyString()));
             }
-            
+
             @Test
             void passwordResetRequest_withUserDisabled() {
                 User user = new User();
                 user.setEnabled(false);
-                
+
                 when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
-                
+
                 assertThrows(UserAccountNotVerifiedException.class, () -> authService.passwordResetRequest(anyString()));
             }
-            
+
             @Test
             void passwordResetRequest_withValidUser() {
                 User user = new User();
                 user.setEnabled(true);
-                
+
                 when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
                 doNothing().when(applicationPublisher).publishEvent(any(PasswordResetEvent.class));
 
@@ -286,20 +298,6 @@ class AuthServiceTest {
                 verify(emailTokenRepository, times(1)).delete(any());
                 assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
                 assertEquals("Link already expired, please send another password change request", response.getBody());
-            }
-
-            @Test
-            void passwordChange_withPasswordsMismatching() {
-                EmailToken emailToken = new EmailToken();
-                emailToken.setType(TokenType.PASSWORD_RECOVERY);
-                emailToken.setExpirationTime(ZonedDateTime.now().plusHours(24));
-
-                when(emailTokenRepository.findByToken(tokenParam)).thenReturn(Optional.of(emailToken));
-
-                ResponseEntity<String> response = authService.passwordChange(passwordParam, repeatedPasswordParam, tokenParam);
-
-                assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-                assertEquals("Given passwords have to match each other", response.getBody());
             }
 
             @Test

@@ -10,8 +10,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ExerciseRepositoryIntegrationTest extends BaseWorkoutIntegrationJPATest {
@@ -23,10 +26,11 @@ public class ExerciseRepositoryIntegrationTest extends BaseWorkoutIntegrationJPA
     void beforeEach() {
         exerciseRepository.deleteAll();
 
-        exerciseRepository.save(ExerciseFactory.createExercise(UUID.randomUUID(), "Arm Curl"));
-        exerciseRepository.save(ExerciseFactory.createExercise(UUID.randomUUID(), "Leg Press"));
-        exerciseRepository.save(ExerciseFactory.createExercise(UUID.randomUUID(), "Arm Extension"));
-        exerciseRepository.save(ExerciseFactory.createExercise(UUID.randomUUID(), "Chest Press"));
+        exerciseRepository.save(ExerciseFactory.createExercise(UUID.randomUUID(), "Arm Curl", List.of("biceps")));
+        exerciseRepository.save(ExerciseFactory.createExercise(UUID.randomUUID(), "Leg Press", List.of("quads")));
+        exerciseRepository.save(ExerciseFactory.createExercise(UUID.randomUUID(), "Arm Extension", List.of("triceps")));
+        exerciseRepository.save(ExerciseFactory.createExercise(UUID.randomUUID(), "Chest Press", List.of("chest")));
+        exerciseRepository.save(ExerciseFactory.createExercise(UUID.randomUUID(), "Bench Press", List.of("chest")));
     }
 
     @Test
@@ -47,7 +51,7 @@ public class ExerciseRepositoryIntegrationTest extends BaseWorkoutIntegrationJPA
 
         assertThat(result.getContent())
                 .extracting(Exercise::getName)
-                .containsExactly("Chest Press", "Leg Press");
+                .containsExactly("Bench Press", "Chest Press", "Leg Press");
     }
 
     @Test
@@ -69,7 +73,7 @@ public class ExerciseRepositoryIntegrationTest extends BaseWorkoutIntegrationJPA
 
         assertThat(result.getContent())
                 .extracting(Exercise::getName)
-                .containsExactly("Arm Curl", "Arm Extension", "Chest Press", "Leg Press");
+                .containsExactly("Arm Curl", "Arm Extension", "Bench Press", "Chest Press", "Leg Press");
     }
 
     @Test
@@ -101,5 +105,60 @@ public class ExerciseRepositoryIntegrationTest extends BaseWorkoutIntegrationJPA
 
         assertThat(result.getContent()).hasSize(10);
         assertThat(result.getNumber()).isEqualTo(1);
+    }
+
+    @Test
+    void testFindAllByPrimaryMuscle_Chest() {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("name"));
+
+        String primaryMuscle = "chest";
+        String primaryMusclePrepared = '{' + primaryMuscle+ '}';
+
+        Page<Exercise> result = exerciseRepository.findAllByPrimaryMuscle(primaryMusclePrepared, pageable);
+
+        assertThat(result.getContent())
+                .extracting(Exercise::getName)
+                .containsExactly("Bench Press", "Chest Press");
+    }
+
+    @Test
+    void testFindAllByPrimaryMuscle_NoMatch() {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("name"));
+
+        String primaryMuscle = "middle back";
+        String primaryMusclePrepared = '{' + primaryMuscle+ '}';
+
+        Page<Exercise> result = exerciseRepository.findAllByPrimaryMuscle(primaryMusclePrepared, pageable);
+
+        assertThat(result.getContent()).isEmpty();
+    }
+
+    @Test
+    void testFindAllByPrimaryMuscleAndPrefix() {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("name"));
+
+        String primaryMuscle = "chest";
+        String primaryMusclePrepared = '{' + primaryMuscle + '}';
+        String prefix = "bench";
+
+        Page<Exercise> result = exerciseRepository.findAllByPrimaryMuscleAndPrefix(primaryMusclePrepared, prefix, pageable);
+
+        assertThat(result.getContent())
+                .extracting(Exercise::getName)
+                .containsExactly("Bench Press");
+    }
+
+    @Test
+    void testFindAllByPrimaryMuscleAndPrefix_EmptyPrefix() {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("name"));
+
+        String primaryMuscle = "chest";
+        String primaryMusclePrepared = '{' + primaryMuscle + '}';
+        String prefix = "";
+        Page<Exercise> result = exerciseRepository.findAllByPrimaryMuscleAndPrefix(primaryMusclePrepared, prefix, pageable);
+
+        assertThat(result.getContent())
+                .extracting(Exercise::getName)
+                .containsExactly("Bench Press", "Chest Press");
     }
 }

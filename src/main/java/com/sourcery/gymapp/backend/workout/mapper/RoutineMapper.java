@@ -2,6 +2,7 @@ package com.sourcery.gymapp.backend.workout.mapper;
 
 import com.sourcery.gymapp.backend.workout.dto.CreateRoutineDto;
 import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineDto;
+import com.sourcery.gymapp.backend.workout.dto.ResponseRoutineSimpleDto;
 import com.sourcery.gymapp.backend.workout.model.Routine;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +12,13 @@ import java.util.UUID;
 public class RoutineMapper {
     public ResponseRoutineDto toDto(Routine routine) {
         return this.toDto(routine, false);
+    }
+
+    public ResponseRoutineSimpleDto toSimpleDto(Routine routine) {
+        return new ResponseRoutineSimpleDto(
+                routine.getId(),
+                routine.getName()
+        );
     }
 
     public ResponseRoutineDto toDto(Routine routine, boolean likedByCurrentUser) {
