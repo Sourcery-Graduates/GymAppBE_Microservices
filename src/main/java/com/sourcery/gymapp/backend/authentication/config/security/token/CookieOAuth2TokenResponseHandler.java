@@ -50,7 +50,7 @@ public class CookieOAuth2TokenResponseHandler implements AuthenticationSuccessHa
         Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, tokenValue);
         refreshTokenCookie.setHttpOnly(HTTP_ONLY_COOKIE);
         // https is enabled only in production
-        refreshTokenCookie.setSecure(isProduction());
+        refreshTokenCookie.setSecure(isDeployment());
         refreshTokenCookie.setPath(COOKIE_PATH);
         refreshTokenCookie.setMaxAge((int) Duration.between(Instant.now(), expiresAt).getSeconds());
         response.addCookie(refreshTokenCookie);
@@ -69,7 +69,7 @@ public class CookieOAuth2TokenResponseHandler implements AuthenticationSuccessHa
         objectMapper.writeValue(response.getWriter(), tokens);
     }
 
-    private boolean isProduction() {
-        return activeProfile.contains("prod");
+    private boolean isDeployment() {
+        return activeProfile.contains("deployment");
     }
 }

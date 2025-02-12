@@ -1,21 +1,17 @@
 package com.sourcery.gymapp.backend.authentication.service;
 
 import com.sourcery.gymapp.backend.authentication.dto.RegistrationRequest;
-import com.sourcery.gymapp.backend.authentication.dto.UserAuthDto;
-import com.sourcery.gymapp.backend.authentication.dto.UserDetailsDto;
 import com.sourcery.gymapp.backend.authentication.exception.UserAlreadyExistsException;
 import com.sourcery.gymapp.backend.authentication.mapper.UserMapper;
 import com.sourcery.gymapp.backend.authentication.model.User;
 import com.sourcery.gymapp.backend.authentication.producer.AuthKafkaProducer;
 import com.sourcery.gymapp.backend.authentication.repository.UserRepository;
-import com.sourcery.gymapp.backend.authentication.exception.UserNotAuthenticatedException;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.support.TransactionTemplate;
 

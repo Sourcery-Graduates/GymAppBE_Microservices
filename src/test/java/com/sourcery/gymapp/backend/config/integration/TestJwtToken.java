@@ -1,7 +1,6 @@
 package com.sourcery.gymapp.backend.config.integration;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.jwt.*;
 
 import static org.junit.jupiter.api.Assertions.*;
