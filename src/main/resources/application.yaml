@@ -30,7 +30,6 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: sourcery.graduates@gmail.com
-    password: tvezahniilhaqlga
     properties:
       mail:
         smtp:

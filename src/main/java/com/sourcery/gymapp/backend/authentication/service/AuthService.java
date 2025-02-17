@@ -8,16 +8,17 @@ import com.sourcery.gymapp.backend.authentication.event.RegistrationCompleteEven
 import com.sourcery.gymapp.backend.authentication.exception.*;
 import com.sourcery.gymapp.backend.authentication.jwt.GymAppJwtProvider;
 import com.sourcery.gymapp.backend.authentication.mapper.UserMapper;
+import com.sourcery.gymapp.backend.authentication.model.EmailToken;
 import com.sourcery.gymapp.backend.authentication.model.TokenType;
 import com.sourcery.gymapp.backend.authentication.model.User;
-import com.sourcery.gymapp.backend.authentication.repository.EmailTokenRepository;
 import com.sourcery.gymapp.backend.authentication.producer.AuthKafkaProducer;
+import com.sourcery.gymapp.backend.authentication.repository.EmailTokenRepository;
 import com.sourcery.gymapp.backend.authentication.repository.UserRepository;
-import com.sourcery.gymapp.backend.authentication.exception.UserNotAuthenticatedException;
 import com.sourcery.gymapp.backend.events.RegistrationEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,10 +28,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
-import com.sourcery.gymapp.backend.authentication.model.EmailToken;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -52,14 +51,12 @@ public class AuthService {
     public UserAuthDto authenticateUser(Authentication authentication) {
         if (authentication.getPrincipal() instanceof UserDetails userDetails) {
             UserDetailsDto userDetailsDto = (UserDetailsDto) userDetails;
-            String token = jwtProvider.generateToken(userDetailsDto.getUsername(),
-                    userDetailsDto.getId());
+            String token = jwtProvider.generateToken(userDetailsDto.getUsername(), userDetailsDto.getId());
             return userMapper.toAuthDto(userDetailsDto, token);
         }
 
         if (authentication.getPrincipal() instanceof Jwt jwt) {
-            UserDetailsDto userDetails =
-                    (UserDetailsDto) userDetailsService.loadUserByUsername(jwt.getClaim("email"));
+            UserDetailsDto userDetails = (UserDetailsDto) userDetailsService.loadUserByUsername(jwt.getClaim("email"));
             String token = jwt.getTokenValue();
             return userMapper.toAuthDto(userDetails, token);
         }
@@ -88,8 +85,7 @@ public class AuthService {
 
     @Transactional
     public ResponseEntity<String> registerVerification(String token) {
-        EmailToken emailToken =  emailTokenRepository.findByToken(token)
-                .orElseThrow(RegistrationTokenNotFoundException::new);
+        EmailToken emailToken = emailTokenRepository.findByToken(token).orElseThrow(RegistrationTokenNotFoundException::new);
 
         if (emailToken.getUser().isEnabled()) {
             return ResponseEntity.badRequest().body("This account was already verified earlier");
@@ -110,7 +106,7 @@ public class AuthService {
     @Transactional
     public ResponseEntity<String> passwordResetRequest(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Can't find user by email " + email));
-        if (!user.isEnabled()){
+        if (!user.isEnabled()) {
             throw new UserAccountNotVerifiedException("Verify your account via email before resetting password!");
         }
 
@@ -119,24 +115,29 @@ public class AuthService {
         return ResponseEntity.ok().body("Email with password reset was send to your email address");
     }
 
-    public ResponseEntity<String> passwordChange(String password, String repeatedPassword, String token) {
-        EmailToken emailToken =  emailTokenRepository.findByToken(token)
-                .orElseThrow(PasswordResetTokenNotFoundException::new);
+    @Transactional
+    public ResponseEntity<String> passwordChange(String password, String token) {
 
-        if (emailToken.getType() != TokenType.PASSWORD_RECOVERY) {
-            return ResponseEntity.badRequest().body("Wrong token type was %s, expected %s".formatted(emailToken.getType(), TokenType.PASSWORD_RECOVERY));
-        }
 
-        if (emailToken.getExpirationTime().isBefore(ZonedDateTime.now()) ) {
+        try {
+            EmailToken emailToken = emailTokenRepository.findByTokenAndLockRowAccess(token).orElseThrow(PasswordResetTokenNotFoundException::new);
+
+            if (emailToken.getType() != TokenType.PASSWORD_RECOVERY) {
+                return ResponseEntity.badRequest().body("Wrong token type was %s, expected %s".formatted(emailToken.getType(), TokenType.PASSWORD_RECOVERY));
+            }
+
+            if (emailToken.getExpirationTime().isBefore(ZonedDateTime.now())) {
+                emailTokenRepository.delete(emailToken);
+                return ResponseEntity.badRequest().body("Link already expired, please send another password change request");
+            }
+            User user = emailToken.getUser();
+            user.setPassword(passwordEncoder.encode(password));
+            userRepository.save(user);
             emailTokenRepository.delete(emailToken);
-            return ResponseEntity.badRequest().body("Link already expired, please send another password change request");
+        } catch (CannotAcquireLockException e) {
+            throw new TokenAlreadyInUsageException();
         }
 
-
-        User user = emailToken.getUser();
-        user.setPassword(passwordEncoder.encode(password));
-        userRepository.save(user);
-        emailTokenRepository.delete(emailToken);
 
         return ResponseEntity.ok("Password has been changed!");
     }
