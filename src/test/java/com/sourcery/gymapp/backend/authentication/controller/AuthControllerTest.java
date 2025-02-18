@@ -1,11 +1,11 @@
 package com.sourcery.gymapp.backend.authentication.controller;
 
-import com.sourcery.gymapp.backend.authentication.config.BaseAuthenticationIntegrationTest;
 import com.sourcery.gymapp.backend.authentication.dto.RegistrationRequest;
 import com.sourcery.gymapp.backend.authentication.exception.ErrorCode;
 import com.sourcery.gymapp.backend.authentication.exception.ErrorResponse;
 import com.sourcery.gymapp.backend.authentication.exception.FieldResponse;
 import com.sourcery.gymapp.backend.authentication.factory.RegistrationRequestFactory;
+import com.sourcery.gymapp.backend.config.integration.BaseKafkaIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class AuthControllerTest extends BaseAuthenticationIntegrationTest {
+public class AuthControllerTest extends BaseKafkaIntegrationTest {
     @Nested
     @DisplayName("Register endpoint tests")
     public class RegisterTests {
