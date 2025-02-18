@@ -52,6 +52,8 @@ spring:
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
     topics:
       account-register: "userProfile.create-account"
+      likes-events: "workout.like-events"
+      likes-notifications: "userProfile.notifications-likes-dislikes"
       retry: "common.RETRY"
       dead-letter: "common.DLT"
 ---
