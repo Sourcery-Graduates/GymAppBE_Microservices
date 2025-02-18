@@ -45,9 +45,6 @@ public class AuthKafkaIntegrationTest extends BaseKafkaIntegrationTest {
         @Test
         void testProfileIsCreatedInDBAndEmailIsSent() {
             RegistrationRequest request = RegistrationRequestFactory.createRegistrationValidRequest();
-            String testUsername = UUID.randomUUID().toString()
-                    .replaceAll("[^a-zA-Z]", "").substring(0, 8);
-            request.setUsername(testUsername);
 
             webTestClient.post().uri("/api/auth/register")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -63,10 +60,9 @@ public class AuthKafkaIntegrationTest extends BaseKafkaIntegrationTest {
                     .pollInterval(Duration.ofSeconds(3))
                     .atMost(10, SECONDS)
                     .untilAsserted(() -> {
-                        System.out.println("All profiles in DB: " + userProfileRepository.findAll());
                         UserProfile profile = userProfileRepository.findUserProfileByUserId(userId).orElse(null);
                         assertNotNull(profile);
-                        assertEquals(testUsername, profile.getUsername());
+                        assertEquals(request.getUsername(), profile.getUsername());
                         assertEquals("Test", profile.getFirstName());
                         assertEquals("User", profile.getLastName());
                         verify(emailService, times(1)).sendEmail(any());
@@ -76,9 +72,6 @@ public class AuthKafkaIntegrationTest extends BaseKafkaIntegrationTest {
         @Test
         void testEmailIsSent() {
             RegistrationRequest request = RegistrationRequestFactory.createRegistrationValidRequest();
-            String testUsername = UUID.randomUUID().toString()
-                    .replaceAll("[^a-zA-Z]", "").substring(0, 8);
-            request.setUsername(testUsername);
 
             // get sout message from mocked Email Service that returns sout instead of email sending logic.
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
