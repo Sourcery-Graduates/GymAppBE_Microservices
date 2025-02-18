@@ -10,7 +10,8 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AccessTokenAuthenticationToken;
@@ -18,15 +19,14 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class CookieOAuth2TokenResponseHandler implements AuthenticationSuccessHandler {
     private static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
     private static final boolean HTTP_ONLY_COOKIE = true;
     private static final String COOKIE_PATH = "/";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-
-    @Value("${spring.profiles.active:default}")
-    private String activeProfile;
+    private final Environment environment;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -70,6 +70,6 @@ public class CookieOAuth2TokenResponseHandler implements AuthenticationSuccessHa
     }
 
     private boolean isDeployment() {
-        return activeProfile.contains("deployment");
+        return environment.matchesProfiles("deployment");
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -46,12 +47,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableMethodSecurity
 @Configuration
 public class SecurityConfig {
-
+    // TODO: if user "logged in" -> do not show login page -> redirect to FE
     @Bean
     @Order(1)
     public SecurityFilterChain authorizationServerSecurityChain(HttpSecurity httpSecurity,
                                                                 RegisteredClientRepository registeredClientRepository,
-                                                                OAuth2TokenGenerator<OAuth2Token> tokenGenerator)
+                                                                OAuth2TokenGenerator<OAuth2Token> tokenGenerator,
+                                                                Environment environment)
             throws Exception {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(httpSecurity);
 
@@ -73,7 +75,7 @@ public class SecurityConfig {
         // return refresh token in cookies, access in body
         httpSecurity.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 .tokenEndpoint(tokenEndpoint -> tokenEndpoint
-                        .accessTokenResponseHandler(new CookieOAuth2TokenResponseHandler())
+                        .accessTokenResponseHandler(new CookieOAuth2TokenResponseHandler(environment))
                         .accessTokenRequestConverter(new RefreshTokenCookieAuthenticationConverter())
                 );
 
@@ -131,7 +133,8 @@ public class SecurityConfig {
         httpSecurity
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/oauth2/logout"))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/main.css", "/login", "/error", "/scripts.js",
+                        .requestMatchers("/authentication/main.css", "/login", "/error",
+                                "/authentication/scripts.js",
                                 "/oauth2/logout").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -144,7 +147,7 @@ public class SecurityConfig {
                         .logoutUrl("/oauth2/logout")
                         .addLogoutHandler(new CookieClearingLogoutHandler("refresh_token"))
                         // TODO: check this line below
-                        .logoutSuccessUrl("http://localhost:5173/") // redirect to FE after success
+                        .logoutSuccessUrl("http://localhost:3000/") // redirect to FE after success
                         .clearAuthentication(true)
                 );
 
@@ -161,15 +164,17 @@ public class SecurityConfig {
     public RegisteredClientRepository registeredClientRepository() {
         RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId("public-client")
-                .clientSecret("secret")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.NONE) // authorization + PKCE
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("http://localhost:5173/")
-                .postLogoutRedirectUri("http://localhost:5173/")
+                .redirectUri("http://localhost:3000/")
+                .postLogoutRedirectUri("http://localhost:3000/")
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
-                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
+                .clientSettings(ClientSettings.builder()
+                        .requireAuthorizationConsent(false)
+                        .requireProofKey(true)
+                        .build())
                 .tokenSettings(TokenSettings.builder()
                         .accessTokenTimeToLive(Duration.ofMinutes(5))
                         .refreshTokenTimeToLive(Duration.ofDays(7))
