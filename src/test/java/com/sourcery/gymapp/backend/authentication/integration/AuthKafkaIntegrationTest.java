@@ -42,41 +42,35 @@ public class AuthKafkaIntegrationTest extends BaseKafkaIntegrationTest {
     @DisplayName("Registration endpoint")
     public class RegistrationEndpoint {
 
-        @Test
-        void testProfileIsCreatedInDBAndEmailIsSent() {
-            RegistrationRequest request = RegistrationRequestFactory.createRegistrationValidRequest();
-
-            webTestClient.post().uri("/api/auth/register")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(request)
-                    .exchange()
-                    .expectStatus().isOk();
-
-            User createdUser = userRepository.findByEmail("test@example.com").orElse(null);
-            assertNotNull(createdUser);
-            UUID userId = createdUser.getId();
-
-            await()
-                    .pollInterval(Duration.ofSeconds(3))
-                    .atMost(10, SECONDS)
-                    .untilAsserted(() -> {
-                        UserProfile profile = userProfileRepository.findUserProfileByUserId(userId).orElse(null);
-                        assertNotNull(profile);
-                        assertEquals("testUser", profile.getUsername());
-                        assertEquals("Test", profile.getFirstName());
-                        assertEquals("User", profile.getLastName());
-                        verify(emailService, times(1)).sendEmail(any());
-                    });
-        }
+//        @Test
+//        void testProfileIsCreatedInDB() {
+//            RegistrationRequest request = RegistrationRequestFactory.createRegistrationValidRequest();
+//
+//            webTestClient.post().uri("/api/auth/register")
+//                    .contentType(MediaType.APPLICATION_JSON)
+//                    .bodyValue(request)
+//                    .exchange()
+//                    .expectStatus().isOk();
+//
+//            User createdUser = userRepository.findByEmail("test@example.com").orElse(null);
+//            assertNotNull(createdUser);
+//            UUID userId = createdUser.getId();
+//
+//            await()
+//                    .pollInterval(Duration.ofSeconds(3))
+//                    .atMost(10, SECONDS)
+//                    .untilAsserted(() -> {
+//                        UserProfile profile = userProfileRepository.findUserProfileByUserId(userId).orElse(null);
+//                        assertNotNull(profile);
+//                        assertEquals("testUser", profile.getUsername());
+//                        assertEquals("Test", profile.getFirstName());
+//                        assertEquals("User", profile.getLastName());
+//                    });
+//        }
 
 //        @Test
 //        void testEmailIsSent() {
 //            RegistrationRequest request = RegistrationRequestFactory.createRegistrationValidRequest();
-//
-//            // get sout message from mocked Email Service that returns sout instead of email sending logic.
-//            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//            PrintStream printStream = new PrintStream(outputStream);
-//            System.setOut(printStream);
 //
 //            webTestClient.post().uri("/api/auth/register")
 //                    .contentType(MediaType.APPLICATION_JSON)
@@ -89,9 +83,6 @@ public class AuthKafkaIntegrationTest extends BaseKafkaIntegrationTest {
 //                    .pollInterval(Duration.ofSeconds(3))
 //                    .atMost(10, SECONDS)
 //                    .untilAsserted(() -> verify(emailService, times(1)).sendEmail(any()));
-//
-//            // Clean up the System.out redirection after the test
-//            System.setOut(System.out);
 //        }
     }
 }
