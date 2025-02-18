@@ -1,18 +1,13 @@
 package com.sourcery.gymapp.backend.config.integration;
 
 import com.sourcery.gymapp.backend.authentication.jwt.JwtConfig;
-import com.sourcery.gymapp.backend.authentication.service.AuthService;
 import org.junit.jupiter.api.*;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.test.context.ActiveProfiles;
@@ -33,9 +28,6 @@ public abstract class BaseIntegrationTest {
 
     @Autowired
     protected WebTestClient webTestClient;
-
-    @MockBean
-    JavaMailSender javaMailSender;
 
     protected static String jwtToken;
     protected static String username = "testUser";

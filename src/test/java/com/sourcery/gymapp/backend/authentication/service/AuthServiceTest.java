@@ -4,7 +4,6 @@ import com.sourcery.gymapp.backend.authentication.dto.RegistrationRequest;
 import com.sourcery.gymapp.backend.authentication.dto.UserAuthDto;
 import com.sourcery.gymapp.backend.authentication.dto.UserDetailsDto;
 import com.sourcery.gymapp.backend.authentication.event.PasswordResetEvent;
-import com.sourcery.gymapp.backend.authentication.event.RegistrationCompleteEvent;
 import com.sourcery.gymapp.backend.authentication.exception.*;
 import com.sourcery.gymapp.backend.authentication.jwt.GymAppJwtProvider;
 import com.sourcery.gymapp.backend.authentication.mapper.UserMapper;
@@ -133,13 +132,11 @@ class AuthServiceTest {
             when(userMapper.toEntity(registrationRequest)).thenReturn(user);
             when(userRepository.save(any())).thenReturn(user);
             when(transactionTemplate.execute(any())).thenAnswer(invocation -> userRepository.save(user));
-            doNothing().when(applicationPublisher).publishEvent(any(RegistrationCompleteEvent.class));
 
             authService.register(registrationRequest);
 
             verify(userRepository, times(1)).save(any());
             verify(authKafkaProducer, times(1)).sendRegistrationEvent(any());
-            verify(applicationPublisher, times(1)).publishEvent(any(RegistrationCompleteEvent.class));
     }
 
         @Test
@@ -259,13 +256,13 @@ class AuthServiceTest {
         @Nested
         @DisplayName("Password change")
         public class PasswordChange {
-            String passwordParam = "password1";
+            String passwordParam = "password";
             String tokenParam = "token";
 
             @Test
             void passwordChange_withNoToken() {
 
-                when(emailTokenRepository.findByToken(tokenParam)).thenReturn(Optional.empty());
+                when(emailTokenRepository.findByTokenAndLockRowAccess(tokenParam)).thenReturn(Optional.empty());
 
                 assertThrows(PasswordResetTokenNotFoundException.class, () -> authService.passwordChange(passwordParam, tokenParam));
             }
@@ -275,7 +272,7 @@ class AuthServiceTest {
                 EmailToken emailToken = new EmailToken();
                 emailToken.setType(TokenType.REGISTRATION);
 
-                when(emailTokenRepository.findByToken(tokenParam)).thenReturn(Optional.of(emailToken));
+                when(emailTokenRepository.findByTokenAndLockRowAccess(tokenParam)).thenReturn(Optional.of(emailToken));
 
                 ResponseEntity<String> response = authService.passwordChange(passwordParam, tokenParam);
 
@@ -289,7 +286,7 @@ class AuthServiceTest {
                 emailToken.setType(TokenType.PASSWORD_RECOVERY);
                 emailToken.setExpirationTime(ZonedDateTime.now().minusMinutes(15));
 
-                when(emailTokenRepository.findByToken(tokenParam)).thenReturn(Optional.of(emailToken));
+                when(emailTokenRepository.findByTokenAndLockRowAccess(tokenParam)).thenReturn(Optional.of(emailToken));
                 doNothing().when(emailTokenRepository).delete(any());
 
                 ResponseEntity<String> response = authService.passwordChange(passwordParam, tokenParam);
@@ -308,7 +305,7 @@ class AuthServiceTest {
                 emailToken.setUser(user);
 
 
-                when(emailTokenRepository.findByToken(tokenParam)).thenReturn(Optional.of(emailToken));
+                when(emailTokenRepository.findByTokenAndLockRowAccess(tokenParam)).thenReturn(Optional.of(emailToken));
                 when(passwordEncoder.encode(anyString())).thenReturn("hashedPassword");
                 when(userRepository.save(any())).thenReturn(user);
                 doNothing().when(emailTokenRepository).delete(any());

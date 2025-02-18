@@ -4,7 +4,7 @@ import com.sourcery.gymapp.backend.authentication.event.PasswordResetEvent;
 import com.sourcery.gymapp.backend.authentication.model.EmailToken;
 import com.sourcery.gymapp.backend.authentication.model.TokenType;
 import com.sourcery.gymapp.backend.authentication.repository.EmailTokenRepository;
-import com.sourcery.gymapp.backend.sharedModule.EmailSendDto;
+import com.sourcery.gymapp.backend.events.EmailSendEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -65,6 +65,6 @@ public class PasswordResetEventListener implements ApplicationListener<PasswordR
                 "<p style=\"font-style: italic; text-decoration: underline;\"> This is automated message, please dont reply to it</p>";
 
         // can utilize kafka here for email sending
-        emailPublisher.publishEvent(new EmailSendDto(subject, senderName, mailContent, user.getEmail()));
+        emailPublisher.publishEvent(new EmailSendEvent(subject, senderName, mailContent, user.getEmail()));
     }
 }

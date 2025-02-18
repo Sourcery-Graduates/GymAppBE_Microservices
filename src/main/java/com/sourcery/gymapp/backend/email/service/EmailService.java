@@ -1,6 +1,6 @@
 package com.sourcery.gymapp.backend.email.service;
 
-import com.sourcery.gymapp.backend.sharedModule.EmailSendDto;
+import com.sourcery.gymapp.backend.events.EmailSendEvent;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String emailServiceAddress;
 
-    public void sendEmail(EmailSendDto emailDto) throws MessagingException, UnsupportedEncodingException {
+    public void sendEmail(EmailSendEvent emailDto) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper messageHelper = new MimeMessageHelper(message);
         messageHelper.setFrom(emailServiceAddress, emailDto.senderName());
@@ -31,7 +31,7 @@ public class EmailService {
     }
 
     @ApplicationModuleListener
-    public void getEmailEvent(EmailSendDto eventDto) throws MessagingException, UnsupportedEncodingException {
+    public void getEmailEvent(EmailSendEvent eventDto) throws MessagingException, UnsupportedEncodingException {
         sendEmail(eventDto);
     }
 }

@@ -1,9 +1,9 @@
-package com.sourcery.gymapp.backend.sharedModule;
+package com.sourcery.gymapp.backend.events;
 
 import org.jmolecules.event.annotation.Externalized;
 
 @Externalized
-public record EmailSendDto(
+public record EmailSendEvent(
         String subject,
         String senderName,
         String content,

@@ -35,5 +35,6 @@ spring:
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
     topics:
       account-register: "userProfile.create-account"
+      email-send: "email.send-email"
       retry: "common.RETRY"
       dead-letter: "common.DLT"
