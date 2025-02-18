@@ -12,6 +12,9 @@ public class TestJwtToken extends BaseIntegrationTest {
     @Autowired
     private JwtConfig jwtConfig;
 
+    public void tearDown() {
+        // not needed in this class
+    }
     @Test
     public void givenCreatedTestJwt_shouldBeValid() {
         assertNotNull(jwtToken);

@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,7 +25,10 @@ import java.time.Instant;
 @AutoConfigureWebTestClient
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public abstract class BaseIntegrationTest {
+public abstract class BaseIntegrationTest implements BaseTestTeardownLifecycle {
+
+    @Autowired
+    protected JdbcTemplate jdbcTemplate;
 
     @Autowired
     protected WebTestClient webTestClient;
@@ -39,7 +43,18 @@ public abstract class BaseIntegrationTest {
         MockitoAnnotations.openMocks(this);  // Initialize mocks
     }
     @BeforeAll
-    public static void setup(@Autowired JwtConfig jwtConfig) {
+    public static void setup(@Autowired JwtConfig jwtConfig, @Autowired JdbcTemplate jdbcTemplate) {
+
+    jdbcTemplate.execute("""
+                    DO $$ 
+                    DECLARE r RECORD;
+                    BEGIN 
+                        FOR r IN (SELECT schemaname, tablename FROM pg_catalog.pg_tables WHERE schemaname IN ('user_profiles', 'user_auth', 'shared_links', 'workout_data'))
+                        LOOP 
+                            EXECUTE 'TRUNCATE TABLE ' || r.schemaname || '.' || r.tablename || ' CASCADE'; 
+                        END LOOP; 
+                    END $$;
+                """);
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
