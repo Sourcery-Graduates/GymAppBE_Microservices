@@ -1,9 +1,10 @@
 package com.sourcery.gymapp.backend.authentication.config;
 
-import com.sourcery.gymapp.backend.config.integration.BaseIntegrationTest;
+import com.sourcery.gymapp.backend.config.integration.BaseKafkaIntegrationTest;
 import org.junit.jupiter.api.AfterEach;
 
-public class BaseAuthenticationIntegrationTest extends BaseIntegrationTest {
+public class BaseAuthKafkaIntegrationTest extends BaseKafkaIntegrationTest {
+
     @AfterEach
     public void tearDown() {
         jdbcTemplate.execute("""
