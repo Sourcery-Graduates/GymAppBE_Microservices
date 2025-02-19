@@ -5,6 +5,10 @@ spring:
   config:
     activate:
       on-profile: deployment
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE}
+      max-request-size: ${MAX_FILE_SIZE}
 
   datasource:
     url: jdbc:postgresql://postgres:5432/gym_app_db

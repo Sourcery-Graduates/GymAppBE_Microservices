@@ -8,6 +8,10 @@ spring:
   config:
     activate:
       on-profile: test
+  servlet:
+    multipart:
+      max-file-size: 1048576
+      max-request-size: 1048576
 
   jpa:
     hibernate:
@@ -38,3 +42,12 @@ spring:
       email-send: "email.send-email"
       retry: "common.RETRY"
       dead-letter: "common.DLT"
+
+aws:
+  s3:
+    access:
+      key: "test-key"
+    secret:
+      key: "test-key"
+    region: "test-region"
+    bucket: "test-bucket"
