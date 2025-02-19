@@ -11,6 +11,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.List;
 
 /**
  * Configuration class for JPA auditing that provides user tracking functionality.
@@ -33,43 +34,44 @@ public class AuditorConfig {
 
     /**
      * Implementation of AuditorAware interface that provides user IDs for JPA auditing.
-     * Handles special cases like user registration where system user ID is used.
+     * Handles special cases where there is no user and system user ID is required.
      */
     @RequiredArgsConstructor
     public static class AuditorAwareImpl implements AuditorAware<UUID> {
         private final CurrentUserService currentUserService;
         private static final UUID SYSTEM_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
-        private static final String registrationPath = "/api/auth/register";
+        private static final List<String> systemAuditorEndpointsPaths = List.of("/api/auth/register", "/api/auth/register/verification", "/api/auth/password/reset", "/api/auth/password/change");
         private static final ThreadLocal<Boolean> isKafkaProcessing = ThreadLocal.withInitial(() -> false);
 
         /**
          * Determines the user ID to be used for auditing.
-         * Returns system user ID for registration endpoint, otherwise returns current user ID.
+         * Returns system user ID for endpoints requiring system auditor, otherwise returns current user ID.
          *
          * @return Optional containing either system user ID or current user ID
          */
         @Override
         @NonNull
         public Optional<UUID> getCurrentAuditor() {
-            if(KafkaProcessingContext.isKafkaProcessing()) {
+            if (isEndpointRequiringSystemAuditor()) {
                 return Optional.of(SYSTEM_USER_UUID);
             }
-            if (isRegistrationEndpoint()) {
+            if(KafkaProcessingContext.isKafkaProcessing()) {
                 return Optional.of(SYSTEM_USER_UUID);
             }
             return Optional.of(currentUserService.getCurrentUserId());
         }
 
+
         /**
-         * Checks if the current request is for user registration.
+         * Checks if the current request requires system auditor.
          *
-         * @return true if current request is for registration endpoint, false otherwise
+         * @return true if current request is contained in systemAuditorEndpointsPath list, false otherwise
          */
-        private boolean isRegistrationEndpoint() {
+        private boolean isEndpointRequiringSystemAuditor() {
             RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
             if (requestAttributes instanceof ServletRequestAttributes) {
                 String requestUri = ((ServletRequestAttributes) requestAttributes).getRequest().getRequestURI();
-                return registrationPath.equals(requestUri);
+                return systemAuditorEndpointsPaths.contains(requestUri);
             }
             return false;
         }

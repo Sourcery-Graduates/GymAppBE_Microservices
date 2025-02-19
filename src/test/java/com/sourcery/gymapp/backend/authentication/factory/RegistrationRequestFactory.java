@@ -3,17 +3,32 @@ package com.sourcery.gymapp.backend.authentication.factory;
 import com.sourcery.gymapp.backend.authentication.dto.RegistrationRequest;
 
 public class RegistrationRequestFactory {
-    public static RegistrationRequest createRegistrationValidRequest() {
+
+    public static RegistrationRequest createRegistrationRequest(String username, String password, String confirmPassword, String email, String firstName, String lastName, String location, String bio) {
         RegistrationRequest request = new RegistrationRequest();
-        request.setUsername("testUser");
-        request.setPassword("securePassword");
-        request.setConfirmPassword("securePassword");
-        request.setEmail("test@example.com");
-        request.setFirstName("Test");
-        request.setLastName("User");
-        request.setBio("Lorem ipsum dolor sit amet");
+        request.setUsername(username);
+        request.setPassword(password);
+        request.setConfirmPassword(confirmPassword);
+        request.setEmail(email);
+        request.setFirstName(firstName);
+        request.setLastName(lastName);
+        request.setBio(bio);
+        request.setLocation(location);
 
         return request;
+    }
+
+    public static RegistrationRequest createRegistrationValidRequest() {
+        return createRegistrationRequest(
+                "testUser",
+                "securePassword",
+                "securePassword",
+                "test@example.com",
+                "Test",
+                "User",
+                "TestLocation",
+                "Lorem ipsum dolor sit amet"
+        );
     }
 
     public static RegistrationRequest createRegistrationRequestDifferentPasswords() {

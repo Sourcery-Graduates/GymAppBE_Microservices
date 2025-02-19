@@ -56,4 +56,7 @@ public class User {
     @Column(nullable = false)
     @LastModifiedDate
     protected LocalDateTime modifiedAt;
+
+    @Column(nullable = false)
+    private boolean isEnabled;
 }

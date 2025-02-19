@@ -12,6 +12,9 @@ public class TestJwtToken extends BaseIntegrationTest {
     @Autowired
     private JwtConfig jwtConfig;
 
+    public void tearDown() {
+        // not needed in this class
+    }
     @Test
     public void givenCreatedTestJwt_shouldBeValid() {
         assertNotNull(jwtToken);
@@ -20,5 +23,6 @@ public class TestJwtToken extends BaseIntegrationTest {
         assertEquals(decodedJwt.getSubject(), username);
         assertEquals(decodedJwt.getClaim("userId"), userId);
         assertEquals(decodedJwt.getClaim("username"), username);
+        assertEquals(decodedJwt.getClaim("email"), email);
     }
 }

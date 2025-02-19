@@ -19,6 +19,7 @@ public class UserDetailsDto implements UserDetails {
     private String username;
     private String password;
     private String email;
+    private boolean isEnabled;
     private Set<String> roles;
     private Map<String, RolePermission.Level> permissions;
 
@@ -52,6 +53,6 @@ public class UserDetailsDto implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isEnabled;
     }
 }

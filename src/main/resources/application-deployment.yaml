@@ -23,6 +23,18 @@ spring:
     show-sql: true
     open-in-view: false
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: sourcery.graduates@gmail.com
+    password: tvezahniilhaqlga
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
   springdoc:
     api-docs:
       path: /api-docs
@@ -93,3 +105,8 @@ jwt:
     wiqfan+PYOHXMUoU5LbKHvkmmaS/kWUUauELsI9xKmCuk+tdPJqHiqps/7CGVyu3
     3PGzdbBnQ7Owix8BBbsoeIiJ
     -----END PRIVATE KEY-----
+---
+frontend:
+  base_url: "https://app.workout-app.online"
+  registration_verification_path: "/registerVerification?token="
+  password_reset_path: "/passwordReset?token="

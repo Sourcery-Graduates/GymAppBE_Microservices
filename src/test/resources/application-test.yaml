@@ -19,6 +19,9 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.yaml
     label-filter: "!exclude-test"
 
+  mail:
+    username: "testMailUsername"
+
   kafka:
     replicas: 1
     partitions: 1
@@ -32,5 +35,6 @@ spring:
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
     topics:
       account-register: "userProfile.create-account"
+      email-send: "email.send-email"
       retry: "common.RETRY"
       dead-letter: "common.DLT"
