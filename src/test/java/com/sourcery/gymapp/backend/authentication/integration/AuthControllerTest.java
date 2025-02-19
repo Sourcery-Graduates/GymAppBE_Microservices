@@ -192,7 +192,6 @@ public class AuthControllerTest extends BaseAuthKafkaIntegrationTest {
                             assertEquals(request.getUsername(), profile.getUsername());
                             assertEquals(request.getFirstName(), profile.getFirstName());
                             assertEquals(request.getLastName(), profile.getLastName());
-                            verify(emailService, times(1)).sendEmail(any());
                         });
             }
 

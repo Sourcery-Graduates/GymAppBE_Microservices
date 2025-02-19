@@ -19,16 +19,16 @@ public class EmailKafkaConsumer {
     private final EmailService emailService;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = {"${spring.kafka.topics.email-send}"}, groupId = "email-listener-group")
+    @KafkaListener(topics = {"${spring.kafka.topics.email-send}", "${spring.kafka.topics.email-retry}"}, groupId = "email-listener-group")
     public void onMessage(ConsumerRecord<UUID, String> record) {
         try {
             KafkaProcessingContext.enableKafkaProcessing();
 
             var email = objectMapper.readValue(record.value(), EmailSendEvent.class);
             emailService.sendEmail(email);
-            log.info("Registration event email processed: {}", record.key());
+            log.info("Email event processed from topic: {}, key: {}", record.topic(), record.key());
         } catch (Exception e) {
-            log.error("Error processing registration email event: {}", e.getMessage(), e);
+            log.error("Error processing email event from topic: {}, key: {}, message: {}",record.topic(), record.key(), e.getMessage(), e);
         } finally {
             KafkaProcessingContext.disableKafkaProcessing();
         }
