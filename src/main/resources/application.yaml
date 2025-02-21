@@ -72,6 +72,11 @@ spring:
       email-send: "email.send-email"
       retry: "common.RETRY"
       dead-letter: "common.DLT"
+    streams:
+      application-id: gym-app-backend-streams
+      properties:
+        default.key.serde: org.apache.kafka.common.serialization.Serdes$UUIDSerde
+        default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
 ---
 jwt:
   public-key: |

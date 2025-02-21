@@ -28,17 +28,17 @@ public class NotificationsLikesAggregator {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Bean
-    public KTable<UUID, Long> notificationLikesStream(StreamsBuilder builder) {
+    public KTable<String, Long> notificationLikesStream(StreamsBuilder builder) {
 
-        KStream<UUID, String> textLines = builder.stream(
-                INPUT_TOPIC
+        KStream<String, String> textLines = builder.stream(
+                INPUT_TOPIC, Consumed.with(Serdes.String(), Serdes.String())
         );
 
-        KTable<UUID, Long> outputStream = textLines
+        KTable<String, Long> outputStream = textLines
                 .groupByKey()
                 .count();
 
-        outputStream.toStream().to(OUTPUT_TOPIC, Produced.with(Serdes.UUID(), Serdes.Long()));
+        outputStream.toStream().to(OUTPUT_TOPIC, Produced.with(Serdes.String(), Serdes.Long()));
         return outputStream;
 
 //        KStream<UUID, RoutineLikeEvent> inputStream = builder
