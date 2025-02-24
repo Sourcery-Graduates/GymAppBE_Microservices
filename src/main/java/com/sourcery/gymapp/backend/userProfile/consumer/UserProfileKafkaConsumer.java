@@ -20,7 +20,7 @@ public class UserProfileKafkaConsumer {
     private final ObjectMapper objectMapper;
 
     @KafkaListener(topics = {"${spring.kafka.topics.account-register}"}, groupId = "user-profile-listener-group")
-    public void onMessage(ConsumerRecord<UUID, String> record) {
+    public void onRegistrationMessage(ConsumerRecord<UUID, String> record) {
         try {
             KafkaProcessingContext.enableKafkaProcessing();
 
@@ -32,5 +32,10 @@ public class UserProfileKafkaConsumer {
         } finally {
             KafkaProcessingContext.disableKafkaProcessing();
         }
+    }
+
+//    @KafkaListener(topics = "${spring.kafka.topics.likes-notifications}", groupId = "user-profile-listener-group")
+    public void onLikesNotification(ConsumerRecord<UUID, String> record) {
+
     }
 }
