@@ -34,8 +34,8 @@ public class UserProfileKafkaConsumer {
         }
     }
 
-//    @KafkaListener(topics = "${spring.kafka.topics.likes-notifications}", groupId = "user-profile-listener-group")
+    @KafkaListener(topics = "${spring.kafka.topics.likes-notifications}", groupId = "user-profile-listener-group")
     public void onLikesNotification(ConsumerRecord<UUID, String> record) {
-
+        log.info("Received like notification with key: {}: {}", record.key(), record.value());
     }
 }
