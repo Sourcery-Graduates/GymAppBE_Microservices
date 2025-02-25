@@ -1,12 +1,15 @@
 function togglePasswordVisibility() {
     const passwordInput = document.getElementById("password");
-    const passwordIcon = document.querySelector(".toggle-password");
+    const passwordIcon = document.querySelector(".toggle-password i");
+
     if (passwordInput.type === "password") {
         passwordInput.type = "text";
-        passwordIcon.textContent = "🙈";
+        passwordIcon.classList.remove("fa-eye");
+        passwordIcon.classList.add("fa-eye-slash");
     } else {
         passwordInput.type = "password";
-        passwordIcon.textContent = "👁️";
+        passwordIcon.classList.remove("fa-eye-slash");
+        passwordIcon.classList.add("fa-eye");
     }
 }
 
