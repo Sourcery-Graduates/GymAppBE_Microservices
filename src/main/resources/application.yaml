@@ -57,9 +57,3 @@ spring:
       account-register: "userProfile.create-account"
       retry: "common.RETRY"
       dead-letter: "common.DLT"
----
-
-logging:
-  level:
-    springframework.security: DEBUG
-    springframework.web: DEBUG

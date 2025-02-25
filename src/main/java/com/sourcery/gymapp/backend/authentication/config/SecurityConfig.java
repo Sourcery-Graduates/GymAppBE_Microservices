@@ -4,6 +4,7 @@ import com.sourcery.gymapp.backend.authentication.config.security.client_auth.Pu
 import com.sourcery.gymapp.backend.authentication.config.security.client_auth.PublicClientRefreshTokenAuthenticationConverter;
 import com.sourcery.gymapp.backend.authentication.config.security.token.CookieOAuth2TokenResponseHandler;
 import com.sourcery.gymapp.backend.authentication.config.security.token.RefreshTokenCookieAuthenticationConverter;
+import jakarta.servlet.http.HttpServletResponse;
 import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
@@ -154,6 +155,9 @@ public class SecurityConfig {
                                 new CookieClearingLogoutHandler("refresh_token","JSESSIONID")
                         )
                         .clearAuthentication(true)
+                        .logoutSuccessHandler((request, response, authentication) ->
+                                response.setStatus(HttpServletResponse.SC_NO_CONTENT)
+                        )
                 );
 
         return httpSecurity.build();
