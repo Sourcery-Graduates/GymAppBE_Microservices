@@ -8,9 +8,3 @@ public record ErrorResponse(
         List<FieldResponse> fields
 ) {
 }
-
-record FieldResponse(
-        String field,
-        String error
-) {
-}

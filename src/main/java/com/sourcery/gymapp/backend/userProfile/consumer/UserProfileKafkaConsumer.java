@@ -2,7 +2,6 @@ package com.sourcery.gymapp.backend.userProfile.consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sourcery.gymapp.backend.events.RegistrationEvent;
-import com.sourcery.gymapp.backend.globalconfig.AuditorConfig;
 import com.sourcery.gymapp.backend.globalconfig.KafkaProcessingContext;
 import com.sourcery.gymapp.backend.userProfile.service.UserProfileService;
 import lombok.AllArgsConstructor;

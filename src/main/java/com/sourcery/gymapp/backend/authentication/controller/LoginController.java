@@ -25,7 +25,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class LoginController {
 
-    @Value("${app.frontend-url}")
+    @Value("${frontend.base_url}")
     private String frontendUrl;
 
     private final RequestCache requestCache = new HttpSessionRequestCache();

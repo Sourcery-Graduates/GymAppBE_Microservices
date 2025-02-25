@@ -1,6 +1,8 @@
 package com.sourcery.gymapp.backend.authentication.service;
 
+import com.sourcery.gymapp.backend.authentication.exception.UserAccountNotVerifiedException;
 import com.sourcery.gymapp.backend.authentication.mapper.UserMapper;
+import com.sourcery.gymapp.backend.authentication.model.User;
 import com.sourcery.gymapp.backend.authentication.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,10 +19,14 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username)
-                .map(userMapper::toDetailsDto)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("Can't find user by username " + username));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new UsernameNotFoundException("Can't find user by email " + email));
+
+        if (!user.isEnabled()) {
+            throw new UserAccountNotVerifiedException();
+        }
+
+        return userMapper.toDetailsDto(user);
     }
 }

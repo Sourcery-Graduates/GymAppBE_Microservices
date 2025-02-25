@@ -50,7 +50,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 public class SecurityConfig {
     // TODO: if user "logged in" -> do not show login page -> redirect to FE
-    @Value("${app.frontend-url}")
+    @Value("${frontend.base_url}")
     private String frontendUrl;
 
     @Bean
@@ -124,7 +124,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "api/auth/register"
+                                "/api/auth/**",
+                                "/actuator/health"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -168,7 +169,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // TODO: check this settings (because of redirect URIs)
     @Bean
     public RegisteredClientRepository registeredClientRepository() {
         RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())

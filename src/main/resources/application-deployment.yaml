@@ -5,6 +5,10 @@ spring:
   config:
     activate:
       on-profile: deployment
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE}
+      max-request-size: ${MAX_FILE_SIZE}
 
   datasource:
     url: jdbc:postgresql://postgres:5432/gym_app_db
@@ -22,6 +26,17 @@ spring:
       ddl-auto: validate
     show-sql: true
     open-in-view: false
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: sourcery.graduates@gmail.com
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
   springdoc:
     api-docs:
@@ -52,5 +67,7 @@ spring:
       retry: "common.RETRY"
       dead-letter: "common.DLT"
 
-app:
-  frontend-url: "https://app.workout-app.online"
+frontend:
+  base_url: "https://app.workout-app.online"
+  registration_verification_path: "/registerVerification?token="
+  password_reset_path: "/passwordReset?token="
