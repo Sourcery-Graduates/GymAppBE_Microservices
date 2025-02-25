@@ -45,7 +45,12 @@ input[type="password"] {
     border-radius: 4px;
     box-sizing: border-box;
     background-color: #282828; /* Slightly lighter gray for secondary elements */
-    color: #6c757d; /* Gray for text */
+    color: #d1d1d1; /* Gray for text */
+}
+
+input::placeholder {
+    color: #505050; /* Темно-серый, чтобы отличался от введённого текста */
+    opacity: 1;
 }
 
 .password-wrapper {
@@ -93,5 +98,21 @@ input[type="checkbox"] {
 }
 
 .register-container a:hover {
+    text-decoration: underline;
+}
+
+.forgot-password-container {
+    text-align: right;
+    margin-top: 5px;
+}
+
+.forgot-password-container a {
+    color: #6c757d;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.forgot-password-container a:hover {
+    color: #3867c5;
     text-decoration: underline;
 }

@@ -10,7 +10,12 @@ function togglePasswordVisibility() {
     }
 }
 
+const FRONTEND_BASE_URL = document.body.getAttribute("data-frontend-url");
+
 function redirectToRegister() {
-    // TODO: Replace with the actual frontend URL
-    window.location.href = "https://frontend.example.com/register";
+    window.location.href = `${FRONTEND_BASE_URL}/register`;
+}
+
+function redirectToForgotPassword() {
+    window.location.href = `${FRONTEND_BASE_URL}/forgot-password`;
 }

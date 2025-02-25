@@ -51,6 +51,6 @@ spring:
       account-register: "userProfile.create-account"
       retry: "common.RETRY"
       dead-letter: "common.DLT"
----
-jwt:
 
+app:
+  frontend-url: "https://app.workout-app.online"

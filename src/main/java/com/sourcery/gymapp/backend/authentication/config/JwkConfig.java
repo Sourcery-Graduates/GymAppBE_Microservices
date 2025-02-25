@@ -77,12 +77,14 @@ public class JwkConfig {
         return context -> {
             Authentication principal = context.getPrincipal();
 
-            if (OidcParameterNames.ID_TOKEN.equals(context.getTokenType().getValue())) {
+            if (OidcParameterNames.ID_TOKEN.equals(context.getTokenType().getValue())
+                    && principal.getPrincipal() instanceof UserDetailsDto userDetails) {
                 Set<String> authorities = principal.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toSet());
 
                 context.getClaims().claim("authorities", authorities);
+                context.getClaims().claim("userId", userDetails.getId().toString());
             }
 
             if (OAuth2TokenType.ACCESS_TOKEN.getValue().equals(context.getTokenType().getValue())

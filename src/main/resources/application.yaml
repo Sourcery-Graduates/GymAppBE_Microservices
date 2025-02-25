@@ -3,6 +3,9 @@ spring:
     active: local
   application:
     name: Gym App Backend
+
+app:
+  frontend-url: "http://localhost:3000"
 ---
 spring:
   config:
@@ -55,3 +58,8 @@ spring:
       retry: "common.RETRY"
       dead-letter: "common.DLT"
 ---
+
+logging:
+  level:
+    springframework.security: DEBUG
+    springframework.web: DEBUG

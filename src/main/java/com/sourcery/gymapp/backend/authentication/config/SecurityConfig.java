@@ -7,6 +7,7 @@ import com.sourcery.gymapp.backend.authentication.config.security.token.RefreshT
 import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -26,6 +27,7 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -48,6 +50,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 public class SecurityConfig {
     // TODO: if user "logged in" -> do not show login page -> redirect to FE
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
+
     @Bean
     @Order(1)
     public SecurityFilterChain authorizationServerSecurityChain(HttpSecurity httpSecurity,
@@ -131,6 +136,7 @@ public class SecurityConfig {
     @Order(3)
     public SecurityFilterChain defaultSecurityChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/oauth2/logout"))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/authentication/main.css", "/login", "/error",
@@ -145,9 +151,9 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/oauth2/logout")
-                        .addLogoutHandler(new CookieClearingLogoutHandler("refresh_token"))
-                        // TODO: check this line below
-                        .logoutSuccessUrl("http://localhost:3000/") // redirect to FE after success
+                        .addLogoutHandler(
+                                new CookieClearingLogoutHandler("refresh_token","JSESSIONID")
+                        )
                         .clearAuthentication(true)
                 );
 
@@ -167,8 +173,7 @@ public class SecurityConfig {
                 .clientAuthenticationMethod(ClientAuthenticationMethod.NONE) // authorization + PKCE
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("http://localhost:3000/")
-                .postLogoutRedirectUri("http://localhost:3000/")
+                .redirectUri(frontendUrl)
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
                 .clientSettings(ClientSettings.builder()
