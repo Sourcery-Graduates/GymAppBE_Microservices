@@ -22,3 +22,31 @@ function redirectToRegister() {
 function redirectToForgotPassword() {
     window.location.href = `${FRONTEND_BASE_URL}/forgot-password`;
 }
+
+function dismissError(errorId) {
+    const errorToast = document.getElementById(errorId);
+    if (errorToast) {
+        errorToast.style.animation = 'fadeOut 0.3s forwards';
+        setTimeout(() => {
+            errorToast.style.display = 'none';
+        }, 300);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Проверяем наличие обоих видов ошибок
+    const verificationErrorToast = document.getElementById('verification-error-toast');
+    const credentialsErrorToast = document.getElementById('credentials-error-toast');
+
+    if (verificationErrorToast) {
+        setTimeout(() => {
+            dismissError('verification-error-toast');
+        }, 7000);
+    }
+
+    if (credentialsErrorToast) {
+        setTimeout(() => {
+            dismissError('credentials-error-toast');
+        }, 7000);
+    }
+});

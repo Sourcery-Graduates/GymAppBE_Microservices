@@ -2,6 +2,7 @@ package com.sourcery.gymapp.backend.authentication.config;
 
 import com.sourcery.gymapp.backend.authentication.config.security.client_auth.PublicClientRefreshProvider;
 import com.sourcery.gymapp.backend.authentication.config.security.client_auth.PublicClientRefreshTokenAuthenticationConverter;
+import com.sourcery.gymapp.backend.authentication.config.security.login.LoginFailureHandler;
 import com.sourcery.gymapp.backend.authentication.config.security.token.CookieOAuth2TokenResponseHandler;
 import com.sourcery.gymapp.backend.authentication.config.security.token.RefreshTokenCookieAuthenticationConverter;
 import jakarta.servlet.http.HttpServletResponse;
@@ -49,7 +50,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableMethodSecurity
 @Configuration
 public class SecurityConfig {
-    // TODO: if user "logged in" -> do not show login page -> redirect to FE
     @Value("${frontend.base_url}")
     private String frontendUrl;
 
@@ -116,7 +116,7 @@ public class SecurityConfig {
                 )
                 .securityMatcher("/api/**")
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth/register"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth/**"))
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
@@ -148,6 +148,8 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
+                        .failureUrl("/login?error")
+                        .failureHandler(new LoginFailureHandler())
                         .permitAll()
                 )
                 .logout(logout -> logout

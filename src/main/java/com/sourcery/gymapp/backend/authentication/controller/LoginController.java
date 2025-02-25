@@ -47,12 +47,23 @@ public class LoginController {
     public Object loginPage(Model model, HttpServletRequest request, HttpServletResponse response) {
         SavedRequest savedRequest = requestCache.getRequest(request, response);
 
+        model.addAttribute("frontendUrl", frontendUrl);
+
+        String errorParam = request.getParameter("error");
+        if (errorParam != null) {
+            model.addAttribute("errorType", errorParam);
+            model.addAttribute("hasError", true);
+
+            System.out.println("Error parameter detected: " + errorParam);
+
+            return "authentication/login";
+        }
+
         if (savedRequest != null) {
             String redirectUrl = savedRequest.getRedirectUrl();
             boolean hasPkceParameters = redirectUrl.contains("code_challenge=");
 
             if (hasPkceParameters) {
-                model.addAttribute("frontendUrl", frontendUrl);
                 return "authentication/login";
             }
         }
