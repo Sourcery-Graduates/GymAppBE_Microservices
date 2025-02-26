@@ -12,15 +12,17 @@ public class LikeNotificationMapper {
                 likeNotification.getOwnerId(),
                 likeNotification.getRoutineId(),
                 likeNotification.getLikesCount(),
+                likeNotification.getRoutineTitle(),
                 likeNotification.getCreatedAt()
         );
     }
 
     public LikeNotification toEntity(LikeNotificationEvent event) {
-        LikeNotification entity =  new LikeNotification();
+        LikeNotification entity = new LikeNotification();
         entity.setLikesCount(event.likesCount());
         entity.setRoutineId(event.routineId());
         entity.setOwnerId(event.ownerId());
+        entity.setRoutineTitle(event.routineName());
         return entity;
     }
 }

@@ -11,6 +11,8 @@ public record RoutineLikeEvent(
         @NotNull
         UUID routineId,
         @NotNull
+        String routineName,
+        @NotNull
         UUID ownerId,
         @NotNull
         boolean isLiked,

@@ -65,7 +65,10 @@ public class NotificationsLikesAggregator {
         KStream<String, LikeNotificationEvent> outputStream = aggregatedLikes
                 .toStream((windowedKey, value) -> windowedKey.key())
                 .mapValues((routineId, aggregation) -> new LikeNotificationEvent(
-                        aggregation.ownerId, UUID.fromString(routineId), aggregation.likesCount
+                        aggregation.ownerId,
+                        UUID.fromString(routineId),
+                        aggregation.routineName,
+                        aggregation.likesCount
                 ));
 
         outputStream.to(OUTPUT_TOPIC, Produced.with(Serdes.String(), notificationSerde));
@@ -79,10 +82,14 @@ public class NotificationsLikesAggregator {
     private static class LikeAggregation {
         private UUID ownerId;
         private int likesCount = 0;
+        private String routineName;
 
         public LikeAggregation update(RoutineLikeEvent event) {
             if (this.ownerId == null) {
                 this.ownerId = event.ownerId();
+            }
+            if (this.routineName == null) {
+                this.routineName = event.routineName();
             }
             this.likesCount += event.isLiked() ? 1 : -1;
             return this;

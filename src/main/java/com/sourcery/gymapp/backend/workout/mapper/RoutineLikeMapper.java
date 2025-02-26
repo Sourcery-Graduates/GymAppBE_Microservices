@@ -13,6 +13,7 @@ public class RoutineLikeMapper {
         return new RoutineLikeEvent(
                 userId,
                 routine.getId(),
+                routine.getName(),
                 routine.getUserId(),
                 true,
                 LocalDateTime.now()
@@ -23,6 +24,7 @@ public class RoutineLikeMapper {
         return new RoutineLikeEvent(
                 userId,
                 routine.getId(),
+                routine.getName(),
                 routine.getUserId(),
                 false,
                 LocalDateTime.now()
