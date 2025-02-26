@@ -34,7 +34,6 @@ function dismissError(errorId) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Проверяем наличие обоих видов ошибок
     const verificationErrorToast = document.getElementById('verification-error-toast');
     const credentialsErrorToast = document.getElementById('credentials-error-toast');
 
