@@ -33,6 +33,9 @@ public class NotificationsLikesAggregator {
     private String INPUT_TOPIC;
     @Value("${spring.kafka.topics.likes-notifications}")
     private String OUTPUT_TOPIC;
+    @Value("${spring.kafka.aggregation.like-notification.interval-minutes}")
+    private int aggregationInterval;
+
     private final ObjectMapper objectMapper;
 
     public NotificationsLikesAggregator() {
@@ -52,7 +55,7 @@ public class NotificationsLikesAggregator {
 
         KTable<Windowed<String>, LikeAggregation> aggregatedLikes = inputStream
                 .groupByKey()
-                .windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofDays(3)))
+                .windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofMinutes(aggregationInterval)))
                 .aggregate(
                         LikeAggregation::new,
                         (routineId, event, aggregation) -> aggregation.update(event),
@@ -75,7 +78,7 @@ public class NotificationsLikesAggregator {
     @AllArgsConstructor
     private static class LikeAggregation {
         private UUID ownerId;
-        private long likesCount = 0;
+        private int likesCount = 0;
 
         public LikeAggregation update(RoutineLikeEvent event) {
             if (this.ownerId == null) {

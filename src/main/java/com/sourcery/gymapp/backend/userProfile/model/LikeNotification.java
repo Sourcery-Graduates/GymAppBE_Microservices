@@ -21,5 +21,5 @@ public class LikeNotification extends BaseEntity {
     private UUID routineId;
 
     @Column(nullable = false)
-    private long likesCount;
+    private int likesCount;
 }

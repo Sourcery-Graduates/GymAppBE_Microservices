@@ -56,6 +56,9 @@ spring:
   kafka:
     replicas: 3
     partitions: 3
+    aggregation:
+      like-notification:
+        interval-minutes: 2
     consumer:
       bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
       key-deserializer: org.apache.kafka.common.serialization.UUIDDeserializer
