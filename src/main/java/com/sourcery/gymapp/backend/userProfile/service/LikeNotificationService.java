@@ -1,25 +1,46 @@
 package com.sourcery.gymapp.backend.userProfile.service;
 
 import com.sourcery.gymapp.backend.events.LikeNotificationEvent;
+import com.sourcery.gymapp.backend.userProfile.dto.LikeNotificationDto;
+import com.sourcery.gymapp.backend.userProfile.dto.LikeNotificationPageDto;
 import com.sourcery.gymapp.backend.userProfile.mapper.LikeNotificationMapper;
 import com.sourcery.gymapp.backend.userProfile.model.LikeNotification;
 import com.sourcery.gymapp.backend.userProfile.repository.LikeNotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class LikeNotificationService {
     private final LikeNotificationRepository likeNotificationRepository;
     private final LikeNotificationMapper likeNotificationMapper;
+    private final ProfileCurrentUserService currentUserService;
 
     @Value("${spring.kafka.aggregation.like-notification.interval-minutes}")
     private int aggregationInterval;
+
+    public LikeNotificationPageDto getLikeNotifications(Pageable pageable) {
+        UUID currentUserId = currentUserService.getCurrentUserId();
+
+        Page<LikeNotification> page = likeNotificationRepository
+                .findByOwnerIdOrderByCreatedAtDesc(currentUserId, pageable);
+
+        List<LikeNotificationDto> notifications = page
+                .getContent()
+                .stream()
+                .map(likeNotificationMapper::toDto)
+                .toList();
+        return new LikeNotificationPageDto(page.getTotalPages(), page.getTotalElements(), notifications);
+    }
 
     @Transactional
     public void uploadLikeNotifications(LikeNotificationEvent event) {
