@@ -25,7 +25,6 @@ repositories {
 
 ext {
 	set('springModulithVersion', "1.2.4")
-	springCloudVersion = "2023.0.5"
 }
 
 dependencies {
@@ -42,7 +41,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator:3.4.0'
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.cloud:spring-cloud-function-web'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
@@ -66,7 +64,6 @@ dependencies {
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.modulith:spring-modulith-bom:${springModulithVersion}"
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
 	}
 }
 

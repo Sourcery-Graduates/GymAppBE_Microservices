@@ -84,8 +84,6 @@ public class SecurityConfig {
                         .accessTokenRequestConverter(new RefreshTokenCookieAuthenticationConverter())
                 );
 
-
-        // in case or exceptions redirect to login page -> not sure if good idea
         httpSecurity
                 .exceptionHandling(exception -> exception.defaultAuthenticationEntryPointFor(
                         new LoginUrlAuthenticationEntryPoint("/login"),
