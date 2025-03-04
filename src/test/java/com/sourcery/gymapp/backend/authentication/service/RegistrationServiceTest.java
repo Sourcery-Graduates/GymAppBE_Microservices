@@ -1,11 +1,8 @@
 package com.sourcery.gymapp.backend.authentication.service;
 
 import com.sourcery.gymapp.backend.authentication.dto.RegistrationRequest;
-import com.sourcery.gymapp.backend.authentication.dto.UserAuthDto;
-import com.sourcery.gymapp.backend.authentication.dto.UserDetailsDto;
 import com.sourcery.gymapp.backend.authentication.event.PasswordResetEvent;
 import com.sourcery.gymapp.backend.authentication.exception.*;
-import com.sourcery.gymapp.backend.authentication.jwt.GymAppJwtProvider;
 import com.sourcery.gymapp.backend.authentication.mapper.UserMapper;
 import com.sourcery.gymapp.backend.authentication.model.EmailToken;
 import com.sourcery.gymapp.backend.authentication.model.TokenType;
@@ -28,7 +25,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -46,9 +42,6 @@ class AuthServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
-
-    @Mock
-    private GymAppJwtProvider jwtProvider;
 
     @Mock
     private AuthKafkaProducer authKafkaProducer;
@@ -76,38 +69,6 @@ class AuthServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-
-    @Nested
-    @DisplayName("Authentication tests")
-    public class AuthenticationTests{
-        @Test
-        void testAuthenticateUser_withValidAuthentication() {
-            Authentication authentication = mock(Authentication.class);
-            UserDetailsDto userDetailsDto = mock(UserDetailsDto.class);
-            String token = "jwt-token";
-
-            when(authentication.getPrincipal()).thenReturn(userDetailsDto);
-            when(userDetailsDto.getUsername()).thenReturn(userName);
-            when(userDetailsDto.getId()).thenReturn(UUID.randomUUID());
-            when(jwtProvider.generateToken(anyString(), any(UUID.class))).thenReturn(token);
-            when(userMapper.toAuthDto(userDetailsDto, token)).thenReturn(new UserAuthDto(token, userName, userEmail, null, null));
-
-            UserAuthDto result = authService.authenticateUser(authentication);
-
-            assertNotNull(result);
-            assertEquals("jwt-token", result.token());
-            assertEquals(userName, result.username());
-            assertEquals(userEmail, result.email());
-        }
-
-        @Test
-        void testAuthenticateUser_withInvalidPrincipal() {
-            Authentication authentication = mock(Authentication.class);
-            when(authentication.getPrincipal()).thenReturn("invalidPrincipal");
-
-            assertThrows(UserNotAuthenticatedException.class, () -> authService.authenticateUser(authentication));
-        }
-    }
 
     @Nested
     @DisplayName("Registration tests")

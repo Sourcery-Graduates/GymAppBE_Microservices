@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
-// TODO: each pageable routine should be returned with isLikedByCurrentUser
 @Service
 @RequiredArgsConstructor
 public class RoutineService {
