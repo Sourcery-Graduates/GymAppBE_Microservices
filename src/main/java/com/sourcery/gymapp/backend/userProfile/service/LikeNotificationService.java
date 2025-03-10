@@ -18,6 +18,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Service class for handling like notifications.
+ * Manages persistence, retrieval, and aggregation of like notifications for user routines.
+ */
 @Service
 @RequiredArgsConstructor
 public class LikeNotificationService {
@@ -25,9 +29,19 @@ public class LikeNotificationService {
     private final LikeNotificationMapper likeNotificationMapper;
     private final ProfileCurrentUserService currentUserService;
 
+    /**
+     * Aggregation interval in minutes, retrieved from application properties.
+     */
     @Value("${spring.kafka.aggregation.like-notification.interval-minutes}")
     private int aggregationInterval;
 
+    /**
+     * Retrieves a paginated list of like notifications for the current user.
+     *
+     * @param pageable the pagination and sorting information
+     * @return a {@link LikeNotificationPageDto} containing the list of notifications,
+     *         total pages, and total elements
+     */
     public LikeNotificationPageDto getLikeNotifications(Pageable pageable) {
         UUID currentUserId = currentUserService.getCurrentUserId();
 
@@ -42,6 +56,13 @@ public class LikeNotificationService {
         return new LikeNotificationPageDto(page.getTotalPages(), page.getTotalElements(), notifications);
     }
 
+    /**
+     * Handles the processing and storage of a new like notification event.
+     * If a notification already exists within the aggregation time window, it updates the existing record;
+     * otherwise, it creates a new notification entry.
+     *
+     * @param event the {@link LikeNotificationEvent} containing details of the like notification.
+     */
     @Transactional
     public void uploadLikeNotifications(LikeNotificationEvent event) {
         LocalDateTime timeWindow = LocalDateTime.now().minusMinutes(aggregationInterval);

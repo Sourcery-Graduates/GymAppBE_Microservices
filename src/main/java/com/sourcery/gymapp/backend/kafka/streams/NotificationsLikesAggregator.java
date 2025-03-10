@@ -26,13 +26,24 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.util.UUID;
 
+/**
+ * Kafka Streams processor for aggregating like events and publishing notifications.
+ * This component listens to the input kafka topic, aggregates likes within a specified interval defined in minutes,
+ * and produces summarized notifications to the output kafka topic.
+ */
 @Slf4j
 @Component
 public class NotificationsLikesAggregator {
+
     @Value("${spring.kafka.topics.likes-events}")
     private String INPUT_TOPIC;
+
     @Value("${spring.kafka.topics.likes-notifications}")
     private String OUTPUT_TOPIC;
+
+    /**
+     * Aggregation interval in minutes, retrieved from application properties.
+     */
     @Value("${spring.kafka.aggregation.like-notification.interval-minutes}")
     private int aggregationInterval;
 
@@ -44,6 +55,12 @@ public class NotificationsLikesAggregator {
     }
 
 
+    /**
+     * Defines a Kafka Streams processing pipeline for aggregating routine likes.
+     *
+     * @param builder StreamsBuilder instance for constructing the processing topology.
+     * @return A KStream processing pipeline producing like notification events.
+     */
     @Bean
     public KStream<String, LikeNotificationEvent> notificationLikesStream(StreamsBuilder builder) {
         JsonSerde<RoutineLikeEvent> routineLikeSerde = new JsonSerde<>(RoutineLikeEvent.class);
@@ -76,6 +93,9 @@ public class NotificationsLikesAggregator {
         return outputStream;
     }
 
+    /**
+     * Data class for maintaining aggregated like counts within a time window.
+     */
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -84,6 +104,12 @@ public class NotificationsLikesAggregator {
         private int likesCount = 0;
         private String routineName;
 
+        /**
+         * Updates the aggregation based on an incoming like event.
+         *
+         * @param event RoutineLikeEvent representing a like or dislike action.
+         * @return Updated LikeAggregation instance.
+         */
         public LikeAggregation update(RoutineLikeEvent event) {
             if (this.ownerId == null) {
                 this.ownerId = event.ownerId();
