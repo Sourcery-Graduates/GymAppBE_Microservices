@@ -46,7 +46,7 @@ public class UserProfileKafkaConsumer {
             likeNotificationService.uploadLikeNotifications(data);
             log.info("Routine like notification event processed: {}", record.key());
         } catch (Exception e) {
-            log.error("Error processing registration event: {}", e.getMessage(), e);
+            log.error("Error processing like notification event: {}", e.getMessage(), e);
         } finally {
             KafkaProcessingContext.disableKafkaProcessing();
         }
