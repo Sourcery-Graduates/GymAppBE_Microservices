@@ -1,7 +1,6 @@
 package com.sourcery.gymapp.backend.authentication.mapper;
 
 import com.sourcery.gymapp.backend.authentication.dto.RegistrationRequest;
-import com.sourcery.gymapp.backend.authentication.dto.UserAuthDto;
 import com.sourcery.gymapp.backend.authentication.dto.UserDetailsDto;
 import com.sourcery.gymapp.backend.authentication.model.Role;
 import com.sourcery.gymapp.backend.authentication.model.RolePermission;
@@ -47,14 +46,6 @@ public class UserMapper {
                         (existing, replacement) ->
                                 (replacement == RolePermission.Level.ALLOW)
                                         ? RolePermission.Level.ALLOW : existing));
-    }
-
-    public UserAuthDto toAuthDto(UserDetailsDto userDetailsDto, String token) {
-        return new UserAuthDto(token,
-                userDetailsDto.getUsername(),
-                userDetailsDto.getEmail(),
-                userDetailsDto.getRoles(),
-                userDetailsDto.getPermissions());
     }
 
     public User toEntity(RegistrationRequest registrationRequest) {

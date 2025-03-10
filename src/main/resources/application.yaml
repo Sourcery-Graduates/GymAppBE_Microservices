@@ -3,6 +3,7 @@ spring:
     active: local
   application:
     name: Gym App Backend
+
 ---
 spring:
   config:
@@ -58,7 +59,7 @@ spring:
     partitions: 3
     aggregation:
       like-notification:
-        interval-minutes: 2
+        interval-minutes: 1440
     consumer:
       bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
       key-deserializer: org.apache.kafka.common.serialization.UUIDDeserializer
@@ -80,49 +81,7 @@ spring:
       properties:
         default.key.serde: org.apache.kafka.common.serialization.Serdes$UUIDSerde
         default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
----
-jwt:
-  public-key: |
-    -----BEGIN PUBLIC KEY-----
-    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzXOcZtQgSBb6ERsRxczi
-    PH6XnuR8FG2/h6T21fORMdnKlgpZxd7U+p7Td53kMElalnHh1e/aB9/JCyb6Fw5h
-    7yE9szB6qAht2vbvsy66Lq+6tjoW8O8tIim84WA0KQJUZTc37cbmHsrWjaNpvCoZ
-    zT2dmm54TFiu5deyOw/F0ahKckpLbejlsWPF7Zha89eJ2yrqVTCd28g5f0XARZsF
-    MAGiTCh2jqmHGlurDaLYQkHNTzlnbANYRDrSOPJD/ToFCURfeMg85Rfwq1eBna9Y
-    h/v2r9ngUoLydcOKWi+lZ+rQG0kolJz/c9T9KHUdm6wJEyoW1QEf3HXzNRdBMOsK
-    /QIDAQAB
-    -----END PUBLIC KEY-----
 
-  private-key: |
-    -----BEGIN PRIVATE KEY-----
-    MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDNc5xm1CBIFvoR
-    GxHFzOI8fpee5HwUbb+HpPbV85Ex2cqWClnF3tT6ntN3neQwSVqWceHV79oH38kL
-    JvoXDmHvIT2zMHqoCG3a9u+zLrour7q2Ohbw7y0iKbzhYDQpAlRlNzftxuYeytaN
-    o2m8KhnNPZ2abnhMWK7l17I7D8XRqEpySktt6OWxY8XtmFrz14nbKupVMJ3byDl/
-    RcBFmwUwAaJMKHaOqYcaW6sNothCQc1POWdsA1hEOtI48kP9OgUJRF94yDzlF/Cr
-    V4Gdr1iH+/av2eBSgvJ1w4paL6Vn6tAbSSiUnP9z1P0odR2brAkTKhbVAR/cdfM1
-    F0Ew6wr9AgMBAAECggEAFf5fGxvww77f8MZY0fezrV2w7gPQK6CvDP6SJQfAvpkt
-    yH+dqiLHYnfvs+GtbKTho3LYBf659LdWbpDy21aBEegZUo4pR0U1u2fNc71YFYje
-    4ESaMZstFffpXigeFVjIP5iYbmYpOtkkfD+m4UuRfQjwTvit/KBOwtCjJhLzbpTY
-    HzQ6oTHs4A/GLD2kwJ1Qb4BnkPU1UKORTyTdGZhY5V3txf6r02aSyNA2KiQQ2Qv/
-    +iSyoJQhGpJtjlOfyhxFIESlEZcbTJ4mWyAA6+9w72v8fgg1WAWcp3HD0lznQiQJ
-    xsSuJGL2sY7/rKVIr80CdbyVTX9IPftayneOLkF3iQKBgQDmHhVDbAZMK1q3jBuw
-    mZzesYK173tk7BAA3XqCK3STjmc1Rft1+GPZMLcxmrXmdT6PoD4TAMHjHs9E/C9k
-    KxHcKO6wGmp9YDuV9VZaQ1y+qDB0JrYPdR7wcfrzmCex4m8+Meb8lX50w4OOghcw
-    yah2CeEYFLdR1tii+5E8do535QKBgQDkj06bdFKjOu9U7rBqq05X+UmDLHSLU2T9
-    r1WS56RJaYaIuOlijuevabFbH1/1lR3XPl6LIj2E66NbgufHbanAg/O8Qk8CrbQL
-    MNCAq/tOGZjPpWcWpr/fWQ2NmoOXRlhoCcBH9pOyampv6aCbN8/gsd+Vy7cp5su1
-    bzIfxgFlOQKBgQC9LRwD6mme8sFIRYl5/D7nIH05fmAtzpc1bt5I5tqWd6pHNHoO
-    OJ41LgRcZjiF9frxbiW5z5SVV33D06JOMc4j9Q6MfZrv6U3y8NcFq30yS+hRhIWF
-    XZ6KwtkwqvRvG5yiP7oKCggEi7q6TB4ugInaSDLhbh5qzDoaer+iOkDTNQKBgQCp
-    wrtLAYIjlTGQbtz/zY8aDqGIWWuS1HUta55ux7ihgkyXnmhSePwisKk3mj0m5gPN
-    DJkiVGNHJ9IktT08RfqQcDGHweR3g9c3fKFRAOxeXOrASAUisOXQmY9UftCAepJN
-    a/iyOrYHDb1StD9DKpgvN05vL2kzKSZi811SdjoxGQKBgCqESWMtCo8B4k9ufEd3
-    bgd1a/WqcWNZUw1lHVyeCk8Q7J/QlH/KlKvrtzOYCTZ0fKXqBVNLRqmcBOwgm918
-    wiqfan+PYOHXMUoU5LbKHvkmmaS/kWUUauELsI9xKmCuk+tdPJqHiqps/7CGVyu3
-    3PGzdbBnQ7Owix8BBbsoeIiJ
-    -----END PRIVATE KEY-----
----
 frontend:
   base_url: "http://localhost:3000"
   registration_verification_path: "/registerVerification?token="

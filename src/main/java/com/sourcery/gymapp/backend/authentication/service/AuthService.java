@@ -1,11 +1,8 @@
 package com.sourcery.gymapp.backend.authentication.service;
 
 import com.sourcery.gymapp.backend.authentication.dto.RegistrationRequest;
-import com.sourcery.gymapp.backend.authentication.dto.UserAuthDto;
-import com.sourcery.gymapp.backend.authentication.dto.UserDetailsDto;
 import com.sourcery.gymapp.backend.authentication.event.PasswordResetEvent;
 import com.sourcery.gymapp.backend.authentication.exception.*;
-import com.sourcery.gymapp.backend.authentication.jwt.GymAppJwtProvider;
 import com.sourcery.gymapp.backend.authentication.mapper.UserMapper;
 import com.sourcery.gymapp.backend.authentication.model.EmailToken;
 import com.sourcery.gymapp.backend.authentication.model.TokenType;
@@ -20,11 +17,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -37,9 +31,7 @@ import java.util.UUID;
 public class AuthService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
-    private final CustomUserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
-    private final GymAppJwtProvider jwtProvider;
     private final AuthKafkaProducer kafkaEventsProducer;
     private final TransactionTemplate transactionTemplate;
     private final ApplicationEventPublisher applicationPublisher;
@@ -50,22 +42,6 @@ public class AuthService {
 
     @Value("${frontend.registration_verification_path}")
     private String registerVerificationEndpoint;
-
-    @Transactional(readOnly = true)
-    public UserAuthDto authenticateUser(Authentication authentication) {
-        if (authentication.getPrincipal() instanceof UserDetails userDetails) {
-            UserDetailsDto userDetailsDto = (UserDetailsDto) userDetails;
-            String token = jwtProvider.generateToken(userDetailsDto.getUsername(), userDetailsDto.getId());
-            return userMapper.toAuthDto(userDetailsDto, token);
-        }
-
-        if (authentication.getPrincipal() instanceof Jwt jwt) {
-            UserDetailsDto userDetails = (UserDetailsDto) userDetailsService.loadUserByUsername(jwt.getClaim("email"));
-            String token = jwt.getTokenValue();
-            return userMapper.toAuthDto(userDetails, token);
-        }
-        throw new UserNotAuthenticatedException();
-    }
 
     public void register(RegistrationRequest registrationRequest) {
         User user = transactionTemplate.execute(status -> {
