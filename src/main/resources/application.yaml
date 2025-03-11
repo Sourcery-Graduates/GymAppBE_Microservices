@@ -57,6 +57,9 @@ spring:
   kafka:
     replicas: 3
     partitions: 3
+    aggregation:
+      like-notification:
+        interval-minutes: 1440
     consumer:
       bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
       key-deserializer: org.apache.kafka.common.serialization.UUIDDeserializer
@@ -68,9 +71,16 @@ spring:
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
     topics:
       account-register: "userProfile.create-account"
+      likes-events: "workout.like-events"
+      likes-notifications: "userProfile.notifications-likes-dislikes"
       email-send: "email.send-email"
       retry: "common.RETRY"
       dead-letter: "common.DLT"
+    streams:
+      application-id: gym-app-backend-streams
+      properties:
+        default.key.serde: org.apache.kafka.common.serialization.Serdes$UUIDSerde
+        default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
 
 frontend:
   base_url: "http://localhost:3000"

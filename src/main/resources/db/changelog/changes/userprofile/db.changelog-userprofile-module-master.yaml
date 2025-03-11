@@ -2,3 +2,7 @@ databaseChangeLog:
   - include:
       file: ./v1.0-userprofile-changelog.sql
       relativeToChangelogFile: true
+
+  - include:
+      file: ./v2.0-routine-like-notification-changelog.sql
+      relativeToChangelogFile: true

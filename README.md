@@ -9,6 +9,7 @@ A Spring Boot-based backend application for managing gym workouts, exercises, an
    - [Documentation & Development](#documentation--development)
 3. [Project Structure](#project-structure)
 4. [Communication between Modules](#communication-between-modules)
+   - [Kafka Stream API](#kafka-stream-api)
 5. [Getting Started](#getting-started)
    - [Prerequisites](#prerequisites)
    - [Running with Docker for Development](#running-with-docker-for-development)
@@ -77,6 +78,29 @@ For every type of communication/event/functionality there should be a dedicated 
 There are also 2 special Topics:
 - DeadLetter (if Service2 cannot process something many times, its put into a deadzone/archive)
 - Retry (Service2 may put something here if it could process it 1st time and retry it in an hour)
+
+### Kafka Stream API
+Some of the parts of application rely on Kafka Stream API to do the real-time data aggregation and analytics within a time window. The aggregation window for like notifications is configurable via the application properties.
+
+Kafka Streams API provides two key abstractions for processing events: KStream and KTable:
+
+**KStream** - Represents a continuous, unbounded stream of records where each record is immutable and represents a unique event.
+
+**KTable** - Represents a stateful and continuously updated view of the latest values for each key. It behaves like a database table.
+
+The general flow of the code looks like this:
+
+```mermaid
+graph TD;
+    Service1-->KafkaProducer;
+    KafkaProducer-->Kafka;
+    Kafka-->AggrergationPipeline;
+    AggrergationPipeline-->Kafka;
+    Kafka-->KafkaConsumer;
+    KafkaConsumer-->Service2;
+```
+
+Where `Service1`, `KafkaProducer`, `AggrergationPipeline`, `KafkaConsumer` and `Service2` are all within the backend of the application.
 
 ## Getting Started
 
