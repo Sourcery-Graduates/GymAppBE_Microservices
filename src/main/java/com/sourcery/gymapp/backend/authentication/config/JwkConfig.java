@@ -1,28 +1,30 @@
 package com.sourcery.gymapp.backend.authentication.config;
 
-import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
 import com.sourcery.gymapp.backend.authentication.config.security.token.CustomOAuth2RefreshTokenGenerator;
 import com.sourcery.gymapp.backend.authentication.dto.UserDetailsDto;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.core.OAuth2RefreshToken;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.token.DelegatingOAuth2TokenGenerator;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
@@ -31,7 +33,9 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 
 @Configuration
+@RequiredArgsConstructor
 public class JwkConfig {
+    private final UserDetailsService userDetailsService;
 
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
@@ -75,23 +79,34 @@ public class JwkConfig {
      */
     public OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer() {
         return context -> {
-            Authentication principal = context.getPrincipal();
+            Authentication authentication = context.getPrincipal();
+            String tokenType = context.getTokenType().getValue();
 
-            if (OidcParameterNames.ID_TOKEN.equals(context.getTokenType().getValue())
-                    && principal.getPrincipal() instanceof UserDetailsDto userDetails) {
-                Set<String> authorities = principal.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.toSet());
+            UserDetailsDto userDetails = extractUserDetails(authentication);
 
-                context.getClaims().claim("authorities", authorities);
+            if (userDetails != null) {
                 context.getClaims().claim("userId", userDetails.getId().toString());
-            }
 
-            if (OAuth2TokenType.ACCESS_TOKEN.getValue().equals(context.getTokenType().getValue())
-                    && principal.getPrincipal() instanceof UserDetailsDto userDetails) {
-                context.getClaims().claim("userId", userDetails.getId().toString());
+                if (OidcParameterNames.ID_TOKEN.equals(tokenType)) {
+                    Set<String> authorities = userDetails.getAuthorities().stream()
+                            .map(GrantedAuthority::getAuthority)
+                            .collect(Collectors.toSet());
+                    context.getClaims().claim("sub", userDetails.getUsername());
+                    context.getClaims().claim("authorities", authorities);
+                }
             }
         };
+    }
+
+    private UserDetailsDto extractUserDetails(Authentication authentication) {
+        if (authentication.getPrincipal() instanceof UserDetailsDto userDetails) {
+            return userDetails;
+        }
+        if (authentication.getPrincipal() instanceof DefaultOidcUser defaultOidcUser) {
+            String email = defaultOidcUser.getAttribute("email");
+            return (UserDetailsDto) userDetailsService.loadUserByUsername(email);
+        }
+        return null;
     }
 
     private static KeyPair generateRSAKeys() {
