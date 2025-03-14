@@ -15,6 +15,9 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.ActiveProfiles;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 import static org.mockito.Mockito.when;
@@ -46,25 +49,25 @@ public class EmailServiceTest {
         @Test
         public void testEmailWasSent() {
 
-            EmailSendEvent emailSendEvent = new EmailSendEvent("testSubject", "TestSenderName", "testContent", "email@email.com");
+            EmailSendEvent emailSendEvent = new EmailSendEvent("testSubject", "TestSenderName", "testContent", "email@email.com", 0);
 
             when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
 
-            emailService.sendEmail(emailSendEvent);
+            var isSuccessful = emailService.sendEmail(emailSendEvent);
 
             verify(mailSender, times(1)).send(any(MimeMessage.class));
+            assertTrue(isSuccessful);
         }
 
         @Test
         public void testSendEmail_ThrowsMailException_retriesEmail() {
-            EmailSendEvent emailSendEvent = new EmailSendEvent("testSubject", "TestSenderName", "testContent", "email@email.com");
+            EmailSendEvent emailSendEvent = new EmailSendEvent("testSubject", "TestSenderName", "testContent", "email@email.com", 0);
 
             when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
             doThrow(new MailException("Error sending email") {}).when(mailSender).send(any(MimeMessage.class));
 
-            emailService.sendEmail(emailSendEvent);
-
-            verify(kafkaTemplate, times(1)).send(EMAIL_RETRY_TOPIC, emailSendEvent);
+            var isSuccessful = emailService.sendEmail(emailSendEvent);
+            assertFalse(isSuccessful);
         }
     }
 }
