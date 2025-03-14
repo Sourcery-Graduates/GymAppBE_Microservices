@@ -7,6 +7,7 @@ public record EmailSendEvent(
         String subject,
         String senderName,
         String content,
-        String userEmail
+        String userEmail,
+        int retryCount
 ) {
 }
