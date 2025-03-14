@@ -10,9 +10,13 @@ import com.sourcery.gymapp.backend.events.EmailSendEvent;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Component
@@ -23,7 +27,9 @@ public class EmailKafkaConsumer {
     private final ObjectMapper objectMapper;
     private final EmailKafkaProducer emailKafkaProducer;
     private final EmailMapper emailMapper;
+    private ThreadPoolTaskScheduler taskScheduler;
     private static final int MAX_RETRIES = 3;
+    private static final long BASE_BACKOFF_TIME_SECONDS = 2;
 
     @KafkaListener(topics = {"${spring.kafka.topics.email-send}", "${spring.kafka.topics.email-retry}"}, groupId = "email-listener-group")
     public void onMessage(ConsumerRecord<UUID, String> record) {
@@ -49,9 +55,16 @@ public class EmailKafkaConsumer {
         if (email.retryCount() < MAX_RETRIES) {
             log.warn("Retrying email for {} (attempt {}/{})", email.userEmail(), email.retryCount() + 1, MAX_RETRIES);
             EmailSendEvent retriedEmail = emailMapper.incrementRetryEvent(email);
-            emailKafkaProducer.retryEmail(eventId, retriedEmail);
+            taskScheduler.schedule(
+                    () -> emailKafkaProducer.retryEmail(eventId, retriedEmail),
+                    calculateBackoffTime(retriedEmail.retryCount())
+            );
         } else {
             log.error("Error processing email event, Max retries reached: {}", email);
         }
+    }
+
+    private Instant calculateBackoffTime(int retryCount) {
+        return Instant.now().plusSeconds(BASE_BACKOFF_TIME_SECONDS * retryCount);
     }
 }
