@@ -65,6 +65,6 @@ public class PasswordResetEventListener implements ApplicationListener<PasswordR
                 "<p style=\"font-style: italic; text-decoration: underline;\"> This is automated message, please dont reply to it</p>";
 
         // can utilize kafka here for email sending
-        emailPublisher.publishEvent(new EmailSendEvent(subject, senderName, mailContent, user.getEmail()));
+        emailPublisher.publishEvent(new EmailSendEvent(subject, senderName, mailContent, user.getEmail(), 0));
     }
 }
