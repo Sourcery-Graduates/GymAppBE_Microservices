@@ -1,5 +1,7 @@
 package com.sourcery.gymapp.backend.email.service;
 
+import com.sourcery.gymapp.backend.email.mapper.EmailMapper;
+import com.sourcery.gymapp.backend.email.producer.EmailKafkaProducer;
 import com.sourcery.gymapp.backend.events.EmailSendEvent;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.DisplayName;
@@ -14,9 +16,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -29,10 +35,13 @@ import static org.mockito.Mockito.when;
 public class EmailServiceTest {
 
     @MockBean
-    private KafkaTemplate<String, EmailSendEvent> kafkaTemplate;
+    EmailKafkaProducer emailKafkaProducer;
 
     @MockBean
     private JavaMailSender mailSender;
+
+    @Autowired
+    private EmailMapper emailMapper;
 
     @MockBean
     private MimeMessage mimeMessage;
@@ -42,6 +51,9 @@ public class EmailServiceTest {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private ThreadPoolTaskScheduler taskScheduler;
 
     @Nested
     @DisplayName("Send Email")
@@ -53,10 +65,10 @@ public class EmailServiceTest {
 
             when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
 
-            var isSuccessful = emailService.sendEmail(emailSendEvent);
+            emailService.sendEmail(emailSendEvent);
 
             verify(mailSender, times(1)).send(any(MimeMessage.class));
-            assertTrue(isSuccessful);
+            verify(emailKafkaProducer, never()).retryEmail(any(), any());
         }
 
         @Test
@@ -66,8 +78,9 @@ public class EmailServiceTest {
             when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
             doThrow(new MailException("Error sending email") {}).when(mailSender).send(any(MimeMessage.class));
 
-            var isSuccessful = emailService.sendEmail(emailSendEvent);
-            assertFalse(isSuccessful);
+            emailService.sendEmail(emailSendEvent);
+            taskScheduler.getScheduledThreadPoolExecutor().getQueue().forEach(Runnable::run);
+            verify(emailKafkaProducer, atLeastOnce()).retryEmail(any(), any());
         }
     }
 }

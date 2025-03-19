@@ -44,6 +44,7 @@ public class EmailService {
             messageHelper.setText(emailDto.content(), true);
             mailSender.send(message);
             logger.info("Email sent successfully to {}", emailDto.userEmail());
+            return;
         }
         catch (UnsupportedEncodingException e) {
             logger.error("Unsupported encoding in email sender name: {}", emailDto.senderName(), e);
