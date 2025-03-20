@@ -28,7 +28,8 @@ public class RoutineLikeController {
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Like successfully added"),
         @ApiResponse(responseCode = "409", description = "Like already exists"),
-        @ApiResponse(responseCode = "401", description = "User not authenticated")
+        @ApiResponse(responseCode = "401", description = "User not authenticated"),
+        @ApiResponse(responseCode = "404", description = "Routine not found")
     })
     @PostMapping("/{routineId}")
     @ResponseStatus(HttpStatus.CREATED)
@@ -43,7 +44,8 @@ public class RoutineLikeController {
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Like successfully removed"),
         @ApiResponse(responseCode = "404", description = "Like not found - user hasn't liked this routine"),
-        @ApiResponse(responseCode = "401", description = "User not authenticated")
+        @ApiResponse(responseCode = "401", description = "User not authenticated"),
+        @ApiResponse(responseCode = "404", description = "Routine not found")
     })
     @DeleteMapping("/{routineId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

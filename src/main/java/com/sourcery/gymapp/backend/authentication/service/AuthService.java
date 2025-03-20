@@ -147,6 +147,6 @@ public class AuthService {
                 "<a href=\"" + verificationUrl + "\">Verify your email to activate your account </a>" +
                 "<p> Thank you <br> Users Registration Portal Service</p>" +
                 "<p style=\"font-style: italic; text-decoration: underline;\"> This is automated message, please dont reply to it</p>";
-        return new EmailSendEvent(subject, senderName, mailContent, user.getEmail());
+        return new EmailSendEvent(subject, senderName, mailContent, user.getEmail(), 0);
     }
 }
