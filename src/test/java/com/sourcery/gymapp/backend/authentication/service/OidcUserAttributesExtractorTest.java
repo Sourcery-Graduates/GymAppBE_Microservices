@@ -1,5 +1,6 @@
 package com.sourcery.gymapp.backend.authentication.service;
 
+import com.sourcery.gymapp.backend.authentication.config.OidcDefaults;
 import com.sourcery.gymapp.backend.authentication.model.OidcUserAttributes;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +30,9 @@ public class OidcUserAttributesExtractorTest {
     @Mock
     private ClientRegistration clientRegistration;
 
+    @Mock
+    private OidcDefaults oidcDefaults;
+
     @Test
     public void extractUserAttributes_shouldExtractCorrectly_whenAllAttributesPresent() {
         // Arrange
@@ -57,6 +61,7 @@ public class OidcUserAttributesExtractorTest {
         when(oidcUser.getSubject()).thenReturn("user123");
         when(userRequest.getClientRegistration()).thenReturn(clientRegistration);
         when(clientRegistration.getRegistrationId()).thenReturn("google");
+        when(oidcDefaults.getDefaultName()).thenReturn("GymUser"); // Настраиваем только в тесте, где это используется
 
         // Act
         OidcUserAttributes attributes = extractor.extractUserAttributes(oidcUser, userRequest);
@@ -64,7 +69,7 @@ public class OidcUserAttributesExtractorTest {
         // Assert
         assertNotNull(attributes);
         assertEquals("test@example.com", attributes.email());
-        assertNull(attributes.name());
+        assertEquals("GymUser", attributes.name()); // Теперь ожидаем значение по умолчанию
         assertEquals("google", attributes.provider());
         assertEquals("user123", attributes.providerId());
     }

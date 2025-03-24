@@ -1,5 +1,6 @@
 package com.sourcery.gymapp.backend.authentication.service;
 
+import com.sourcery.gymapp.backend.authentication.config.OidcDefaults;
 import com.sourcery.gymapp.backend.authentication.model.User;
 import com.sourcery.gymapp.backend.authentication.producer.AuthKafkaProducer;
 import com.sourcery.gymapp.backend.events.RegistrationEvent;
@@ -12,10 +13,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class OidcUserEventService {
-    private static final String DEFAULT_LOCATION = "Planet Earth";
-    private static final String DEFAULT_BIO = "Gym App Enthusiast";
-
     private final AuthKafkaProducer kafkaEventsProducer;
+    private final OidcDefaults oidcDefaults;
 
     public void sendUserCreationEvents(User user, OidcUser oidcUser) {
         RegistrationEvent event = createRegistrationEvent(user, oidcUser);
@@ -24,13 +23,24 @@ public class OidcUserEventService {
     }
 
     private RegistrationEvent createRegistrationEvent(User user, OidcUser oidcUser) {
+        String givenName = oidcUser.getGivenName();
+        String familyName = oidcUser.getFamilyName();
+
+        if (givenName == null || givenName.trim().isEmpty()) {
+            givenName = oidcDefaults.getDefaultGivenName();
+        }
+
+        if (familyName == null || familyName.trim().isEmpty()) {
+            familyName = oidcDefaults.getDefaultFamilyName();
+        }
+
         return new RegistrationEvent(
                 user.getId(),
                 user.getUsername(),
-                oidcUser.getGivenName(),
-                oidcUser.getFamilyName(),
-                DEFAULT_LOCATION,
-                DEFAULT_BIO
+                givenName,
+                familyName,
+                oidcDefaults.getDefaultLocation(),
+                oidcDefaults.getDefaultBio()
         );
     }
 }

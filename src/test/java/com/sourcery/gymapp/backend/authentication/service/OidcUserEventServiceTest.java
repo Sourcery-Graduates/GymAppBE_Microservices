@@ -1,5 +1,6 @@
 package com.sourcery.gymapp.backend.authentication.service;
 
+import com.sourcery.gymapp.backend.authentication.config.OidcDefaults;
 import com.sourcery.gymapp.backend.authentication.model.User;
 import com.sourcery.gymapp.backend.authentication.producer.AuthKafkaProducer;
 import com.sourcery.gymapp.backend.events.RegistrationEvent;
@@ -31,6 +32,9 @@ public class OidcUserEventServiceTest {
     @Mock
     private OidcUser oidcUser;
 
+    @Mock
+    private OidcDefaults oidcDefaults;
+
     @Captor
     private ArgumentCaptor<RegistrationEvent> eventCaptor;
 
@@ -49,6 +53,8 @@ public class OidcUserEventServiceTest {
         when(user.getEmail()).thenReturn(email);
         when(oidcUser.getGivenName()).thenReturn(givenName);
         when(oidcUser.getFamilyName()).thenReturn(familyName);
+        when(oidcDefaults.getDefaultLocation()).thenReturn("Planet Earth");
+        when(oidcDefaults.getDefaultBio()).thenReturn("Gym App Enthusiast");
 
         // Act
         eventService.sendUserCreationEvents(user, oidcUser);
@@ -72,11 +78,20 @@ public class OidcUserEventServiceTest {
         when(user.getUsername()).thenReturn("testuser");
         when(oidcUser.getGivenName()).thenReturn(null);
         when(oidcUser.getFamilyName()).thenReturn(null);
+        when(oidcDefaults.getDefaultGivenName()).thenReturn("Gym");
+        when(oidcDefaults.getDefaultFamilyName()).thenReturn("User");
+        when(oidcDefaults.getDefaultLocation()).thenReturn("Planet Earth");
+        when(oidcDefaults.getDefaultBio()).thenReturn("Gym App Enthusiast");
 
         // Act
         eventService.sendUserCreationEvents(user, oidcUser);
 
         // Assert
-        verify(kafkaProducer).sendRegistrationEvent(any(RegistrationEvent.class));
+        verify(kafkaProducer).sendRegistrationEvent(eventCaptor.capture());
+
+        // Проверяем, что были использованы значения по умолчанию
+        RegistrationEvent capturedEvent = eventCaptor.getValue();
+        assertEquals("Gym", capturedEvent.firstName());
+        assertEquals("User", capturedEvent.lastName());
     }
 }

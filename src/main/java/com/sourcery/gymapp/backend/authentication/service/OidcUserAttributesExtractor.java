@@ -1,5 +1,6 @@
 package com.sourcery.gymapp.backend.authentication.service;
 
+import com.sourcery.gymapp.backend.authentication.config.OidcDefaults;
 import com.sourcery.gymapp.backend.authentication.model.OidcUserAttributes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class OidcUserAttributesExtractor {
+    private final OidcDefaults oidcDefaults;
 
     public OidcUserAttributes extractUserAttributes(OidcUser oidcUser, OidcUserRequest userRequest) {
         String email = oidcUser.getEmail();
@@ -18,6 +20,10 @@ public class OidcUserAttributesExtractor {
         }
 
         String name = oidcUser.getGivenName();
+        if (name == null || name.trim().isEmpty()) {
+            name = oidcDefaults.getDefaultName();
+        }
+
         String provider = userRequest.getClientRegistration().getRegistrationId();
         String providerId = oidcUser.getSubject();
 
