@@ -1,8 +1,8 @@
 package com.sourcery.gymapp.backend.authentication.service;
 
 import com.sourcery.gymapp.backend.authentication.dto.RegistrationRequest;
-import com.sourcery.gymapp.backend.authentication.event.PasswordResetEvent;
 import com.sourcery.gymapp.backend.authentication.exception.*;
+import com.sourcery.gymapp.backend.authentication.mapper.EmailTemplateMapper;
 import com.sourcery.gymapp.backend.authentication.mapper.UserMapper;
 import com.sourcery.gymapp.backend.authentication.model.EmailToken;
 import com.sourcery.gymapp.backend.authentication.model.TokenType;
@@ -14,7 +14,6 @@ import com.sourcery.gymapp.backend.events.EmailSendEvent;
 import com.sourcery.gymapp.backend.events.RegistrationEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -34,7 +34,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthKafkaProducer kafkaEventsProducer;
     private final TransactionTemplate transactionTemplate;
-    private final ApplicationEventPublisher applicationPublisher;
+    private final EmailTemplateMapper emailTemplateMapper;
     private final EmailTokenRepository emailTokenRepository;
 
     @Value("${frontend.base_url}")
@@ -42,6 +42,9 @@ public class AuthService {
 
     @Value("${frontend.registration_verification_path}")
     private String registerVerificationEndpoint;
+
+    @Value("${frontend.password_reset_path}")
+    private String passwordResetEndpoint;
 
     public void register(RegistrationRequest registrationRequest) {
         User user = transactionTemplate.execute(status -> {
@@ -61,7 +64,20 @@ public class AuthService {
         kafkaEventsProducer.sendRegistrationEvent(event);
 
         EmailSendEvent emailSendEvent = createRegistrationEmailEvent(user);
-        kafkaEventsProducer.sendRegistrationEmail(emailSendEvent, user.getId());
+        kafkaEventsProducer.sendEmailEvent(emailSendEvent, user.getId());
+    }
+
+    private EmailSendEvent createRegistrationEmailEvent(User user) {
+        String verificationToken = UUID.randomUUID().toString();
+        EmailToken emailToken = new EmailToken();
+
+        emailToken.setType(TokenType.REGISTRATION);
+        emailToken.setToken(verificationToken);
+        emailToken.setUser(user);
+        emailTokenRepository.save(emailToken);
+
+        String verificationURL = applicationURL + registerVerificationEndpoint + verificationToken;
+        return emailTemplateMapper.toRegisterVerificationEmail(user, verificationURL);
     }
 
     @Transactional
@@ -91,16 +107,34 @@ public class AuthService {
             throw new UserAccountNotVerifiedException("Verify your account via email before resetting password!");
         }
 
-        applicationPublisher.publishEvent(new PasswordResetEvent(user, applicationURL));
+        EmailSendEvent emailSendEvent = createPasswordResetEvent(user);
+        kafkaEventsProducer.sendEmailEvent(emailSendEvent, user.getId());
 
         return ResponseEntity.ok().body("Email with password reset was send to your email address");
+    }
+
+    private EmailSendEvent createPasswordResetEvent(User user) {
+        List<EmailToken> emailTokens = emailTokenRepository.findAllByUserIdAndType(user.getId(), TokenType.PASSWORD_RECOVERY);
+        if (!emailTokens.isEmpty()) {
+            emailTokenRepository.deleteAll(emailTokens);
+        }
+
+        String verificationToken = UUID.randomUUID().toString();
+        EmailToken emailToken = new EmailToken();
+        emailToken.setType(TokenType.PASSWORD_RECOVERY);
+        emailToken.setExpirationTime(ZonedDateTime.now().plusHours(24));
+        emailToken.setToken(verificationToken);
+        emailToken.setUser(user);
+        emailTokenRepository.save(emailToken);
+
+        String resetPasswordURL = applicationURL + passwordResetEndpoint + verificationToken;
+        return emailTemplateMapper.toPasswordResetEmail(user, resetPasswordURL);
     }
 
     @Transactional
     public ResponseEntity<String> passwordChange(String password, String token) {
         try {
             EmailToken emailToken = emailTokenRepository.findByTokenAndLockRowAccess(token).orElseThrow(PasswordResetTokenNotFoundException::new);
-
             if (emailToken.getType() != TokenType.PASSWORD_RECOVERY) {
                 return ResponseEntity.badRequest().body("Wrong token type was %s, expected %s".formatted(emailToken.getType(), TokenType.PASSWORD_RECOVERY));
             }
@@ -117,36 +151,6 @@ public class AuthService {
             throw new TokenAlreadyInUsageException();
         }
 
-
         return ResponseEntity.ok("Password has been changed!");
-    }
-
-    private EmailSendEvent createRegistrationEmailEvent(User user) {
-
-        String verificationToken = UUID.randomUUID().toString();
-
-        EmailToken emailToken = new EmailToken();
-
-        emailToken.setType(TokenType.REGISTRATION);
-        emailToken.setToken(verificationToken);
-        emailToken.setUser(user);
-
-        emailTokenRepository.save(emailToken);
-
-        String verificationURL = applicationURL + registerVerificationEndpoint + verificationToken;
-
-        return createRegisterVerificationEmail(user, verificationURL);
-    }
-
-    public EmailSendEvent createRegisterVerificationEmail(User user, String verificationUrl) {
-        String subject = "Email verificaton";
-        String senderName = "User Registration Portal Service";
-        String mailContent = "<p> Hi, %s </p>".formatted(user.getUsername()) +
-                "<p>Thank you for registering with us.</p>" +
-                "<p>Please, follow the link below to complete your registration. </p>" +
-                "<a href=\"" + verificationUrl + "\">Verify your email to activate your account </a>" +
-                "<p> Thank you <br> Users Registration Portal Service</p>" +
-                "<p style=\"font-style: italic; text-decoration: underline;\"> This is automated message, please dont reply to it</p>";
-        return new EmailSendEvent(subject, senderName, mailContent, user.getEmail(), 0);
     }
 }

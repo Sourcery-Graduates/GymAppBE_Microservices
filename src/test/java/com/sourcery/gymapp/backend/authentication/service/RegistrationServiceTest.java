@@ -1,7 +1,6 @@
 package com.sourcery.gymapp.backend.authentication.service;
 
 import com.sourcery.gymapp.backend.authentication.dto.RegistrationRequest;
-import com.sourcery.gymapp.backend.authentication.event.PasswordResetEvent;
 import com.sourcery.gymapp.backend.authentication.exception.*;
 import com.sourcery.gymapp.backend.authentication.mapper.UserMapper;
 import com.sourcery.gymapp.backend.authentication.model.EmailToken;
