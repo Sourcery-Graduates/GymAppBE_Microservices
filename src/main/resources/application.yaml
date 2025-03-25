@@ -3,14 +3,14 @@ spring:
     active: local
   application:
     name: Gym App Backend
-#
-#logging:
-#  level:
-#    kafka: WARN
-#    org.springframework.kafka: WARN
-#    org.apache.kafka: WARN
-#    org.apache.kafka.clients: WARN
-#    org.apache.kafka.streams: WARN
+
+logging:
+  level:
+    kafka: WARN
+    org.springframework.kafka: WARN
+    org.apache.kafka: WARN
+    org.apache.kafka.clients: WARN
+    org.apache.kafka.streams: WARN
 
 ---
 spring:
@@ -86,7 +86,7 @@ spring:
       retry: "common.RETRY"
       dead-letter: "common.DLT"
     streams:
-      application-id: gym-app-backend-streams
+      application-id: gym-app-backend-streams-single-broker
       properties:
         default.key.serde: org.apache.kafka.common.serialization.Serdes$UUIDSerde
         default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
