@@ -89,7 +89,6 @@ public class OidcUserEventServiceTest {
         // Assert
         verify(kafkaProducer).sendRegistrationEvent(eventCaptor.capture());
 
-        // Проверяем, что были использованы значения по умолчанию
         RegistrationEvent capturedEvent = eventCaptor.getValue();
         assertEquals("Gym", capturedEvent.firstName());
         assertEquals("User", capturedEvent.lastName());

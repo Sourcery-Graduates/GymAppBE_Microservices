@@ -61,7 +61,7 @@ public class OidcUserAttributesExtractorTest {
         when(oidcUser.getSubject()).thenReturn("user123");
         when(userRequest.getClientRegistration()).thenReturn(clientRegistration);
         when(clientRegistration.getRegistrationId()).thenReturn("google");
-        when(oidcDefaults.getDefaultName()).thenReturn("GymUser"); // Настраиваем только в тесте, где это используется
+        when(oidcDefaults.getDefaultName()).thenReturn("GymUser");
 
         // Act
         OidcUserAttributes attributes = extractor.extractUserAttributes(oidcUser, userRequest);
@@ -69,7 +69,7 @@ public class OidcUserAttributesExtractorTest {
         // Assert
         assertNotNull(attributes);
         assertEquals("test@example.com", attributes.email());
-        assertEquals("GymUser", attributes.name()); // Теперь ожидаем значение по умолчанию
+        assertEquals("GymUser", attributes.name());
         assertEquals("google", attributes.provider());
         assertEquals("user123", attributes.providerId());
     }

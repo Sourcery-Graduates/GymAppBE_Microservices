@@ -65,12 +65,4 @@ public class User {
 
     @Column(name = "provider_id")
     private String providerId;
-
-    /**
-     * Checks if this user is authenticated via an OAuth2 provider
-     * @return true if this is an OAuth2 user, false otherwise
-     */
-    public boolean isOAuth2User() {
-        return provider != null && providerId != null;
-    }
 }
