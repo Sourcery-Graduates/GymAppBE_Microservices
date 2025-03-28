@@ -21,7 +21,7 @@ public class AuthKafkaProducer {
     private String accountRegisterTopicName;
 
     @Value("${spring.kafka.topics.email-send}")
-    private String registrationEmailTopicName;
+    private String emailTopicName;
 
     private final KafkaTemplate<UUID, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
@@ -52,7 +52,7 @@ public class AuthKafkaProducer {
         });
     }
 
-    public CompletableFuture<SendResult<UUID, String>> sendRegistrationEmail(EmailSendEvent email, UUID key) {
+    public CompletableFuture<SendResult<UUID, String>> sendEmailEvent(EmailSendEvent email, UUID key) {
 
         String value = null;
         try {
@@ -61,7 +61,7 @@ public class AuthKafkaProducer {
             throw new AuthenticationRuntimeException("Couldn't convert to JSON at Kafka Producer" + e.getMessage());
         }
 
-        var future = kafkaTemplate.send(registrationEmailTopicName, key, value);
+        var future = kafkaTemplate.send(emailTopicName, key, value);
 
         String finalValue = value;
         return future.whenComplete((result, error) -> {

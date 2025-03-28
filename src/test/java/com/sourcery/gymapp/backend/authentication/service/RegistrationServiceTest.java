@@ -1,8 +1,8 @@
 package com.sourcery.gymapp.backend.authentication.service;
 
 import com.sourcery.gymapp.backend.authentication.dto.RegistrationRequest;
-import com.sourcery.gymapp.backend.authentication.event.PasswordResetEvent;
 import com.sourcery.gymapp.backend.authentication.exception.*;
+import com.sourcery.gymapp.backend.authentication.mapper.EmailTemplateMapper;
 import com.sourcery.gymapp.backend.authentication.mapper.UserMapper;
 import com.sourcery.gymapp.backend.authentication.model.EmailToken;
 import com.sourcery.gymapp.backend.authentication.model.TokenType;
@@ -15,6 +15,7 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.sourcery.gymapp.backend.events.EmailSendEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -50,7 +50,7 @@ class AuthServiceTest {
     private TransactionTemplate transactionTemplate;
 
     @Mock
-    private ApplicationEventPublisher applicationPublisher;
+    private EmailTemplateMapper emailTemplateMapper;
 
     @Mock
     private EmailTokenRepository emailTokenRepository;
@@ -98,6 +98,7 @@ class AuthServiceTest {
 
             verify(userRepository, times(1)).save(any());
             verify(authKafkaProducer, times(1)).sendRegistrationEvent(any());
+            verify(authKafkaProducer, times(1)).sendEmailEvent(any(), any());
     }
 
         @Test
@@ -108,6 +109,8 @@ class AuthServiceTest {
             when(userRepository.existsByEmail(userEmail)).thenReturn(true);
 
             assertThrows(UserAlreadyExistsException.class, () -> authService.register(registrationRequest));
+            verify(authKafkaProducer, never()).sendRegistrationEvent(any());
+            verify(authKafkaProducer, never()).sendEmailEvent(any(), any());
         }
     }
 
@@ -187,6 +190,7 @@ class AuthServiceTest {
 
                 assertThrows(UsernameNotFoundException.class, () ->
                 authService.passwordResetRequest(anyString()));
+                verify(authKafkaProducer, never()).sendEmailEvent(any(), any());
             }
 
             @Test
@@ -197,6 +201,7 @@ class AuthServiceTest {
                 when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
 
                 assertThrows(UserAccountNotVerifiedException.class, () -> authService.passwordResetRequest(anyString()));
+                verify(authKafkaProducer, never()).sendEmailEvent(any(), any());
             }
 
             @Test
@@ -205,11 +210,9 @@ class AuthServiceTest {
                 user.setEnabled(true);
 
                 when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
-                doNothing().when(applicationPublisher).publishEvent(any(PasswordResetEvent.class));
-
                 ResponseEntity<String> response = authService.passwordResetRequest(anyString());
 
-                verify(applicationPublisher, times(1)).publishEvent(any(PasswordResetEvent.class));
+                verify(authKafkaProducer, times(1)).sendEmailEvent(any(), any());
                 assertEquals(HttpStatus.OK, response.getStatusCode());
                 assertEquals("Email with password reset was send to your email address", response.getBody());
             }

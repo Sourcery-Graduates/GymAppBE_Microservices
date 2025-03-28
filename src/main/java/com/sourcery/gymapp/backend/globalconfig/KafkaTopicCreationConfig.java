@@ -31,8 +31,8 @@ public class KafkaTopicCreationConfig {
         for (Map.Entry<String, String> entry : topics.entrySet()) {
             listOfTopics.add(
                     TopicBuilder.name(entry.getValue())
-                            .partitions(replicas)
-                            .replicas(partitions)
+                            .partitions(partitions)
+                            .replicas(replicas)
                             .build()
             );
         }
