@@ -66,4 +66,17 @@ public class UserMapper {
                 registrationRequest.getBio()
         );
     }
+
+    public User createOAuth2User(String email,
+                                 String name,
+                                 String provider,
+                                 String providerId) {
+        User user = new User();
+        user.setEmail(email);
+        user.setUsername(name);
+        user.setProvider(provider);
+        user.setProviderId(providerId);
+        user.setEnabled(true); // OAuth2 users are automatically verified
+        return user;
+    }
 }

@@ -53,6 +53,16 @@
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
         <button type="submit" class="submit-button">Login</button>
     </form>
+
+    <div class="separator">
+        <span>OR</span>
+    </div>
+
+    <div class="google-login-button" onclick="window.location.href='/oauth2/authorization/google'">
+        <i class="fab fa-google"></i>
+        Sign in with Google
+    </div>
+
     <div class="register-container">
         <p>Don't have an account? <a href="#" onclick="redirectToRegister()">Register here!</a></p>
     </div>

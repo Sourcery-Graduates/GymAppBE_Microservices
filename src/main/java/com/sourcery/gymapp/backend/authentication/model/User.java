@@ -59,4 +59,10 @@ public class User {
 
     @Column(nullable = false)
     private boolean isEnabled;
+
+    @Column(length = 30)
+    private String provider;
+
+    @Column(name = "provider_id")
+    private String providerId;
 }

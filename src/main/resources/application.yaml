@@ -95,3 +95,18 @@ frontend:
   base_url: "http://localhost:3000"
   registration_verification_path: "/registerVerification?token="
   password_reset_path: "/passwordReset?token="
+
+app:
+  base_url: "http://localhost:8080"
+  oidc:
+    defaults:
+      defaultName: GymUser
+      defaultGivenName: Gym
+      defaultFamilyName: User
+      defaultLocation: Planet Earth
+      defaultBio: Gym App Enthusiast
+
+google:
+  client-id: ${GOOGLE_OAUTH2_CLIENT_ID}
+  client-secret: ${GOOGLE_OAUTH2_CLIENT_SECRET}
+

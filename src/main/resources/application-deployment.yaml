@@ -71,3 +71,11 @@ frontend:
   base_url: "https://app.workout-app.online"
   registration_verification_path: "/registerVerification?token="
   password_reset_path: "/passwordReset?token="
+
+#TODO: add actual url here
+app:
+  base_url: "https://replace.this.example.com"
+
+google:
+  client-id: ${GOOGLE_OAUTH2_CLIENT_ID}
+  client-secret: ${GOOGLE_OAUTH2_CLIENT_SECRET}
