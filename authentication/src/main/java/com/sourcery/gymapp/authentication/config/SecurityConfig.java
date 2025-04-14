@@ -121,10 +121,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/api/auth/**",
-                                "/actuator/health"
+                                "/api/auth/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -144,7 +141,10 @@ public class SecurityConfig {
                                 "/authentication/scripts.js",
                                 "/oauth2/logout",
                                 "/oauth2/authorization/**",
-                                "/login/oauth2/code/**").permitAll()
+                                "/login/oauth2/code/**,",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/actuator/health").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
