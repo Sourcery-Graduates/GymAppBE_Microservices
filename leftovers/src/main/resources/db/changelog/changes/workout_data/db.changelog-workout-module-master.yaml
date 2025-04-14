@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - include:
+      file: v1.0-workout-changelog.sql
+      relativeToChangelogFile: true
+
+  - include:
+      file: v2.0-enable-uuid-generation-extension.sql
+      relativeToChangelogFile: true
+
+  - include:
+      file: v3.0-import-exercise-data.sql
+      relativeToChangelogFile: true
+      labels: exclude-test
+
+  - include:
+      file: v1.1-workout-changelog.sql
+      relativeToChangelogFile: true
+  - include:
+      file: v1.2-workout-changelog.sql
+      relativeToChangelogFile: true
+
+  - include:
+      file: v4.0-routine-cascade-delete.sql
+      relativeToChangelogFile: true
+  - include:
+      file: v4.1-routine-like-functionality.sql
+      relativeToChangelogFile: true

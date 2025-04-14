@@ -2,7 +2,7 @@
 # They are provided by a third-party and are governed by
 # separate terms of service, privacy policy, and support
 # documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# This workflow will com.sourcery.gymapp.backend.workout.build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
 name: Java CI with Gradle
@@ -51,7 +51,7 @@ jobs:
       run: ./gradlew integrationTest
 
     - name: Build with Gradle Wrapper
-      run: ./gradlew build
+      run: ./gradlew com.sourcery.gymapp.backend.workout.build
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
@@ -62,7 +62,7 @@ jobs:
     #     gradle-version: '8.9'
     #
     # - name: Build with Gradle 8.9
-    #   run: gradle build
+    #   run: gradle com.sourcery.gymapp.backend.workout.build
 
   dependency-submission:
 
