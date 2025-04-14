@@ -1,0 +1,92 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.4'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.sourcery.gymapp'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	set('springModulithVersion', "1.2.4")
+}
+
+dependencies {
+	implementation 'org.springframework:spring-aop'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+	implementation 'org.liquibase:liquibase-core'
+	implementation 'org.springframework.modulith:spring-modulith-starter-core'
+	implementation 'org.springframework.modulith:spring-modulith-starter-jpa'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator:3.4.0'
+	implementation 'org.springframework.kafka:spring-kafka'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+	implementation 'org.springframework.boot:spring-boot-starter-mail:3.4.1'
+	implementation 'software.amazon.awssdk:s3:2.30.16'
+	implementation 'org.apache.kafka:kafka-streams'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
+	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+	testImplementation 'org.testcontainers:junit-jupiter'
+	testImplementation 'org.testcontainers:postgresql'
+	testImplementation "org.testcontainers:kafka:1.20.4"
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'org.postgresql:postgresql'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.modulith:spring-modulith-bom:${springModulithVersion}"
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform {
+		excludeTags 'integration'
+	}
+	systemProperty 'spring.profiles.active', 'test'
+}
+
+tasks.register('integrationTest', Test) {
+	useJUnitPlatform {
+		includeTags 'integration'
+	}
+	description = 'Runs integration tests.'
+	group = 'verification'
+	shouldRunAfter test
+	systemProperty 'spring.profiles.active', 'test'
+}
+
+tasks.named('check') {
+	dependsOn(tasks.named('integrationTest'))
+}
