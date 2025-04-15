@@ -3,7 +3,7 @@ package com.sourcery.gymapp.userProfile.consumer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sourcery.gymapp.userProfile.event.LikeNotificationEvent;
 import com.sourcery.gymapp.userProfile.event.RegistrationEvent;
-import com.sourcery.gymapp.globalconfig.KafkaProcessingContext;
+import com.sourcery.gymapp.userProfile.config.KafkaProcessingContext;
 import com.sourcery.gymapp.userProfile.service.LikeNotificationService;
 import com.sourcery.gymapp.userProfile.service.UserProfileService;
 import lombok.AllArgsConstructor;

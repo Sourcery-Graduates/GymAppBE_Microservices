@@ -26,16 +26,7 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("GymApp API")
-                        .version("1.0")
-                        .description("API for managing gym workouts, routines, and exercises"))
-                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
-                .components(
-                        new Components()
-                                .addSecuritySchemes("bearerAuth", new SecurityScheme()
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("bearer")
-                                        .bearerFormat("JWT")
-                                        .description("JWT token authentication"))
-                );
+                        .version("2.0")
+                        .description("API for the  User Profile microservice"));
     }
 }

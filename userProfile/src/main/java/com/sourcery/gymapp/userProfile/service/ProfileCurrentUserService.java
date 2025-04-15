@@ -2,8 +2,8 @@ package com.sourcery.gymapp.userProfile.service;
 
 import java.util.UUID;
 
-import com.sourcery.gymapp.globalconfig.AuditorConfig;
-import com.sourcery.gymapp.globalconfig.KafkaProcessingContext;
+import com.sourcery.gymapp.userProfile.config.AuditorConfig;
+import com.sourcery.gymapp.userProfile.config.KafkaProcessingContext;
 import com.sourcery.gymapp.userProfile.exception.UserNotAuthenticatedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

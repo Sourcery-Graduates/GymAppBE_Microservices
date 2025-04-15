@@ -3,7 +3,7 @@ package com.sourcery.gymapp.email.consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sourcery.gymapp.email.service.EmailService;
-import com.sourcery.gymapp.globalconfig.KafkaProcessingContext;
+import com.sourcery.gymapp.email.config.KafkaProcessingContext;
 import com.sourcery.gymapp.email.event.EmailSendEvent;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
