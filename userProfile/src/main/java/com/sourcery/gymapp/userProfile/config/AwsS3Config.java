@@ -1,4 +1,4 @@
-package com.sourcery.gymapp.globalconfig;
+package com.sourcery.gymapp.userProfile.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

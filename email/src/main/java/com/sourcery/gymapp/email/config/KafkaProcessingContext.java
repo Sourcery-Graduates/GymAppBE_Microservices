@@ -1,4 +1,4 @@
-package com.sourcery.gymapp.globalconfig;
+package com.sourcery.gymapp.email.config;
 
 public class KafkaProcessingContext {
     private static final ThreadLocal<Boolean> isKafkaProcessing = ThreadLocal.withInitial(() -> false);

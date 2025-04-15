@@ -1,4 +1,4 @@
-package com.sourcery.gymapp.globalconfig;
+package com.sourcery.gymapp.workout.config;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

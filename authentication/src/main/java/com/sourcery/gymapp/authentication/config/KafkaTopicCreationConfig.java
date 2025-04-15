@@ -1,4 +1,4 @@
-package com.sourcery.gymapp.globalconfig;
+package com.sourcery.gymapp.authentication.config;
 
 import lombok.Getter;
 import lombok.Setter;

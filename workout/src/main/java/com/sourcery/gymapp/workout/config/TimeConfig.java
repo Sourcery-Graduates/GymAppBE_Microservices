@@ -1,4 +1,4 @@
-package com.sourcery.gymapp.globalconfig;
+package com.sourcery.gymapp.workout.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
