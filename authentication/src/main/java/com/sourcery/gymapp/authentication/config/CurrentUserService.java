@@ -1,4 +1,4 @@
-package com.sourcery.gymapp.globalconfig;
+package com.sourcery.gymapp.authentication.config;
 
 import java.util.UUID;
 import org.springframework.security.core.Authentication;

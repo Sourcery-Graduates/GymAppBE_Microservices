@@ -1,28 +1,29 @@
-package com.sourcery.gymapp.userProfile.service;
+package com.sourcery.gymapp.userProfile.config;
 
 import java.util.UUID;
-
-import com.sourcery.gymapp.userProfile.config.AuditorConfig;
-import com.sourcery.gymapp.userProfile.config.KafkaProcessingContext;
-import com.sourcery.gymapp.userProfile.exception.UserNotAuthenticatedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service for retrieving current user information from JWT token.
+ * Integrates with Spring Security to access authentication context.
+ */
 @Service
-public class ProfileCurrentUserService {
+public class CurrentUserService {
 
+    /**
+     * Retrieves the current user's ID from JWT token.
+     * 
+     * @return UUID of the authenticated user
+     * @throws IllegalStateException if user is not authenticated or JWT token is invalid
+     */
     public UUID getCurrentUserId() {
-        if (KafkaProcessingContext.isKafkaProcessing()) {
-            return AuditorConfig.AuditorAwareImpl.getSystemUserUUID();
-        }
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
             return UUID.fromString(jwt.getClaimAsString("userId"));
         }
-
-        throw new UserNotAuthenticatedException();
+        throw new IllegalStateException("User is not authenticated");
     }
 }

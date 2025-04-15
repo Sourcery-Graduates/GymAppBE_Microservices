@@ -1,9 +1,9 @@
-package com.sourcery.gymapp.workout.kafka.streams;
+package com.sourcery.gymapp.userProfile.kafka.streams;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.sourcery.gymapp.backend.events.LikeNotificationEvent;
-import com.sourcery.gymapp.backend.events.RoutineLikeEvent;
+import com.sourcery.gymapp.userProfile.event.LikeNotificationEvent;
+import com.sourcery.gymapp.userProfile.event.RoutineLikeEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.Consumed;
-import org.apache.kafka.streams.kstream.Grouped;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Materialized;
