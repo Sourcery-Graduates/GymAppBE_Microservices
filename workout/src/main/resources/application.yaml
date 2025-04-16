@@ -3,6 +3,8 @@ spring:
     active: local
   application:
     name: Gym App Workout Service
+---
+spring:
   config:
     activate:
       on-profile: local
