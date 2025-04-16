@@ -2,25 +2,10 @@ spring:
   profiles:
     active: local
   application:
-    name: Gym App Backend
-
-logging:
-  level:
-    kafka: WARN
-    org.springframework.kafka: WARN
-    org.apache.kafka: WARN
-    org.apache.kafka.clients: WARN
-    org.apache.kafka.streams: WARN
-
----
-spring:
+    name: Gym App Auth Service
   config:
     activate:
       on-profile: local
-  servlet:
-    multipart:
-      max-file-size: ${MAX_FILE_SIZE}
-      max-request-size: ${MAX_FILE_SIZE}
 
   datasource:
     url: jdbc:postgresql://localhost:5432/gym_app_db
@@ -38,17 +23,6 @@ spring:
       ddl-auto: validate
     show-sql: true
     open-in-view: false
-
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: sourcery.graduates@gmail.com
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
 
   springdoc:
     api-docs:
@@ -92,11 +66,7 @@ spring:
       properties:
         default.key.serde: org.apache.kafka.common.serialization.Serdes$UUIDSerde
         default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-  batch:
-    job:
-      enabled: false
-    jdbc:
-      initialize-schema: always
+
 frontend:
   base_url: "http://localhost:3000"
   registration_verification_path: "/registerVerification?token="
@@ -116,3 +86,10 @@ google:
   client-id: ${GOOGLE_OAUTH2_CLIENT_ID}
   client-secret: ${GOOGLE_OAUTH2_CLIENT_SECRET}
 
+logging:
+  level:
+    kafka: WARN
+    org.springframework.kafka: WARN
+    org.apache.kafka: WARN
+    org.apache.kafka.clients: WARN
+    org.apache.kafka.streams: WARN

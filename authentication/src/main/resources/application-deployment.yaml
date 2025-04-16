@@ -1,14 +1,9 @@
 spring:
   application:
-    name: Gym App Backend
-
+    name: Gym App Auth Service
   config:
     activate:
       on-profile: deployment
-  servlet:
-    multipart:
-      max-file-size: ${MAX_FILE_SIZE}
-      max-request-size: ${MAX_FILE_SIZE}
 
   datasource:
     url: jdbc:postgresql://postgres:5432/gym_app_db
@@ -26,17 +21,6 @@ spring:
       ddl-auto: validate
     show-sql: true
     open-in-view: false
-
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: sourcery.graduates@gmail.com
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
 
   springdoc:
     api-docs:
