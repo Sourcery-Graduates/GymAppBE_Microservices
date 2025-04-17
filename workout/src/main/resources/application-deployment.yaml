@@ -53,4 +53,3 @@ logging:
     org.springframework.kafka: WARN
     org.apache.kafka: WARN
     org.apache.kafka.clients: WARN
-    org.apache.kafka.streams: WARN
