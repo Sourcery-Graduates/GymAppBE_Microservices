@@ -46,18 +46,23 @@ spring:
           include: health
 
   kafka:
-    replicas: 3
-    partitions: 3
     consumer:
-      bootstrap-servers: kafka1:9092,kafka2:9093,kafka3:9094
+      bootstrap-servers: kafka1:9092
       key-deserializer: org.apache.kafka.common.serialization.UUIDDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       group-id: gym-app-listener-group
     producer:
-      bootstrap-servers: kafka1:9092,kafka2:9093,kafka3:9094
+      bootstrap-servers: kafka1:9092
       key-serializer: org.apache.kafka.common.serialization.UUIDSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
     topics:
-      account-register: "userProfile.create-account"
-      retry: "common.RETRY"
-      dead-letter: "common.DLT"
+      email-send: "email.send-email"
+      email-retry: "email.email-retry"
+
+logging:
+  level:
+    kafka: WARN
+    org.springframework.kafka: WARN
+    org.apache.kafka: WARN
+    org.apache.kafka.clients: WARN
+    org.apache.kafka.streams: WARN

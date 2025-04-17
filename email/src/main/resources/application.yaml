@@ -50,11 +50,6 @@ spring:
           include: health
 
   kafka:
-    replicas: 1
-    partitions: 1
-    aggregation:
-      like-notification:
-        interval-minutes: 1440
     consumer:
       bootstrap-servers: localhost:9092
       key-deserializer: org.apache.kafka.common.serialization.UUIDDeserializer
@@ -65,20 +60,8 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.UUIDSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
     topics:
-      user-reminder: "authentication.user-reminder"
-      account-register: "userProfile.create-account"
-      likes-events: "workout.like-events"
-      likes-notifications: "userProfile.notifications-likes-dislikes"
-      last-user-workout: "workout.last-user-workout"
       email-send: "email.send-email"
       email-retry: "email.email-retry"
-      retry: "common.RETRY"
-      dead-letter: "common.DLT"
-    streams:
-      application-id: gym-app-backend-streams-single-broker
-      properties:
-        default.key.serde: org.apache.kafka.common.serialization.Serdes$UUIDSerde
-        default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
 
 logging:
   level:
