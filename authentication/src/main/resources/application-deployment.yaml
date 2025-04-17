@@ -54,7 +54,6 @@ spring:
       last-user-workout: "workout.last-user-workout"
       email-send: "email.send-email"
       email-retry: "email.email-retry"
-      retry: "common.RETRY"
 
 frontend:
   base_url: "https://app.workout-app.online"
