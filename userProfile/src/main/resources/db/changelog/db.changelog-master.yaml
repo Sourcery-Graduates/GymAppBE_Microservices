@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - include:
+      file: changes/v1.0-userprofile-changelog.sql
+      relativeToChangelogFile: true
+
+  - include:
+      file: changes/v2.0-routine-like-notification-changelog.sql
+      relativeToChangelogFile: true
+
+  - include:
+      file: changes/v0.0-create-event-publication-table.sql
+      relativeToChangelogFile: true

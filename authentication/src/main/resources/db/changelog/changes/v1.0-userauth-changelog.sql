@@ -1,7 +1,7 @@
 --liquibase formatted sql
 
 --changeset TymofiiSkrypko:create-user-table
-CREATE TABLE user_auth.users
+CREATE TABLE users
 (
     id             UUID PRIMARY KEY,
     username       VARCHAR(32) NOT NULL UNIQUE,
@@ -12,7 +12,7 @@ CREATE TABLE user_auth.users
 );
 
 --changeset TymofiiSkrypko:create-roles-table
-CREATE TABLE user_auth.roles
+CREATE TABLE roles
 (
     id             UUID PRIMARY KEY,
     name           VARCHAR(64) NOT NULL UNIQUE,
@@ -23,11 +23,11 @@ CREATE TABLE user_auth.roles
 );
 
 --changeset TymofiiSkrypko:create-user_roles-table
-CREATE TABLE user_auth.user_roles
+CREATE TABLE user_roles
 (
     id             UUID PRIMARY KEY,
-    user_id        UUID NOT NULL REFERENCES user_auth.users(id),
-    role_id        UUID NOT NULL REFERENCES user_auth.roles(id),
+    user_id        UUID NOT NULL REFERENCES users(id),
+    role_id        UUID NOT NULL REFERENCES roles(id),
     created_at     TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     modified_at    TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by     UUID NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE user_auth.user_roles
 );
 
 --changeset TymofiiSkrypko:create-permissions-table
-CREATE TABLE user_auth.permissions
+CREATE TABLE permissions
 (
     id             UUID PRIMARY KEY,
     name           VARCHAR(64) NOT NULL UNIQUE,
@@ -47,11 +47,11 @@ CREATE TABLE user_auth.permissions
 );
 
 --changeset TymofiiSkrypko:create-role_permissions-table
-CREATE TABLE user_auth.role_permissions
+CREATE TABLE role_permissions
 (
     id               UUID PRIMARY KEY,
-    role_id          UUID NOT NULL REFERENCES user_auth.roles(id),
-    permission_id    UUID NOT NULL REFERENCES user_auth.permissions(id),
+    role_id          UUID NOT NULL REFERENCES roles(id),
+    permission_id    UUID NOT NULL REFERENCES permissions(id),
     level            VARCHAR(128) NOT NULL,
     created_at       TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     modified_at      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),

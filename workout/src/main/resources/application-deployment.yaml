@@ -6,7 +6,7 @@ spring:
       on-profile: deployment
 
   datasource:
-    url: jdbc:postgresql://postgres:5432/gym_app_db
+    url: jdbc:postgresql://postgres:5432/workout
     username: gym_app_user
     password: gym_app_pass
     hikari:
