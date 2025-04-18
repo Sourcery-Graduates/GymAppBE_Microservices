@@ -1,7 +1,7 @@
 package com.sourcery.gymapp.userProfile.factory;
 
-import com.sourcery.gymapp.backend.userProfile.dto.UserProfileDto;
-import com.sourcery.gymapp.backend.userProfile.model.UserProfile;
+import com.sourcery.gymapp.userProfile.dto.UserProfileDto;
+import com.sourcery.gymapp.userProfile.model.UserProfile;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

@@ -1,11 +1,11 @@
 package com.sourcery.gymapp.userProfile.service;
 
-import com.sourcery.gymapp.backend.globalconfig.CurrentUserService;
-import com.sourcery.gymapp.backend.userProfile.exception.InvalidImageException;
-import com.sourcery.gymapp.backend.userProfile.exception.UserProfileNotFoundException;
-import com.sourcery.gymapp.backend.userProfile.factory.UserProfileTestFactory;
-import com.sourcery.gymapp.backend.userProfile.model.UserProfile;
-import com.sourcery.gymapp.backend.userProfile.repository.UserProfileRepository;
+import com.sourcery.gymapp.userProfile.config.CurrentUserService;
+import com.sourcery.gymapp.userProfile.exception.InvalidImageException;
+import com.sourcery.gymapp.userProfile.exception.UserProfileNotFoundException;
+import com.sourcery.gymapp.userProfile.factory.UserProfileTestFactory;
+import com.sourcery.gymapp.userProfile.model.UserProfile;
+import com.sourcery.gymapp.userProfile.repository.UserProfileRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

@@ -1,11 +1,11 @@
 package com.sourcery.gymapp.userProfile.mapper;
 
-import com.sourcery.gymapp.backend.userProfile.factory.UserProfileTestFactory;
+import com.sourcery.gymapp.userProfile.factory.UserProfileTestFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import com.sourcery.gymapp.backend.userProfile.model.UserProfile;
-import com.sourcery.gymapp.backend.userProfile.dto.UserProfileDto;
+import com.sourcery.gymapp.userProfile.model.UserProfile;
+import com.sourcery.gymapp.userProfile.dto.UserProfileDto;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;

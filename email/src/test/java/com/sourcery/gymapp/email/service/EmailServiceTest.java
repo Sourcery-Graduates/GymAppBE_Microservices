@@ -1,8 +1,8 @@
 package com.sourcery.gymapp.email.service;
 
-import com.sourcery.gymapp.backend.email.mapper.EmailMapper;
-import com.sourcery.gymapp.backend.email.producer.EmailKafkaProducer;
-import com.sourcery.gymapp.backend.events.EmailSendEvent;
+import com.sourcery.gymapp.email.mapper.EmailMapper;
+import com.sourcery.gymapp.email.producer.EmailKafkaProducer;
+import com.sourcery.gymapp.email.event.EmailSendEvent;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,9 +18,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 import static org.mockito.Mockito.when;
