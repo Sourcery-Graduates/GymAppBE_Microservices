@@ -1,4 +1,4 @@
-package com.sourcery.gymapp.config.integration;
+package com.sourcery.gymapp.workout.config.integration;
 
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;

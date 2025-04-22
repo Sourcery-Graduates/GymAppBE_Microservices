@@ -1,4 +1,4 @@
-package com.sourcery.gymapp.config.integration;
+package com.sourcery.gymapp.workout.config.integration;
 
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;

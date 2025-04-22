@@ -1,4 +1,4 @@
-package com.sourcery.gymapp.config.integration;
+package com.sourcery.gymapp.workout.config.integration;
 
 import com.sourcery.gymapp.backend.authentication.config.JwkConfig;
 import org.junit.jupiter.api.*;

@@ -1,4 +1,4 @@
-package com.sourcery.gymapp.config.integration;
+package com.sourcery.gymapp.authentication.config.integration;
 
 import org.junit.jupiter.api.AfterEach;
 

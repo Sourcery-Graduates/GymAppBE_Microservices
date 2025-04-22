@@ -1,4 +1,4 @@
-package com.sourcery.gymapp.config.integration;
+package com.sourcery.gymapp.authentication.config.integration;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.AuditorAware;
@@ -12,8 +12,8 @@ import java.util.Optional;
 @Primary
 public class TestAuditorAware implements AuditorAware<UUID> {
 
-    private static final java.util.UUID TEST_SCOPED_UUID =
-            java.util.UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final UUID TEST_SCOPED_UUID =
+            UUID.fromString("00000000-0000-0000-0000-000000000001");
 
     @Override
     public Optional<UUID> getCurrentAuditor() { return Optional.of(TEST_SCOPED_UUID);}

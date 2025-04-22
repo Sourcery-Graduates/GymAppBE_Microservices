@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
+import static com.sourcery.gymapp.workout.config.integration.BaseIntegrationTest.jwtToken;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,6 +31,9 @@ public class WorkoutControllerTest extends BaseWorkoutIntegrationTest {
 
     @Autowired
     WorkoutMapper workoutMapper;
+
+    @Autowired
+    private WebTestClient webTestClient;
 
     @Nested
     @DisplayName("getWorkoutGridByDate endpoint")
