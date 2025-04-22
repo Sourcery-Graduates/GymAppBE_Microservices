@@ -99,7 +99,7 @@ fabric.properties
 # Editor-based Rest Client
 .idea/httpRequests
 
-# Android studio 3.1+ serialized cache databases-creation.sql
+# Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
 ### Intellij Patch ###
@@ -124,7 +124,7 @@ fabric.properties
 .idea/**/markdown-navigator-enh.xml
 .idea/**/markdown-navigator/
 
-# Cache databases-creation.sql creation bug
+# Cache file creation bug
 # See https://youtrack.jetbrains.com/issue/JBR-2257
 .idea/$CACHE_FILE$
 
@@ -137,10 +137,10 @@ fabric.properties
 .idea/**/azureSettings.xml
 
 ### Java ###
-# Compiled class databases-creation.sql
+# Compiled class file
 *.class
 
-# Log databases-creation.sql
+# Log file
 *.log
 
 # BlueJ files
