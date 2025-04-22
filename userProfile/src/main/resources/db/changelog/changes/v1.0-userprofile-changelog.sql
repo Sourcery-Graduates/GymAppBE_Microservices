@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS profiles(
     bio TEXT,
     avatar_url TEXT,
     location VARCHAR(128),
-    com.sourcery.gymapp.backend.workout.settings JSONB
+    settings JSONB
 );
 
 --changeset PiotrBaranowski:table_userprofiles.profiles_Add_Not_Null_for_firstName
