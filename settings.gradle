@@ -1,3 +1,3 @@
 rootProject.name = 'gymapp-microservices'
 
-include("authentication", "email", "userProfile", "workout")
+include("authentication", "email", "userProfile", "workout", "configServer")
