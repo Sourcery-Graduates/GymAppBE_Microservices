@@ -15,7 +15,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Table(name = "profiles", schema = "user_profiles")
+@Table(name = "profiles")
 public class UserProfile extends BaseEntity {
     @Column(nullable = false, unique = true)
     private UUID userId;

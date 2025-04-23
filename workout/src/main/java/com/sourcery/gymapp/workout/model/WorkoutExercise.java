@@ -25,7 +25,7 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode(callSuper = true, exclude = "workout")
 @Entity
-@Table(name = "workout_exercise", schema = "workout_data")
+@Table(name = "workout_exercise")
 public class WorkoutExercise extends BaseEntity {
 
     @Column(nullable = false)

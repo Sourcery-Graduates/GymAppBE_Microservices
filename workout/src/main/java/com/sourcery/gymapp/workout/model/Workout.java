@@ -23,7 +23,7 @@ import java.util.UUID;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "workout", schema = "workout_data")
+@Table(name = "workout")
 public class Workout extends BaseEntity {
 
     @Column(nullable = false)

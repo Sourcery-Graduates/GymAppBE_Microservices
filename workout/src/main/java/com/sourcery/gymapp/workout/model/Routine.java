@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "routine", schema = "workout_data")
+@Table(name = "routine")
 public class Routine extends BaseEntity {
 
     @Column(nullable = false)

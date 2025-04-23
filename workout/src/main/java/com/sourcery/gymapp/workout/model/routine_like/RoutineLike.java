@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "routine_like", schema = "workout_data")
+@Table(name = "routine_like")
 @IdClass(RoutineLikeId.class)
 public class RoutineLike implements Serializable {
 
