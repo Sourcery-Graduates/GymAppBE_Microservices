@@ -12,7 +12,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres_gym_app_data:/var/lib/postgresql/data
-      - ./src/main/resources/db/changelog/changes/workout_data/exercises_data:/var/lib/postgresql/import-data
+      - ./database/exercises_data:/var/lib/postgresql/import-data
+      - ./database/init-multiple-databases.sql:/docker-entrypoint-initdb.d/init-multiple-databases.sql
     networks:
       - app-network
 

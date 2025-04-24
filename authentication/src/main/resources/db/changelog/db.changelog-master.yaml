@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - include:
+      file: changes/v1.0-userauth-changelog.sql
+      relativeToChangelogFile: true
+
+  - include:
+      file: changes/v2.0-user-email-send.sql
+      relativeToChangelogFile: true
+
+  - include:
+      file: changes/v2.1-oauth2-oidc-support.sql
+      relativeToChangelogFile: true
+
+  - include:
+      file: changes/v0.0-create-event-publication-table.sql
+      relativeToChangelogFile: true
+
+

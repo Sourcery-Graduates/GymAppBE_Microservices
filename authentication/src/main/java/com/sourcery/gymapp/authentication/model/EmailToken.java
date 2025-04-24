@@ -18,7 +18,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "email_token", schema = "user_auth")
+@Table(name = "email_token")
 @EntityListeners(AuditingEntityListener.class)
 public class EmailToken {
 

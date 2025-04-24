@@ -6,8 +6,10 @@ ENV POSTGRES_DB=gym_app_db \
 
 # Copy initialization scripts
 RUN mkdir -p /var/lib/postgresql/import-data
+RUN mkdir -p /docker-entrypoint-initdb.d
 
-COPY ./db/changelog/changes/workout_data/exercises_data/formatted_exercises.json /var/lib/postgresql/import-data/
+COPY ./exercises_data/formatted_exercises.json /var/lib/postgresql/import-data/
+COPY init-multiple-databases.sql /docker-entrypoint-initdb.d/
 
 RUN chmod -R 755 /docker-entrypoint-initdb.d
 
@@ -19,4 +21,3 @@ EXPOSE 5432
 
 # Default CMD to run PostgreSQL
 CMD ["postgres"]
-

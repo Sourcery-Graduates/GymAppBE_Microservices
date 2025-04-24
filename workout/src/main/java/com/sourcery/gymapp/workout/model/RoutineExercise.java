@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Entity
-@Table(name = "routine_exercise", schema = "workout_data")
+@Table(name = "routine_exercise")
 public class RoutineExercise extends BaseEntity {
 
     @ManyToOne

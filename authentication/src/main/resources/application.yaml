@@ -2,28 +2,15 @@ spring:
   profiles:
     active: local
   application:
-    name: Gym App Backend
-
-logging:
-  level:
-    kafka: WARN
-    org.springframework.kafka: WARN
-    org.apache.kafka: WARN
-    org.apache.kafka.clients: WARN
-    org.apache.kafka.streams: WARN
-
+    name: Gym App Auth Service
 ---
 spring:
   config:
     activate:
       on-profile: local
-  servlet:
-    multipart:
-      max-file-size: ${MAX_FILE_SIZE}
-      max-request-size: ${MAX_FILE_SIZE}
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/gym_app_db
+    url: jdbc:postgresql://localhost:5432/authentication
     username: gym_app_user
     password: gym_app_pass
     hikari:
@@ -38,17 +25,6 @@ spring:
       ddl-auto: validate
     show-sql: true
     open-in-view: false
-
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: sourcery.graduates@gmail.com
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
 
   springdoc:
     api-docs:
@@ -65,9 +41,6 @@ spring:
   kafka:
     replicas: 1
     partitions: 1
-    aggregation:
-      like-notification:
-        interval-minutes: 1440
     consumer:
       bootstrap-servers: localhost:9092
       key-deserializer: org.apache.kafka.common.serialization.UUIDDeserializer
@@ -85,18 +58,7 @@ spring:
       last-user-workout: "workout.last-user-workout"
       email-send: "email.send-email"
       email-retry: "email.email-retry"
-      retry: "common.RETRY"
-      dead-letter: "common.DLT"
-    streams:
-      application-id: gym-app-backend-streams-single-broker
-      properties:
-        default.key.serde: org.apache.kafka.common.serialization.Serdes$UUIDSerde
-        default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-  batch:
-    job:
-      enabled: false
-    jdbc:
-      initialize-schema: always
+
 frontend:
   base_url: "http://localhost:3000"
   registration_verification_path: "/registerVerification?token="
@@ -116,3 +78,9 @@ google:
   client-id: ${GOOGLE_OAUTH2_CLIENT_ID}
   client-secret: ${GOOGLE_OAUTH2_CLIENT_SECRET}
 
+logging:
+  level:
+    kafka: WARN
+    org.springframework.kafka: WARN
+    org.apache.kafka: WARN
+    org.apache.kafka.clients: WARN
