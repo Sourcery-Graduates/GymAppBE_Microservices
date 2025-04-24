@@ -164,5 +164,5 @@ replay_pid*
 
 # End of https://www.toptal.com/developers/gitignore/api/java,intellij
 
-# Ignore all files in the config-repo directory
-config-repo
+# Ignore all files in the configRepo directory
+configRepo/
