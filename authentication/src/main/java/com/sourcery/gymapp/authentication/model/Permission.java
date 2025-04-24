@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "permissions", schema = "user_auth")
+@Table(name = "permissions")
 public class Permission extends BaseEntity {
 
     @Column(length = 64, nullable = false, unique = true)

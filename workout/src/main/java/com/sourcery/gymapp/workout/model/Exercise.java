@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "exercise", schema = "workout_data")
+@Table(name = "exercise")
 public class Exercise extends BaseEntity {
 
     @Column(nullable = false)

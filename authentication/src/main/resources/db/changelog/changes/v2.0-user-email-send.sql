@@ -1,13 +1,13 @@
 --liquibase formatted sql
 
 --changeset PiotrBaranowski:add-isEnabled-column-to-user-table
-ALTER TABLE user_auth.users ADD COLUMN is_enabled BOOLEAN DEFAULT false NOT NULL;
+ALTER TABLE users ADD COLUMN is_enabled BOOLEAN DEFAULT false NOT NULL;
 
 --changeset PiotrBaranowski:add-unique-constraint-to-email-column-user-table
-ALTER TABLE user_auth.users ADD CONSTRAINT unique_email UNIQUE (email);
+ALTER TABLE users ADD CONSTRAINT unique_email UNIQUE (email);
 
 --changeset PiotrBaranowski:add-emailToken_table
-CREATE TABLE user_auth.email_token
+CREATE TABLE email_token
 (
     id              UUID PRIMARY KEY,
     type            VARCHAR(36),

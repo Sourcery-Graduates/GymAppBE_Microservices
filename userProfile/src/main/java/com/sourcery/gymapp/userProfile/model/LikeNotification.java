@@ -11,7 +11,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Table(name = "like_notification", schema = "user_profiles")
+@Table(name = "like_notification")
 public class LikeNotification extends BaseEntity {
 
     @Column(nullable = false)
