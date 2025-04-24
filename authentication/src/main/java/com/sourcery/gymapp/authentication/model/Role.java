@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "roles", schema = "user_auth")
+@Table(name = "roles")
 public class Role extends BaseEntity {
 
     @Column(length = 64, nullable = false, unique = true)
