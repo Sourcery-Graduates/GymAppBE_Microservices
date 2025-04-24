@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: config-server
+  profiles:
+    active: git
+  cloud:
+    config:
+      server:
+        git:
+          uri: "git@github.com:Sourcery-Graduates/GymAppConfig.git"
+          default-label: main
+          timeout: 5
+          clone-on-start: true
+          force-pull: true
+          basedir: ./configRepo
+server:
+  port: 8888

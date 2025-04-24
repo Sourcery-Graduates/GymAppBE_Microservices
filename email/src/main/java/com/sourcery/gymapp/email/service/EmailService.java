@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
@@ -70,10 +69,5 @@ public class EmailService {
 
     private Instant calculateBackoffTime(int retryCount) {
         return Instant.now().plusSeconds(BASE_BACKOFF_TIME_SECONDS * retryCount);
-    }
-
-    @ApplicationModuleListener
-    public void getEmailEvent(EmailSendEvent eventDto) {
-        sendEmail(eventDto);
     }
 }
