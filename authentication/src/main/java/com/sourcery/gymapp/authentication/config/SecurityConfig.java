@@ -28,12 +28,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
@@ -56,44 +54,40 @@ public class SecurityConfig {
 
     @Bean
     @Order(1)
-    public SecurityFilterChain authorizationServerSecurityChain(HttpSecurity httpSecurity,
+    public SecurityFilterChain authorizationServerSecurityChain(HttpSecurity http,
                                                                 RegisteredClientRepository registeredClientRepository,
-                                                                OAuth2TokenGenerator<OAuth2Token> tokenGenerator,
-                                                                Environment environment)
-            throws Exception {
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(httpSecurity);
+                                                                OAuth2TokenGenerator<?> tokenGenerator,
+                                                                Environment environment) throws Exception {
+        OAuth2AuthorizationServerConfigurer authorizationServerConfigurer =
+                new OAuth2AuthorizationServerConfigurer();
 
-        httpSecurity
+        http
+                .securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
+                .with(authorizationServerConfigurer, configurer -> {
+                    configurer.clientAuthentication(authentication -> authentication
+                            .authenticationConverter(new PublicClientRefreshTokenAuthenticationConverter())
+                            .authenticationProvider(new PublicClientRefreshProvider(registeredClientRepository)));
+
+                    configurer.tokenGenerator(tokenGenerator);
+
+                    configurer.tokenEndpoint(tokenEndpoint -> tokenEndpoint
+                            .accessTokenResponseHandler(new CookieOAuth2TokenResponseHandler(environment))
+                            .accessTokenRequestConverter(new RefreshTokenCookieAuthenticationConverter())
+                    );
+
+                    configurer.oidc(Customizer.withDefaults());
+                });
+
+        http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable);
-
-        httpSecurity
-                .getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-                .clientAuthentication(authentication -> {
-                    authentication.authenticationConverter(
-                            new PublicClientRefreshTokenAuthenticationConverter());
-                    authentication.authenticationProvider(
-                            new PublicClientRefreshProvider(registeredClientRepository));
-                })
-                .tokenGenerator(tokenGenerator)
-                .oidc(Customizer.withDefaults());
-
-        // return refresh token in cookies, access in body
-        httpSecurity.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-                .tokenEndpoint(tokenEndpoint -> tokenEndpoint
-                        .accessTokenResponseHandler(new CookieOAuth2TokenResponseHandler(environment))
-                        .accessTokenRequestConverter(new RefreshTokenCookieAuthenticationConverter())
-                );
-
-        httpSecurity
+                .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception -> exception.defaultAuthenticationEntryPointFor(
                         new LoginUrlAuthenticationEntryPoint("/login"),
                         new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
-                ));
+                ))
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
 
-        httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
-
-        return httpSecurity.build();
+        return http.build();
     }
 
     @Bean
@@ -134,6 +128,7 @@ public class SecurityConfig {
     public SecurityFilterChain defaultSecurityChain(HttpSecurity httpSecurity,
                                                     CustomOidcUserService oidcUserService) throws Exception {
         httpSecurity
+                .securityMatcher("/**")
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/oauth2/logout"))
                 .authorizeHttpRequests(authorize -> authorize
