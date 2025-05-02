@@ -4,19 +4,21 @@ import com.sourcery.gymapp.email.mapper.EmailMapper;
 import com.sourcery.gymapp.email.producer.EmailKafkaProducer;
 import com.sourcery.gymapp.email.event.EmailSendEvent;
 import jakarta.mail.internet.MimeMessage;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.test.context.ActiveProfiles;
+
+import java.lang.reflect.Field;
+import java.time.Instant;
 
 import static org.mockito.Mockito.*;
 
@@ -24,30 +26,33 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-@ActiveProfiles("test")
-@SpringBootTest
 public class EmailServiceTest {
 
-    @MockBean
+    @Mock
     EmailKafkaProducer emailKafkaProducer;
 
-    @MockBean
+    @Mock
     private JavaMailSender mailSender;
 
-    @Autowired
+    @Mock
     private EmailMapper emailMapper;
 
-    @MockBean
+    @Mock
     private MimeMessage mimeMessage;
 
-    @Value("${spring.kafka.topics.email-retry}")
-    private String EMAIL_RETRY_TOPIC;
-
-    @Autowired
+    @InjectMocks
     private EmailService emailService;
 
-    @Autowired
+    @Mock
     private ThreadPoolTaskScheduler taskScheduler;
+
+    @BeforeEach
+    void injectMailUsername() throws Exception {
+        Field field = EmailService.class.getDeclaredField("emailServiceAddress");
+        field.setAccessible(true);
+        field.set(emailService, "testSender@example.com");
+    }
+
 
     @Nested
     @DisplayName("Send Email")
@@ -69,12 +74,24 @@ public class EmailServiceTest {
         public void testSendEmail_ThrowsMailException_retriesEmail() {
             EmailSendEvent emailSendEvent = new EmailSendEvent("testSubject", "TestSenderName", "testContent", "email@email.com", 0);
 
+            when(emailMapper.incrementRetryEvent(any())).thenAnswer(inv -> {
+                EmailSendEvent input = inv.getArgument(0);
+                return copyWithRetry(input, input.retryCount() + 1);
+            });
             when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
             doThrow(new MailException("Error sending email") {}).when(mailSender).send(any(MimeMessage.class));
 
             emailService.sendEmail(emailSendEvent);
-            taskScheduler.getScheduledThreadPoolExecutor().getQueue().forEach(Runnable::run);
+
+            ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+            verify(taskScheduler).schedule(runnableCaptor.capture(), any(Instant.class));
+            runnableCaptor.getValue().run();
+
             verify(emailKafkaProducer, atLeastOnce()).retryEmail(any(), any());
         }
+    }
+
+    private static EmailSendEvent copyWithRetry(EmailSendEvent e, int retryCount) {
+        return new EmailSendEvent(e.subject(), e.senderName(), e.content(), e.userEmail(), retryCount);
     }
 }
