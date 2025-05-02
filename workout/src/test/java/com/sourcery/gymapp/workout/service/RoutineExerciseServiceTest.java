@@ -1,6 +1,6 @@
 package com.sourcery.gymapp.workout.service;
 
-import com.sourcery.gymapp.workout.dto.ResponseRoutineDetailDto;
+import com.sourcery.gymapp.workout.dto.*;
 import com.sourcery.gymapp.workout.factory.ExerciseFactory;
 import com.sourcery.gymapp.workout.factory.RoutineFactory;
 import com.sourcery.gymapp.workout.mapper.RoutineExerciseMapper;
@@ -9,9 +9,6 @@ import com.sourcery.gymapp.workout.model.Exercise;
 import com.sourcery.gymapp.workout.model.Routine;
 import com.sourcery.gymapp.workout.model.RoutineExercise;
 import com.sourcery.gymapp.workout.repository.RoutineExerciseRepository;
-import com.sourcery.gymapp.workout.service.ExerciseService;
-import com.sourcery.gymapp.workout.service.RoutineExerciseService;
-import com.sourcery.gymapp.workout.service.RoutineService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

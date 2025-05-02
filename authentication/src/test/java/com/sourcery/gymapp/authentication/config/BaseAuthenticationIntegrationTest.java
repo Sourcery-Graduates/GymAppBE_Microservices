@@ -1,6 +1,6 @@
 package com.sourcery.gymapp.authentication.config;
 
-import com.sourcery.gymapp.backend.config.integration.BaseIntegrationTest;
+import com.sourcery.gymapp.authentication.config.integration.BaseIntegrationTest;
 import org.junit.jupiter.api.AfterEach;
 
 public class BaseAuthenticationIntegrationTest extends BaseIntegrationTest {

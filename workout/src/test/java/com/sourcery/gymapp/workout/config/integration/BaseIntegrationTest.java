@@ -1,6 +1,6 @@
 package com.sourcery.gymapp.workout.config.integration;
 
-import com.sourcery.gymapp.backend.authentication.config.JwkConfig;
+//import com.sourcery.gymapp.backend.authentication.config.JwkConfig;
 import org.junit.jupiter.api.*;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ public abstract class BaseIntegrationTest implements BaseTestTeardownLifecycle {
     }
 
     @BeforeAll
-    public static void setup(@Autowired JwkConfig jwkConfig, @Autowired JdbcTemplate jdbcTemplate) {
+    public static void setup( @Autowired JdbcTemplate jdbcTemplate) {
 
     jdbcTemplate.execute("""
                     DO $$ 
@@ -59,20 +59,20 @@ public abstract class BaseIntegrationTest implements BaseTestTeardownLifecycle {
                     END $$;
                 """);
 
-        JwtEncoder jwtEncoder = new NimbusJwtEncoder(jwkConfig.jwkSource());
-        jwtDecoder = jwkConfig.jwtDecoder();
-
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .subject(username)
-                .issuedAt(Instant.ofEpochSecond(1733490155))
-                .claim("userId", userId)
-                .claim("username", username)
-                .claim("email", email)
-                .expiresAt(Instant.now().plusSeconds(3600))
-                .build();
-
-        JwtEncoderParameters parameters = JwtEncoderParameters.from(claims);
-        jwtToken = jwtEncoder.encode(parameters).getTokenValue();
+//        JwtEncoder jwtEncoder = new NimbusJwtEncoder(jwkConfig.jwkSource());
+//        jwtDecoder = jwkConfig.jwtDecoder();
+//
+//        JwtClaimsSet claims = JwtClaimsSet.builder()
+//                .issuer("self")
+//                .subject(username)
+//                .issuedAt(Instant.ofEpochSecond(1733490155))
+//                .claim("userId", userId)
+//                .claim("username", username)
+//                .claim("email", email)
+//                .expiresAt(Instant.now().plusSeconds(3600))
+//                .build();
+//
+//        JwtEncoderParameters parameters = JwtEncoderParameters.from(claims);
+//        jwtToken = jwtEncoder.encode(parameters).getTokenValue();
     }
 }

@@ -1,6 +1,6 @@
 package com.sourcery.gymapp.authentication.config.integration;
 
-import com.sourcery.gymapp.backend.globalconfig.CurrentUserService;
+import com.sourcery.gymapp.authentication.config.CurrentUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;

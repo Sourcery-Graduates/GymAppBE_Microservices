@@ -1,6 +1,6 @@
 package com.sourcery.gymapp.authentication.config.integration;
 
-import com.sourcery.gymapp.backend.authentication.config.JwkConfig;
+import com.sourcery.gymapp.authentication.config.JwkConfig;
 import org.junit.jupiter.api.*;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;

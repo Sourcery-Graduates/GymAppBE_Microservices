@@ -1,6 +1,6 @@
 package com.sourcery.gymapp.authentication.config;
 
-import com.sourcery.gymapp.backend.config.integration.BaseKafkaIntegrationTest;
+import com.sourcery.gymapp.authentication.config.integration.BaseKafkaIntegrationTest;
 import org.junit.jupiter.api.AfterEach;
 
 public class BaseAuthKafkaIntegrationTest extends BaseKafkaIntegrationTest {

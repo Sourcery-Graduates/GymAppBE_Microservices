@@ -1,6 +1,6 @@
 package com.sourcery.gymapp.workout.integration;
 
-import com.sourcery.gymapp.backend.config.integration.BaseIntegrationTest;
+import com.sourcery.gymapp.workout.config.integration.BaseIntegrationTest;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
