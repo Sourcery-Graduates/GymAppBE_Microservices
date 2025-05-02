@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 class UserPhotoServiceTest {
 
     @Mock
-    private CurrentUserService currentUserService;
+    ProfileCurrentUserService currentUserService;
 
     @Mock
     private UserProfileRepository userProfileRepository;
