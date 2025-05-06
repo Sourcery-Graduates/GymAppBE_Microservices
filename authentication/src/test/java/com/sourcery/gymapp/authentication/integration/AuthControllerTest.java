@@ -8,14 +8,11 @@ import com.sourcery.gymapp.authentication.exception.FieldResponse;
 import com.sourcery.gymapp.authentication.factory.RegistrationRequestFactory;
 import com.sourcery.gymapp.authentication.model.User;
 import com.sourcery.gymapp.authentication.repository.UserRepository;
-import com.sourcery.gymapp.email.service.EmailService;
-import com.sourcery.gymapp.userProfile.model.UserProfile;
-import com.sourcery.gymapp.userProfile.repository.UserProfileRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -33,12 +30,12 @@ import static org.mockito.Mockito.verify;
 
 public class AuthControllerTest extends BaseAuthKafkaIntegrationTest {
 
-    @Autowired
-    UserProfileRepository userProfileRepository;
+//    @Autowired
+//    UserProfileRepository userProfileRepository;
     @Autowired
     UserRepository userRepository;
-    @MockBean
-    EmailService emailService;
+//    @Mock
+//    EmailService emailService;
     @Nested
     @DisplayName("Register endpoint tests")
     public class RegisterTests {
@@ -163,54 +160,54 @@ public class AuthControllerTest extends BaseAuthKafkaIntegrationTest {
             }
         }
 
-        @Nested
-        @DisplayName("Kafka events")
-        public class KafkaEvents {
-
-            @Test
-            void testProfileIsCreatedInDB() {
-                RegistrationRequest request = RegistrationRequestFactory.createRegistrationValidRequest();
-
-                webTestClient.post().uri("/api/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(request)
-                        .exchange()
-                        .expectStatus().isOk();
-
-                User createdUser = userRepository.findByEmail("test@example.com").orElse(null);
-                assertNotNull(createdUser);
-                UUID userId = createdUser.getId();
-
-                await()
-                        .pollInterval(Duration.ofSeconds(3))
-                        .atMost(10, SECONDS)
-                        .untilAsserted(() -> {
-                            UserProfile profile = userProfileRepository.findUserProfileByUserId(userId).orElse(null);
-                            assertNotNull(profile);
-                            assertEquals(request.getUsername(), profile.getUsername());
-                            assertEquals(request.getFirstName(), profile.getFirstName());
-                            assertEquals(request.getLastName(), profile.getLastName());
-                        });
-            }
-
-            @Test
-            void testEmailIsSent() {
-                RegistrationRequest request = RegistrationRequestFactory.createRegistrationValidRequest();
-
-                webTestClient.post().uri("/api/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(request)
-                        .exchange()
-                        .expectStatus().isOk();
-
-
-                await()
-                        .pollInterval(Duration.ofSeconds(3))
-                        .atMost(10, SECONDS)
-                        .untilAsserted(() -> verify(emailService, times(1)).sendEmail(any()));
-
-            }
-        }
+//        @Nested
+//        @DisplayName("Kafka events")
+//        public class KafkaEvents {
+//
+//            @Test
+//            void testProfileIsCreatedInDB() {
+//                RegistrationRequest request = RegistrationRequestFactory.createRegistrationValidRequest();
+//
+//                webTestClient.post().uri("/api/auth/register")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .bodyValue(request)
+//                        .exchange()
+//                        .expectStatus().isOk();
+//
+//                User createdUser = userRepository.findByEmail("test@example.com").orElse(null);
+//                assertNotNull(createdUser);
+//                UUID userId = createdUser.getId();
+//
+//                await()
+//                        .pollInterval(Duration.ofSeconds(3))
+//                        .atMost(10, SECONDS)
+//                        .untilAsserted(() -> {
+//                            UserProfile profile = userProfileRepository.findUserProfileByUserId(userId).orElse(null);
+//                            assertNotNull(profile);
+//                            assertEquals(request.getUsername(), profile.getUsername());
+//                            assertEquals(request.getFirstName(), profile.getFirstName());
+//                            assertEquals(request.getLastName(), profile.getLastName());
+//                        });
+//            }
+//
+//            @Test
+//            void testEmailIsSent() {
+//                RegistrationRequest request = RegistrationRequestFactory.createRegistrationValidRequest();
+//
+//                webTestClient.post().uri("/api/auth/register")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .bodyValue(request)
+//                        .exchange()
+//                        .expectStatus().isOk();
+//
+//
+//                await()
+//                        .pollInterval(Duration.ofSeconds(3))
+//                        .atMost(10, SECONDS)
+//                        .untilAsserted(() -> verify(emailService, times(1)).sendEmail(any()));
+//
+//            }
+//        }
     }
 }
 

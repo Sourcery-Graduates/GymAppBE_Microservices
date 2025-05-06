@@ -1,4 +1,8 @@
 spring:
+  cloud:
+    config:
+      enabled: false
+
   datasource:
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
     url: jdbc:tc:postgresql:14:///test
@@ -8,6 +12,8 @@ spring:
   config:
     activate:
       on-profile: test
+    import: optional:application-test.yaml
+
   servlet:
     multipart:
       max-file-size: 1048576
