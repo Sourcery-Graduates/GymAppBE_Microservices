@@ -38,7 +38,7 @@ public class RoutineFactory {
                 name,
                 description,
                 LocalDateTime.now(),
-                null,
+                UUID.randomUUID(),
                 0L
         );
     }
@@ -48,7 +48,7 @@ public class RoutineFactory {
                 name,
                 "Test Description",
                 LocalDateTime.now(),
-                null,
+                UUID.randomUUID(),
                 0L
         );
     }
@@ -58,7 +58,7 @@ public class RoutineFactory {
                 "Test Routine",
                 "Test Description",
                 LocalDateTime.now(),
-                null,
+                UUID.randomUUID(),
                 0L
         );
     }

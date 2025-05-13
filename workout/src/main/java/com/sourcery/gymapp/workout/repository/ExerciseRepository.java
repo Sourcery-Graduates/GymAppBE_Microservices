@@ -16,28 +16,28 @@ public interface ExerciseRepository extends JpaRepository<Exercise, UUID> {
 
     List<Exercise> findAllByIdIn(List<UUID> exerciseIds);
 
-    @Query(value = "SELECT * FROM workout_data.exercise " +
+    @Query(value = "SELECT * FROM exercise " +
             "WHERE name ILIKE :prefix || '%' " +
             "OR name ILIKE '%' || :prefix || '%' " +
             "ORDER BY (CASE WHEN name ILIKE :prefix || '%' THEN 0 ELSE 1 END), name",
-            countQuery = "SELECT COUNT(*) FROM workout_data.exercise " +
+            countQuery = "SELECT COUNT(*) FROM exercise " +
                     "WHERE name ILIKE :prefix || '%' OR name ILIKE '%' || :prefix || '%'",
             nativeQuery = true)
     Page<Exercise> findByPrefixOrContaining(@Param("prefix") String prefix, Pageable pageable);
 
 
-    @Query(value = "SELECT * FROM workout_data.exercise " +
+    @Query(value = "SELECT * FROM exercise " +
             "WHERE primary_muscles @> CAST(:primaryMuscle AS text[])",
-            countQuery = "SELECT COUNT(*) FROM workout_data.exercise " +
+            countQuery = "SELECT COUNT(*) FROM exercise " +
                     "WHERE primary_muscles @> CAST(:primaryMuscle AS text[])",
             nativeQuery = true)
     Page<Exercise> findAllByPrimaryMuscle(@Param("primaryMuscle") String primaryMuscle, Pageable pageable);
 
-    @Query(value = "SELECT * FROM workout_data.exercise " +
+    @Query(value = "SELECT * FROM exercise " +
             "WHERE primary_muscles @> CAST(:primaryMuscle AS text[]) " +
             "AND (name ILIKE :prefix || '%' " +
             "OR name ILIKE '%' || :prefix || '%')",
-            countQuery = "SELECT COUNT(*) FROM workout_data.exercise " +
+            countQuery = "SELECT COUNT(*) FROM exercise " +
                     "WHERE primary_muscles @> CAST(:primaryMuscle AS text[]) " +
                     "AND (name ILIKE :prefix || '%' OR name ILIKE '%' || :prefix || '%')",
             nativeQuery = true)

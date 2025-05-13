@@ -56,7 +56,7 @@ public class ExerciseRepositoryIntegrationTest extends BaseWorkoutIntegrationJPA
 
     @Test
     void testFindByPrefixOrContaining_Prioritization() {
-        exerciseRepository.save(ExerciseFactory.createExercise(UUID.randomUUID(), "Leg Arm Workout"));
+        exerciseRepository.save(ExerciseFactory.createExercise(null, "Leg Arm Workout"));
 
         String prefix = "Arm";
         Page<Exercise> result = exerciseRepository.findByPrefixOrContaining(prefix, Pageable.ofSize(10).withPage(0));
@@ -97,7 +97,7 @@ public class ExerciseRepositoryIntegrationTest extends BaseWorkoutIntegrationJPA
     @Test
     void testFindByPrefixOrContaining_Pagination() {
         for (int i = 0; i < 21; i++) {
-            exerciseRepository.save(ExerciseFactory.createExercise(UUID.randomUUID(), "Exercise " + i));
+            exerciseRepository.save(ExerciseFactory.createExercise(null, "Exercise " + i));
         }
 
         String prefix = "Exercise";
