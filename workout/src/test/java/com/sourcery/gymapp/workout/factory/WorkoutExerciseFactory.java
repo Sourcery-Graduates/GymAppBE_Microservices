@@ -47,7 +47,7 @@ public class WorkoutExerciseFactory {
     ) {
         return new CreateWorkoutExerciseDto(
                 null,
-                null,
+                UUID.randomUUID(),
                 orderNumber,
                 "Test Notes",
                 sets

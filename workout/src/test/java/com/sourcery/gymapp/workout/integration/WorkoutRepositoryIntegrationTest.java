@@ -51,16 +51,16 @@ public class WorkoutRepositoryIntegrationTest extends BaseWorkoutIntegrationJPAT
     void setUp() {
         userId = UUID.randomUUID();
 
-        Exercise exercise1 = ExerciseFactory.createExercise(UUID.randomUUID(), "Chest exercise", List.of("chest"));
-        Exercise exercise2 = ExerciseFactory.createExercise(UUID.randomUUID(), "Back exercise", List.of("back"));
+        Exercise exercise1 = ExerciseFactory.createExercise(null, "Chest exercise", List.of("chest"));
+        Exercise exercise2 = ExerciseFactory.createExercise(null, "Back exercise", List.of("back"));
 
         List<Exercise> exercises = exerciseRepository.saveAll(List.of(exercise1, exercise2));
 
         Routine routine1 = RoutineFactory.createRoutine(
-                "routine1", UUID.fromString("00000000-0000-0000-0000-000000000001"), userId);
+                "routine1", null, userId);
 
         Routine routine2 = RoutineFactory.createRoutine(
-                "routine2", UUID.fromString("00000000-0000-0000-0000-000000000002"), userId);
+                "routine2", null, userId);
 
         routines = routineRepository.saveAll(List.of(routine1, routine2));
 

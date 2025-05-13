@@ -99,7 +99,7 @@ public class WorkoutFactory {
             String comment
     ) {
         return createWorkout(
-                null,
+                UUID.randomUUID(),
                 name,
                 date,
                 comment,
@@ -115,7 +115,7 @@ public class WorkoutFactory {
             List<WorkoutExercise> exercises
     ) {
         return createWorkout(
-                null,
+                UUID.randomUUID(),
                 "Test Name",
                 LocalDateTime.of(2024, 1, 1, 0, 0)
                         .atZone(ZoneOffset.UTC),
@@ -163,8 +163,8 @@ public class WorkoutFactory {
                 date,
                 comment,
                 exercises,
-                null,
-                null
+                UUID.randomUUID(),
+                UUID.randomUUID()
         );
     }
 
@@ -197,7 +197,7 @@ public class WorkoutFactory {
     public static ResponseWorkoutDto createResponseWorkoutDto() {
         return new ResponseWorkoutDto(
                 null,
-                null,
+                UUID.randomUUID(),
                 "Test Name",
                 LocalDateTime.of(2024, 1, 1, 0, 0)
                         .atZone(ZoneOffset.UTC),
