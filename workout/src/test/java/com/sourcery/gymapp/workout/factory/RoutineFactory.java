@@ -13,7 +13,7 @@ public class RoutineFactory {
     public static Routine createRoutine(String name, String description, LocalDateTime createdAt, UUID userId, long likesCount) {
         Routine routine = new Routine();
 
-        routine.setId(UUID.randomUUID());
+        routine.setId(null);
         routine.setName(name);
         routine.setDescription(description);
         routine.setCreatedAt(createdAt);
@@ -38,7 +38,7 @@ public class RoutineFactory {
                 name,
                 description,
                 LocalDateTime.now(),
-                UUID.randomUUID(),
+                null,
                 0L
         );
     }
@@ -48,7 +48,7 @@ public class RoutineFactory {
                 name,
                 "Test Description",
                 LocalDateTime.now(),
-                UUID.randomUUID(),
+                null,
                 0L
         );
     }
@@ -58,7 +58,7 @@ public class RoutineFactory {
                 "Test Routine",
                 "Test Description",
                 LocalDateTime.now(),
-                UUID.randomUUID(),
+                null,
                 0L
         );
     }
@@ -92,7 +92,7 @@ public class RoutineFactory {
 
     public static ResponseRoutineDto createResponseRoutineDto() {
         return createResponseRoutineDto(
-                UUID.randomUUID(),
+                null,
                 "Test Routine",
                 "Test Description",
                 LocalDateTime.now(),

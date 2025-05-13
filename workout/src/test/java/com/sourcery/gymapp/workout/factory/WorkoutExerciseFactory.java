@@ -15,12 +15,12 @@ public class WorkoutExerciseFactory {
 
     public static ResponseWorkoutExerciseDto createResponseWorkoutExerciseDto() {
         ExerciseSimpleDto exerciseSimpleDto = new ExerciseSimpleDto(
-                UUID.randomUUID(),
+                null,
                 "Test Exercise"
         );
 
         return new ResponseWorkoutExerciseDto(
-                UUID.randomUUID(),
+                null,
                 exerciseSimpleDto,
                 1,
                 "Test Notes",
@@ -33,7 +33,7 @@ public class WorkoutExerciseFactory {
             List<CreateWorkoutExerciseSetDto> sets
     ) {
         return new CreateWorkoutExerciseDto(
-                UUID.randomUUID(),
+                null,
                 exerciseId,
                 1,
                 "Test Notes",
@@ -46,8 +46,8 @@ public class WorkoutExerciseFactory {
             List<CreateWorkoutExerciseSetDto> sets
     ) {
         return new CreateWorkoutExerciseDto(
-                UUID.randomUUID(),
-                UUID.randomUUID(),
+                null,
+                null,
                 orderNumber,
                 "Test Notes",
                 sets
@@ -63,7 +63,7 @@ public class WorkoutExerciseFactory {
 
     public static WorkoutExercise createWorkoutExercise(Exercise exercise) {
         WorkoutExercise workoutExercise = new WorkoutExercise();
-        workoutExercise.setId(UUID.randomUUID());
+        workoutExercise.setId(null);
         workoutExercise.setOrderNumber(1);
         workoutExercise.setNotes("Test Notes");
         workoutExercise.setExercise(exercise);
@@ -74,7 +74,7 @@ public class WorkoutExerciseFactory {
     public static WorkoutExercise createWorkoutExercise(Exercise exercise, Workout workout) {
         WorkoutExercise workoutExercise = new WorkoutExercise();
         workoutExercise.setWorkout(workout);
-        workoutExercise.setId(UUID.randomUUID());
+        workoutExercise.setId(null);
         workoutExercise.setOrderNumber(1);
         workoutExercise.setNotes("Test Notes");
         workoutExercise.setExercise(exercise);

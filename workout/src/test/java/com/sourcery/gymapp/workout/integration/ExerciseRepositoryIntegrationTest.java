@@ -26,11 +26,11 @@ public class ExerciseRepositoryIntegrationTest extends BaseWorkoutIntegrationJPA
     void beforeEach() {
         exerciseRepository.deleteAll();
 
-        exerciseRepository.save(ExerciseFactory.createExercise(UUID.randomUUID(), "Arm Curl", List.of("biceps")));
-        exerciseRepository.save(ExerciseFactory.createExercise(UUID.randomUUID(), "Leg Press", List.of("quads")));
-        exerciseRepository.save(ExerciseFactory.createExercise(UUID.randomUUID(), "Arm Extension", List.of("triceps")));
-        exerciseRepository.save(ExerciseFactory.createExercise(UUID.randomUUID(), "Chest Press", List.of("chest")));
-        exerciseRepository.save(ExerciseFactory.createExercise(UUID.randomUUID(), "Bench Press", List.of("chest")));
+        exerciseRepository.save(ExerciseFactory.createExercise(null, "Arm Curl", List.of("biceps")));
+        exerciseRepository.save(ExerciseFactory.createExercise(null, "Leg Press", List.of("quads")));
+        exerciseRepository.save(ExerciseFactory.createExercise(null, "Arm Extension", List.of("triceps")));
+        exerciseRepository.save(ExerciseFactory.createExercise(null, "Chest Press", List.of("chest")));
+        exerciseRepository.save(ExerciseFactory.createExercise(null, "Bench Press", List.of("chest")));
     }
 
     @Test

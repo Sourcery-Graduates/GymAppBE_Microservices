@@ -34,7 +34,7 @@ public class ExerciseFactory {
 
     public static Exercise createExercise() {
         return createExercise(
-                UUID.randomUUID(),
+                null,
                 "Test Exercise",
                 List.of("chest"),
                 "test force",
@@ -92,14 +92,14 @@ public class ExerciseFactory {
 
     public static ExerciseSimpleDto createExerciseSimpleDto() {
         return new ExerciseSimpleDto(
-                UUID.randomUUID(),
+                null,
                 "Test Exercise"
         );
     }
 
     public static ExerciseDetailDto createExerciseDetailDto() {
         return new ExerciseDetailDto(
-                UUID.randomUUID(),
+                null,
                 "Test Exercise",
                 "Push",
                 "Intermediate",
@@ -131,7 +131,7 @@ public class ExerciseFactory {
 
     public static RoutineExercise createRoutineExercise(Routine routine, Exercise exercise) {
         RoutineExercise routineExercise = new RoutineExercise();
-        routineExercise.setId(UUID.randomUUID());
+        routineExercise.setId(null);
         routineExercise.setRoutine(routine);
         routineExercise.setExercise(exercise);
         routineExercise.setOrderNumber(1);
@@ -146,7 +146,7 @@ public class ExerciseFactory {
 
     public static CreateRoutineExerciseDto createRoutineExerciseDto() {
         return new CreateRoutineExerciseDto(
-                UUID.randomUUID(),
+                null,
                 1,
                 3,
                 10,
@@ -160,7 +160,7 @@ public class ExerciseFactory {
             ExerciseSimpleDto exerciseSimpleDto) {
 
         return new ResponseRoutineExerciseDto(
-                UUID.randomUUID(),
+                null,
                 exerciseSimpleDto,
                 1,
                 3,

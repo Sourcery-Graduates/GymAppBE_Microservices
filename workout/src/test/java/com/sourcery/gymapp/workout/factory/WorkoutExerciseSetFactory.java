@@ -12,7 +12,7 @@ public class WorkoutExerciseSetFactory {
 
     public static WorkoutExerciseSet createWorkoutExerciseSet() {
         WorkoutExerciseSet set = new WorkoutExerciseSet();
-        set.setId(UUID.randomUUID());
+        set.setId(null);
         set.setSetNumber(1);
         set.setReps(5);
         set.setWeight(new BigDecimal(100));
@@ -25,7 +25,7 @@ public class WorkoutExerciseSetFactory {
     public static WorkoutExerciseSet createWorkoutExerciseSet(WorkoutExercise workoutExercise) {
         WorkoutExerciseSet set = new WorkoutExerciseSet();
         set.setWorkoutExercise(workoutExercise);
-        set.setId(UUID.randomUUID());
+        set.setId(null);
         set.setSetNumber(1);
         set.setReps(5);
         set.setWeight(new BigDecimal(100));
@@ -37,7 +37,7 @@ public class WorkoutExerciseSetFactory {
 
     public static ResponseWorkoutExerciseSetDto createResponseWorkoutExerciseSetDto() {
         return new ResponseWorkoutExerciseSetDto(
-                UUID.randomUUID(),
+                null,
                 1,
                 5,
                 new BigDecimal(100),
@@ -48,7 +48,7 @@ public class WorkoutExerciseSetFactory {
 
     public static CreateWorkoutExerciseSetDto createCreateWorkoutExerciseSetDto() {
         return new CreateWorkoutExerciseSetDto(
-                UUID.randomUUID(),
+                null,
                 1,
                 5,
                 new BigDecimal(100),
@@ -59,7 +59,7 @@ public class WorkoutExerciseSetFactory {
 
     public static CreateWorkoutExerciseSetDto createCreateWorkoutExerciseSetDto(Integer setNumber) {
         return new CreateWorkoutExerciseSetDto(
-                UUID.randomUUID(),
+                null,
                 setNumber,
                 5,
                 new BigDecimal(100),
