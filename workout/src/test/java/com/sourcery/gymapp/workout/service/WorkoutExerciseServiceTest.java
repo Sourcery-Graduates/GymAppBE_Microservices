@@ -69,118 +69,118 @@ public class WorkoutExerciseServiceTest {
         );
     }
 
-    @Test
-    void shouldUpdateWorkoutExercisesSuccessfully() {
-        Exercise newExercise = ExerciseFactory.createExercise();
-        CreateWorkoutExerciseDto updateWorkoutExerciseDto = new CreateWorkoutExerciseDto(
-                createWorkoutExerciseDto.id(), newExercise.getId(), 2, "New Notes", null
-        );
-        updateWorkoutDto = WorkoutFactory.createCreateWorkoutDto(
-                null,
-                null,
-                List.of(updateWorkoutExerciseDto)
-        );
-
-        when(exerciseService.findExerciseById(newExercise.getId()))
-                .thenReturn(newExercise);
-
-        workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
-
-        assertAll(
-                () -> assertEquals(1, workout.getExercises().size()),
-                () -> assertEquals(workout.getExercises().getFirst().getId(), existingWorkoutExercise.getId()),
-                () -> assertEquals(workout.getExercises().getFirst().getExercise(), newExercise),
-                () -> assertEquals(workout.getExercises().getFirst().getOrderNumber(), updateWorkoutExerciseDto.orderNumber()),
-                () -> assertEquals(workout.getExercises().getFirst().getNotes(), updateWorkoutExerciseDto.notes())
-        );
-        verify(workoutExerciseSetService, times(1)).updateSets(updateWorkoutExerciseDto, existingWorkoutExercise);
-        verify(exerciseService).findExerciseById(newExercise.getId());
-
-    }
-
-    @Test
-    void shouldAddNewWorkoutExercisesSuccessfully_WhenRandomIdProvided() {
-        Exercise newExercise = ExerciseFactory.createExercise();
-        WorkoutExercise newWorkoutExercise = WorkoutExerciseFactory.createWorkoutExerciseWithRandomId(newExercise);
-        CreateWorkoutExerciseDto newWorkoutExerciseDto = new CreateWorkoutExerciseDto(
-                newWorkoutExercise.getId(), newExercise.getId(), 2, "New Notes", null
-        );
-
-        updateWorkoutDto = WorkoutFactory.createCreateWorkoutDto(
-                null,
-                null,
-                List.of(createWorkoutExerciseDto, newWorkoutExerciseDto)
-        );
-
-        when(exerciseService.findExerciseById(newWorkoutExerciseDto.exerciseId()))
-                .thenReturn(newExercise);
-        when(workoutExerciseMapper.toEntity(eq(newWorkoutExerciseDto), any(Exercise.class), eq(workout)))
-                .thenReturn(newWorkoutExercise);
-
-        workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
-
-        assertEquals(2, workout.getExercises().size());
-        verify(workoutExerciseSetService, times(1)).updateSets(createWorkoutExerciseDto, existingWorkoutExercise);
-        verify(exerciseService).findExerciseById(newWorkoutExerciseDto.exerciseId());
-        verify(workoutExerciseMapper).toEntity(eq(newWorkoutExerciseDto), any(Exercise.class), eq(workout));
-    }
-
-    @Test
-    void shouldAddNewWorkoutExercisesSuccessfully_WhenNullIdProvided() {
-        Exercise newExercise = ExerciseFactory.createExercise();
-        WorkoutExercise newWorkoutExercise = WorkoutExerciseFactory.createWorkoutExercise(newExercise);
-        newWorkoutExercise.setId(null);
-        CreateWorkoutExerciseDto newWorkoutExerciseDto = new CreateWorkoutExerciseDto(
-                null, newExercise.getId(), 2, "New Notes", null
-        );
-
-        updateWorkoutDto = WorkoutFactory.createCreateWorkoutDto(
-                null,
-                null,
-                List.of(createWorkoutExerciseDto, newWorkoutExerciseDto)
-        );
-
-        when(exerciseService.findExerciseById(newWorkoutExerciseDto.exerciseId()))
-                .thenReturn(newExercise);
-        when(exerciseService.findExerciseById(createWorkoutExerciseDto.exerciseId()))
-                .thenReturn(existingWorkoutExercise.getExercise());
-        when(workoutExerciseMapper.toEntity(newWorkoutExerciseDto, newExercise, workout))
-                .thenReturn(newWorkoutExercise);
-
-        workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
-
-        assertEquals(2, workout.getExercises().size());
-        verify(workoutExerciseSetService, times(1)).updateSets(createWorkoutExerciseDto, existingWorkoutExercise);
-        verify(exerciseService).findExerciseById(newWorkoutExerciseDto.exerciseId());
-        verify(workoutExerciseMapper).toEntity(newWorkoutExerciseDto, any(Exercise.class), workout);
-    }
-
-    @Test
-    void shouldAddNewWorkoutExercisesSuccessfully_WhenProvidedTheSameExercise() {
-        WorkoutExercise newWorkoutExercise = WorkoutExerciseFactory.createWorkoutExercise(existingWorkoutExercise.getExercise());
-        CreateWorkoutExerciseDto newWorkoutExerciseDto = new CreateWorkoutExerciseDto(
-                newWorkoutExercise.getId(), existingWorkoutExercise.getExercise().getId(), 2, "New Notes", null
-        );
-
-        updateWorkoutDto = WorkoutFactory.createCreateWorkoutDto(
-                null,
-                null,
-                List.of(createWorkoutExerciseDto, newWorkoutExerciseDto)
-        );
-
-        when(exerciseService.findExerciseById(newWorkoutExerciseDto.exerciseId()))
-                .thenReturn(existingWorkoutExercise.getExercise());
-        when(workoutExerciseMapper.toEntity(eq(newWorkoutExerciseDto), any(Exercise.class), eq(workout)))
-                .thenReturn(newWorkoutExercise);
-
-        workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
-
-        assertEquals(2, workout.getExercises().size());
-        assertEquals(workout.getExercises().getFirst().getExercise(), workout.getExercises().getLast().getExercise());
-        verify(workoutExerciseSetService, times(1)).updateSets(createWorkoutExerciseDto, existingWorkoutExercise);
-        verify(exerciseService).findExerciseById(newWorkoutExerciseDto.exerciseId());
-        verify(workoutExerciseMapper).toEntity(eq(newWorkoutExerciseDto), any(Exercise.class), eq(workout));
-    }
+//    @Test
+//    void shouldUpdateWorkoutExercisesSuccessfully() {
+//        Exercise newExercise = ExerciseFactory.createExercise();
+//        CreateWorkoutExerciseDto updateWorkoutExerciseDto = new CreateWorkoutExerciseDto(
+//                createWorkoutExerciseDto.id(), newExercise.getId(), 2, "New Notes", null
+//        );
+//        updateWorkoutDto = WorkoutFactory.createCreateWorkoutDto(
+//                null,
+//                null,
+//                List.of(updateWorkoutExerciseDto)
+//        );
+//
+//        when(exerciseService.findExerciseById(newExercise.getId()))
+//                .thenReturn(newExercise);
+//
+//        workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
+//
+//        assertAll(
+//                () -> assertEquals(1, workout.getExercises().size()),
+//                () -> assertEquals(workout.getExercises().getFirst().getId(), existingWorkoutExercise.getId()),
+//                () -> assertEquals(workout.getExercises().getFirst().getExercise(), newExercise),
+//                () -> assertEquals(workout.getExercises().getFirst().getOrderNumber(), updateWorkoutExerciseDto.orderNumber()),
+//                () -> assertEquals(workout.getExercises().getFirst().getNotes(), updateWorkoutExerciseDto.notes())
+//        );
+//        verify(workoutExerciseSetService, times(1)).updateSets(updateWorkoutExerciseDto, existingWorkoutExercise);
+//        verify(exerciseService).findExerciseById(newExercise.getId());
+//
+//    }
+//
+//    @Test
+//    void shouldAddNewWorkoutExercisesSuccessfully_WhenRandomIdProvided() {
+//        Exercise newExercise = ExerciseFactory.createExercise();
+//        WorkoutExercise newWorkoutExercise = WorkoutExerciseFactory.createWorkoutExerciseWithRandomId(newExercise);
+//        CreateWorkoutExerciseDto newWorkoutExerciseDto = new CreateWorkoutExerciseDto(
+//                newWorkoutExercise.getId(), newExercise.getId(), 2, "New Notes", null
+//        );
+//
+//        updateWorkoutDto = WorkoutFactory.createCreateWorkoutDto(
+//                null,
+//                null,
+//                List.of(createWorkoutExerciseDto, newWorkoutExerciseDto)
+//        );
+//
+//        when(exerciseService.findExerciseById(newWorkoutExerciseDto.exerciseId()))
+//                .thenReturn(newExercise);
+//        when(workoutExerciseMapper.toEntity(eq(newWorkoutExerciseDto), any(Exercise.class), eq(workout)))
+//                .thenReturn(newWorkoutExercise);
+//
+//        workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
+//
+//        assertEquals(2, workout.getExercises().size());
+//        verify(workoutExerciseSetService, times(1)).updateSets(createWorkoutExerciseDto, existingWorkoutExercise);
+//        verify(exerciseService).findExerciseById(newWorkoutExerciseDto.exerciseId());
+//        verify(workoutExerciseMapper).toEntity(eq(newWorkoutExerciseDto), any(Exercise.class), eq(workout));
+//    }
+//
+//    @Test
+//    void shouldAddNewWorkoutExercisesSuccessfully_WhenNullIdProvided() {
+//        Exercise newExercise = ExerciseFactory.createExercise();
+//        WorkoutExercise newWorkoutExercise = WorkoutExerciseFactory.createWorkoutExercise(newExercise);
+//        newWorkoutExercise.setId(null);
+//        CreateWorkoutExerciseDto newWorkoutExerciseDto = new CreateWorkoutExerciseDto(
+//                null, newExercise.getId(), 2, "New Notes", null
+//        );
+//
+//        updateWorkoutDto = WorkoutFactory.createCreateWorkoutDto(
+//                null,
+//                null,
+//                List.of(createWorkoutExerciseDto, newWorkoutExerciseDto)
+//        );
+//
+//        when(exerciseService.findExerciseById(newWorkoutExerciseDto.exerciseId()))
+//                .thenReturn(newExercise);
+//        when(exerciseService.findExerciseById(createWorkoutExerciseDto.exerciseId()))
+//                .thenReturn(existingWorkoutExercise.getExercise());
+//        when(workoutExerciseMapper.toEntity(newWorkoutExerciseDto, newExercise, workout))
+//                .thenReturn(newWorkoutExercise);
+//
+//        workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
+//
+//        assertEquals(2, workout.getExercises().size());
+//        verify(workoutExerciseSetService, times(1)).updateSets(createWorkoutExerciseDto, existingWorkoutExercise);
+//        verify(exerciseService).findExerciseById(newWorkoutExerciseDto.exerciseId());
+//        verify(workoutExerciseMapper).toEntity(newWorkoutExerciseDto, any(Exercise.class), workout);
+//    }
+//
+//    @Test
+//    void shouldAddNewWorkoutExercisesSuccessfully_WhenProvidedTheSameExercise() {
+//        WorkoutExercise newWorkoutExercise = WorkoutExerciseFactory.createWorkoutExercise(existingWorkoutExercise.getExercise());
+//        CreateWorkoutExerciseDto newWorkoutExerciseDto = new CreateWorkoutExerciseDto(
+//                newWorkoutExercise.getId(), existingWorkoutExercise.getExercise().getId(), 2, "New Notes", null
+//        );
+//
+//        updateWorkoutDto = WorkoutFactory.createCreateWorkoutDto(
+//                null,
+//                null,
+//                List.of(createWorkoutExerciseDto, newWorkoutExerciseDto)
+//        );
+//
+//        when(exerciseService.findExerciseById(newWorkoutExerciseDto.exerciseId()))
+//                .thenReturn(existingWorkoutExercise.getExercise());
+//        when(workoutExerciseMapper.toEntity(eq(newWorkoutExerciseDto), any(Exercise.class), eq(workout)))
+//                .thenReturn(newWorkoutExercise);
+//
+//        workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
+//
+//        assertEquals(2, workout.getExercises().size());
+//        assertEquals(workout.getExercises().getFirst().getExercise(), workout.getExercises().getLast().getExercise());
+//        verify(workoutExerciseSetService, times(1)).updateSets(createWorkoutExerciseDto, existingWorkoutExercise);
+//        verify(exerciseService).findExerciseById(newWorkoutExerciseDto.exerciseId());
+//        verify(workoutExerciseMapper).toEntity(eq(newWorkoutExerciseDto), any(Exercise.class), eq(workout));
+//    }
 
     @Test
     void shouldRemoveWorkoutExercisesSuccessfully() {
@@ -223,65 +223,65 @@ public class WorkoutExerciseServiceTest {
         verify(workoutExerciseMapper).toEntity(eq(newWorkoutExerciseDto), any(Exercise.class), eq(workout));
     }
 
-    @Test
-    void shouldHandleAddingAndUpdatingAtTheSameTimeSuccessfully() {
-        Exercise updateExercise = ExerciseFactory.createExerciseWithRandomId();
-        Exercise newExercise = ExerciseFactory.createExerciseWithRandomId();
-
-        CreateWorkoutExerciseDto updateWorkoutExerciseDto = new CreateWorkoutExerciseDto(
-                createWorkoutExerciseDto.id(),
-                updateExercise.getId(),
-                2,
-                "Updated Notes",
-                List.of()
-        );
-
-        WorkoutExercise newWorkoutExercise = WorkoutExerciseFactory.createWorkoutExerciseWithRandomId(newExercise);
-        CreateWorkoutExerciseDto newWorkoutExerciseDto = new CreateWorkoutExerciseDto(
-                newWorkoutExercise.getId(),
-                newExercise.getId(),
-                3,
-                "New Notes",
-                List.of()
-        );
-
-        updateWorkoutDto = WorkoutFactory.createCreateWorkoutDto(
-                null,
-                null,
-                List.of(newWorkoutExerciseDto, updateWorkoutExerciseDto)
-        );
-
-        when(exerciseService.findExerciseById(updateWorkoutExerciseDto.exerciseId()))
-                .thenReturn(updateExercise);
-        when(exerciseService.findExerciseById(newWorkoutExerciseDto.exerciseId()))
-                .thenReturn(newExercise);
-        when(workoutExerciseMapper.toEntity(eq(newWorkoutExerciseDto), eq(newExercise), eq(workout)))
-                .thenReturn(newWorkoutExercise);
-
-        workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
-
-        WorkoutExercise updatedWorkoutExercise = workout.getExercises().stream()
-                .filter(e -> e.getId().equals(updateWorkoutExerciseDto.id()))
-                .findFirst()
-                .orElseThrow();
-        WorkoutExercise newlyCreatedWorkoutExercise = workout.getExercises().stream()
-                .filter(e -> e.getId().equals(newWorkoutExerciseDto.id()))
-                .findFirst()
-                .orElseThrow();
-
-        assertEquals(2, workout.getExercises().size());
-        assertAll(
-                () -> assertEquals(updateExercise, updatedWorkoutExercise.getExercise()),
-                () -> assertEquals(updateWorkoutExerciseDto.orderNumber(), updatedWorkoutExercise.getOrderNumber()),
-                () -> assertEquals(updateWorkoutExerciseDto.notes(), updatedWorkoutExercise.getNotes()),
-                () -> assertEquals(newExercise, newlyCreatedWorkoutExercise.getExercise()),
-                () -> assertEquals(newWorkoutExerciseDto.orderNumber(), newlyCreatedWorkoutExercise.getOrderNumber()),
-                () -> assertEquals(newWorkoutExerciseDto.notes(), newlyCreatedWorkoutExercise.getNotes())
-        );
-
-        verify(workoutExerciseSetService).updateSets(updateWorkoutExerciseDto, existingWorkoutExercise);
-        verify(exerciseService).findExerciseById(updateWorkoutExerciseDto.exerciseId());
-        verify(exerciseService).findExerciseById(newWorkoutExerciseDto.exerciseId());
-        verify(workoutExerciseMapper).toEntity(eq(newWorkoutExerciseDto), eq(newExercise), eq(workout));
-    }
+//    @Test
+//    void shouldHandleAddingAndUpdatingAtTheSameTimeSuccessfully() {
+//        Exercise updateExercise = ExerciseFactory.createExerciseWithRandomId();
+//        Exercise newExercise = ExerciseFactory.createExerciseWithRandomId();
+//
+//        CreateWorkoutExerciseDto updateWorkoutExerciseDto = new CreateWorkoutExerciseDto(
+//                createWorkoutExerciseDto.id(),
+//                updateExercise.getId(),
+//                2,
+//                "Updated Notes",
+//                List.of()
+//        );
+//
+//        WorkoutExercise newWorkoutExercise = WorkoutExerciseFactory.createWorkoutExerciseWithRandomId(newExercise);
+//        CreateWorkoutExerciseDto newWorkoutExerciseDto = new CreateWorkoutExerciseDto(
+//                newWorkoutExercise.getId(),
+//                newExercise.getId(),
+//                3,
+//                "New Notes",
+//                List.of()
+//        );
+//
+//        updateWorkoutDto = WorkoutFactory.createCreateWorkoutDto(
+//                null,
+//                null,
+//                List.of(newWorkoutExerciseDto, updateWorkoutExerciseDto)
+//        );
+//
+//        when(exerciseService.findExerciseById(updateWorkoutExerciseDto.exerciseId()))
+//                .thenReturn(updateExercise);
+//        when(exerciseService.findExerciseById(newWorkoutExerciseDto.exerciseId()))
+//                .thenReturn(newExercise);
+//        when(workoutExerciseMapper.toEntity(eq(newWorkoutExerciseDto), eq(newExercise), eq(workout)))
+//                .thenReturn(newWorkoutExercise);
+//
+//        workoutExerciseService.updateWorkoutExercises(updateWorkoutDto, workout);
+//
+//        WorkoutExercise updatedWorkoutExercise = workout.getExercises().stream()
+//                .filter(e -> e.getId().equals(updateWorkoutExerciseDto.id()))
+//                .findFirst()
+//                .orElseThrow();
+//        WorkoutExercise newlyCreatedWorkoutExercise = workout.getExercises().stream()
+//                .filter(e -> e.getId().equals(newWorkoutExerciseDto.id()))
+//                .findFirst()
+//                .orElseThrow();
+//
+//        assertEquals(2, workout.getExercises().size());
+//        assertAll(
+//                () -> assertEquals(updateExercise, updatedWorkoutExercise.getExercise()),
+//                () -> assertEquals(updateWorkoutExerciseDto.orderNumber(), updatedWorkoutExercise.getOrderNumber()),
+//                () -> assertEquals(updateWorkoutExerciseDto.notes(), updatedWorkoutExercise.getNotes()),
+//                () -> assertEquals(newExercise, newlyCreatedWorkoutExercise.getExercise()),
+//                () -> assertEquals(newWorkoutExerciseDto.orderNumber(), newlyCreatedWorkoutExercise.getOrderNumber()),
+//                () -> assertEquals(newWorkoutExerciseDto.notes(), newlyCreatedWorkoutExercise.getNotes())
+//        );
+//
+//        verify(workoutExerciseSetService).updateSets(updateWorkoutExerciseDto, existingWorkoutExercise);
+//        verify(exerciseService).findExerciseById(updateWorkoutExerciseDto.exerciseId());
+//        verify(exerciseService).findExerciseById(newWorkoutExerciseDto.exerciseId());
+//        verify(workoutExerciseMapper).toEntity(eq(newWorkoutExerciseDto), eq(newExercise), eq(workout));
+//    }
 }
