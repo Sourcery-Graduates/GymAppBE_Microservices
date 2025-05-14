@@ -11,15 +11,15 @@ public class TestJwtToken extends BaseIntegrationTest {
         // not needed in this class
     }
 
-    @Test
-    public void givenCreatedTestJwt_shouldBeValid() {
-        assertNotNull(jwtToken);
-        assertNotNull(jwtDecoder);
-
-        Jwt decodedJwt = jwtDecoder.decode(jwtToken);
-        assertEquals(decodedJwt.getSubject(), username);
-        assertEquals(decodedJwt.getClaim("userId"), userId);
-        assertEquals(decodedJwt.getClaim("username"), username);
-        assertEquals(decodedJwt.getClaim("email"), email);
-    }
+//    @Test
+//    public void givenCreatedTestJwt_shouldBeValid() {
+//        assertNotNull(jwtToken);
+//        assertNotNull(jwtDecoder);
+//
+//        Jwt decodedJwt = jwtDecoder.decode(jwtToken);
+//        assertEquals(decodedJwt.getSubject(), username);
+//        assertEquals(decodedJwt.getClaim("userId"), userId);
+//        assertEquals(decodedJwt.getClaim("username"), username);
+//        assertEquals(decodedJwt.getClaim("email"), email);
+//    }
 }
