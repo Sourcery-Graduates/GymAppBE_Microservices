@@ -130,6 +130,8 @@ public class WorkoutExerciseSetServiceTest {
                 exercise.getId(),
                 List.of(createWorkoutExerciseSetDto, newWorkoutExerciseSetDto)
         );
+
+        when(workoutExerciseSetMapper.toEntity(createWorkoutExerciseSetDto, workoutExercise)).thenReturn(existingWorkoutExerciseSet);
         when(workoutExerciseSetMapper.toEntity(newWorkoutExerciseSetDto, workoutExercise)).thenReturn(newWorkoutExerciseSet);
 
         workoutExerciseSetService.updateSets(updateWorkoutExerciseDto, workoutExercise);

@@ -182,4 +182,11 @@ public class ExerciseFactory {
             exercises
         );
     }
+
+    public static Exercise createExerciseWithRandomId() {
+        Exercise exercise = createExercise();
+        exercise.setId(UUID.randomUUID());
+        return exercise;
+    }
+
 }

@@ -207,4 +207,11 @@ public class WorkoutFactory {
                 List.of()
         );
     }
+
+    public static Workout createWorkoutWithRandomId() {
+        Workout workout = createWorkout();
+        workout.setId(UUID.randomUUID());
+        return workout;
+    }
+
 }

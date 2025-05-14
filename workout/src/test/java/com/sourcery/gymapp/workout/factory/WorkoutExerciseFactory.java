@@ -81,4 +81,17 @@ public class WorkoutExerciseFactory {
 
         return workoutExercise;
     }
+
+    public static WorkoutExercise createWorkoutExerciseWithRandomId(Exercise exercise) {
+        WorkoutExercise workoutExercise = new WorkoutExercise();
+        workoutExercise.setId(UUID.randomUUID());
+        workoutExercise.setOrderNumber(1);
+        workoutExercise.setNotes("Test Notes");
+        workoutExercise.setExercise(exercise);
+        return workoutExercise;
+    }
+
+    public static CreateWorkoutExerciseDto createCreateWorkoutExerciseDtoWithRandomId(UUID exerciseId) {
+        return new CreateWorkoutExerciseDto(UUID.randomUUID(), exerciseId, 1, "Test Notes", List.of());
+    }
 }
