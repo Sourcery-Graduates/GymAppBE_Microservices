@@ -146,7 +146,7 @@ public class ExerciseFactory {
 
     public static CreateRoutineExerciseDto createRoutineExerciseDto() {
         return new CreateRoutineExerciseDto(
-                null,
+                UUID.randomUUID(),
                 1,
                 3,
                 10,

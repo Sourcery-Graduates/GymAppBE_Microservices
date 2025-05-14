@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -57,7 +58,9 @@ public class WorkoutExerciseServiceTest {
     @BeforeEach
     public void setup() {
         Exercise exercise = ExerciseFactory.createExercise();
+        exercise.setId(UUID.randomUUID());
         workout = WorkoutFactory.createWorkout();
+        workout.setId(UUID.randomUUID());
         createWorkoutExerciseDto = WorkoutExerciseFactory.createCreateWorkoutExerciseDto(exercise.getId());
         existingWorkoutExercise = WorkoutExerciseFactory.createWorkoutExercise(exercise);
         existingWorkoutExercise.setId(createWorkoutExerciseDto.id());

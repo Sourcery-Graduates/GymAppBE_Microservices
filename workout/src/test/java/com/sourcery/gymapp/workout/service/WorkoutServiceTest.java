@@ -34,6 +34,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -69,7 +70,8 @@ public class WorkoutServiceTest {
     @BeforeEach
     void setUp() {
         workout = WorkoutFactory.createWorkout();
-        workoutId = workout.getId();
+        workoutId = UUID.randomUUID();
+        workout.setId(workoutId);
         userId = workout.getUserId();
         createWorkoutDto = WorkoutFactory.createCreateWorkoutDto();
         responseWorkoutDto = WorkoutFactory.createResponseWorkoutDto();
@@ -84,6 +86,7 @@ public class WorkoutServiceTest {
             when(currentUserService.getCurrentUserId()).thenReturn(userId);
             when(workoutMapper.toEntity(createWorkoutDto, userId, null, null, new HashMap<>())).thenReturn(workout);
             when(workoutRepository.save(workout)).thenReturn(workout);
+            when(workoutRepository.findById(any(UUID.class))).thenReturn(Optional.of(workout));
             when(workoutMapper.toDto(workout)).thenReturn(responseWorkoutDto);
 
             ResponseWorkoutDto response = workoutService.createWorkout(createWorkoutDto);

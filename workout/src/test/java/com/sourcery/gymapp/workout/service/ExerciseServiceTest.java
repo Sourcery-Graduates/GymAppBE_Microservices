@@ -52,7 +52,11 @@ public class ExerciseServiceTest {
         @BeforeEach
         void setUp() {
             exercise1 = ExerciseFactory.createExercise();
+            exercise1.setId(UUID.randomUUID());
+
             exercise2 = ExerciseFactory.createExercise();
+            exercise2.setId(UUID.randomUUID());
+
             exerciseIds = List.of(exercise1.getId(), exercise2.getId());
         }
 

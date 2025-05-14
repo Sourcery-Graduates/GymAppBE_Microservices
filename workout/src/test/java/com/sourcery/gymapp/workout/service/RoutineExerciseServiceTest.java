@@ -58,7 +58,8 @@ public class RoutineExerciseServiceTest {
     @BeforeEach
     void setup() {
         routine = RoutineFactory.createRoutine();
-        routineId = routine.getId();
+        routineId = UUID.randomUUID();
+        routine.setId(routineId);
 
         responseRoutineDto = RoutineFactory.createResponseRoutineDto(
                 routine.getId(),
@@ -71,15 +72,17 @@ public class RoutineExerciseServiceTest {
         );
 
         createRoutineExerciseDto = ExerciseFactory.createRoutineExerciseDto();
+        UUID exerciseId = createRoutineExerciseDto.exerciseId();
         createRoutineExerciseListDto = List.of(createRoutineExerciseDto);
 
         exercise = ExerciseFactory.createExercise();
-        exercise.setId(createRoutineExerciseDto.exerciseId());
-        exerciseMap = Map.of(createRoutineExerciseDto.exerciseId(), exercise);
+        exercise.setId(exerciseId);
+        exerciseMap = Map.of(exerciseId, exercise);
 
         exerciseSimpleDto = ExerciseFactory.createExerciseSimpleDto(exercise.getId(), exercise.getName());
 
         RoutineExercise routineExercise = ExerciseFactory.createRoutineExercise(routine, exercise);
+        routineExercise.setId(UUID.randomUUID());
         routineExercises = List.of(routineExercise);
 
         responseRoutineExerciseDto = ExerciseFactory

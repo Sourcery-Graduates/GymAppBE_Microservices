@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -43,14 +44,17 @@ public class WorkoutExerciseSetServiceTest {
     private CreateWorkoutExerciseDto createWorkoutExerciseDto;
     private WorkoutExerciseSet existingWorkoutExerciseSet;
     private CreateWorkoutExerciseSetDto createWorkoutExerciseSetDto;
+    private Exercise exercise;
 
     @BeforeEach
     void setUp() {
-        Exercise exercise = ExerciseFactory.createExercise();
+        exercise = ExerciseFactory.createExercise();
+        exercise.setId(UUID.randomUUID());
         createWorkoutExerciseSetDto = WorkoutExerciseSetFactory.createCreateWorkoutExerciseSetDto();
         existingWorkoutExerciseSet = WorkoutExerciseSetFactory.createWorkoutExerciseSet();
-        existingWorkoutExerciseSet.setId(createWorkoutExerciseSetDto.id());
+        existingWorkoutExerciseSet.setId(UUID.randomUUID());
         workoutExercise = WorkoutExerciseFactory.createWorkoutExercise(exercise);
+        workoutExercise.setId(UUID.randomUUID());
         workoutExercise.addSet(existingWorkoutExerciseSet);
         createWorkoutExerciseDto = WorkoutExerciseFactory.createCreateWorkoutExerciseDto(
                 exercise.getId(),
@@ -99,7 +103,7 @@ public class WorkoutExerciseSetServiceTest {
                 "New comment"
         );
         CreateWorkoutExerciseDto updateWorkoutExerciseDto = WorkoutExerciseFactory.createCreateWorkoutExerciseDto(
-                createWorkoutExerciseDto.exerciseId(),
+                exercise.getId(),
                 List.of(createWorkoutExerciseSetDto, newWorkoutExerciseSetDto)
         );
         when(workoutExerciseSetMapper.toEntity(newWorkoutExerciseSetDto, workoutExercise)).thenReturn(newWorkoutExerciseSet);
@@ -123,7 +127,7 @@ public class WorkoutExerciseSetServiceTest {
                 "New comment"
         );
         CreateWorkoutExerciseDto updateWorkoutExerciseDto = WorkoutExerciseFactory.createCreateWorkoutExerciseDto(
-                createWorkoutExerciseDto.exerciseId(),
+                exercise.getId(),
                 List.of(createWorkoutExerciseSetDto, newWorkoutExerciseSetDto)
         );
         when(workoutExerciseSetMapper.toEntity(newWorkoutExerciseSetDto, workoutExercise)).thenReturn(newWorkoutExerciseSet);

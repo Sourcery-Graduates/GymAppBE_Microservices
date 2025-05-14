@@ -84,6 +84,8 @@ public class WorkoutMapperTest {
     @Test
     void shouldMapWorkoutDtoToWorkout() {
         Exercise exercise = ExerciseFactory.createExercise();
+        exercise.setId(UUID.randomUUID());
+
         Map<UUID, Exercise> exerciseMap = Map.of(exercise.getId(), exercise);
         CreateWorkoutExerciseDto createWorkoutExerciseDto = WorkoutExerciseFactory.createCreateWorkoutExerciseDto(exercise.getId());
         createWorkoutDto = WorkoutFactory.createCreateWorkoutDto(
