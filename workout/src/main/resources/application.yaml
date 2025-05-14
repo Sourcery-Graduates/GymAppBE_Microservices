@@ -3,3 +3,9 @@ spring:
     name: gym-app-workout-service
   config:
     import: configserver:${CONFIG_SERVER_URI:http://localhost:8888}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${AUTH_SERVICE_URL:http://localhost:8080}/.well-known/jwks.json
+          issuer-uri: ${AUTH_SERVICE_URL:http://localhost:8080}
