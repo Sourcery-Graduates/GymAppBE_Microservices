@@ -10,10 +10,6 @@ import com.sourcery.gymapp.workout.factory.WorkoutFactory;
 import com.sourcery.gymapp.workout.mapper.WorkoutMapper;
 import com.sourcery.gymapp.workout.model.Workout;
 import com.sourcery.gymapp.workout.repository.WorkoutRepository;
-import com.sourcery.gymapp.workout.service.RoutineService;
-import com.sourcery.gymapp.workout.service.WorkoutCurrentUserService;
-import com.sourcery.gymapp.workout.service.WorkoutExerciseService;
-import com.sourcery.gymapp.workout.service.WorkoutService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -26,7 +22,6 @@ import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,7 +29,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -73,7 +68,7 @@ public class WorkoutServiceTest {
         workoutId = UUID.randomUUID();
         workout.setId(workoutId);
         userId = workout.getUserId();
-        createWorkoutDto = WorkoutFactory.createCreateWorkoutDto();
+        createWorkoutDto = WorkoutFactory.createCreateWorkoutDto(UUID.randomUUID(), workoutId, null);
         responseWorkoutDto = WorkoutFactory.createResponseWorkoutDto();
     }
 
@@ -84,7 +79,13 @@ public class WorkoutServiceTest {
         @Test
         void shouldCreateWorkoutSuccessfully() {
             when(currentUserService.getCurrentUserId()).thenReturn(userId);
-            when(workoutMapper.toEntity(createWorkoutDto, userId, null, null, new HashMap<>())).thenReturn(workout);
+            when(workoutMapper.toEntity(
+                    eq(createWorkoutDto),
+                    eq(userId),
+                    any(Workout.class),
+                    isNull(),
+                    anyMap()
+            )).thenReturn(workout);
             when(workoutRepository.save(workout)).thenReturn(workout);
             when(workoutRepository.findById(any(UUID.class))).thenReturn(Optional.of(workout));
             when(workoutMapper.toDto(workout)).thenReturn(responseWorkoutDto);
