@@ -12,7 +12,7 @@ import java.util.UUID;
 @Repository
 public interface RoutineLikeRepository extends JpaRepository<RoutineLike, UUID> {
 
-    @Query(value = "INSERT INTO workout_data.routine_like (routine_id, user_id, created_at) " +
+    @Query(value = "INSERT INTO routine_like (routine_id, user_id, created_at) " +
             "VALUES (:routineId, :userId, DEFAULT) " +
             "ON CONFLICT DO NOTHING " +
             "RETURNING routine_id", nativeQuery = true)

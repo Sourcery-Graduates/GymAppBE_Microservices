@@ -47,6 +47,7 @@ tasks.named('test') {
 		excludeTags 'integration'
 	}
 	systemProperty 'spring.profiles.active', 'test'
+	systemProperty 'spring.cloud.config.enabled', 'false'
 }
 
 tasks.register('integrationTest', Test) {
