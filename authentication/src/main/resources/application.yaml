@@ -5,3 +5,24 @@ spring:
     activate:
       on-profile: local
     import: configserver:${CONFIG_SERVER_URI:http://localhost:8888}
+
+auth:
+  jwk-set-endpoint: /.well-known/jwks.json
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+auth:
+  issuer-uri: http://localhost:8080
+
+---
+spring:
+  config:
+    activate:
+      on-profile: production
+
+auth:
+  issuer-uri: #e.g. https://api.workout-app.online

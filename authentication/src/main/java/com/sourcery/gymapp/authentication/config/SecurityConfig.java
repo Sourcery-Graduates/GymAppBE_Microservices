@@ -28,6 +28,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
@@ -52,40 +53,45 @@ public class SecurityConfig {
     @Value("${frontend.base_url}")
     private String frontendUrl;
 
+    @Value("${auth.issuer-uri}")
+    private String issuerUri;
+
+    @Value("${auth.jwk-set-endpoint}")
+    private String jwkSetEndpoint;
+
     @Bean
     @Order(1)
     public SecurityFilterChain authorizationServerSecurityChain(HttpSecurity http,
                                                                 RegisteredClientRepository registeredClientRepository,
-                                                                OAuth2TokenGenerator<?> tokenGenerator,
+                                                                OAuth2TokenGenerator<OAuth2Token> tokenGenerator,
                                                                 Environment environment) throws Exception {
+
         OAuth2AuthorizationServerConfigurer authorizationServerConfigurer =
-                new OAuth2AuthorizationServerConfigurer();
+                OAuth2AuthorizationServerConfigurer.authorizationServer();
 
         http
                 .securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
-                .with(authorizationServerConfigurer, configurer -> {
-                    configurer.clientAuthentication(authentication -> authentication
-                            .authenticationConverter(new PublicClientRefreshTokenAuthenticationConverter())
-                            .authenticationProvider(new PublicClientRefreshProvider(registeredClientRepository)));
-
-                    configurer.tokenGenerator(tokenGenerator);
-
-                    configurer.tokenEndpoint(tokenEndpoint -> tokenEndpoint
-                            .accessTokenResponseHandler(new CookieOAuth2TokenResponseHandler(environment))
-                            .accessTokenRequestConverter(new RefreshTokenCookieAuthenticationConverter())
-                    );
-
-                    configurer.oidc(Customizer.withDefaults());
-                });
-
-        http
+                .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception -> exception.defaultAuthenticationEntryPointFor(
                         new LoginUrlAuthenticationEntryPoint("/login"),
                         new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                 ))
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+                .with(authorizationServerConfigurer, configurer -> configurer
+                        .registeredClientRepository(registeredClientRepository)
+                        .tokenGenerator(tokenGenerator)
+                        .clientAuthentication(clientAuth -> {
+                            clientAuth.authenticationConverter(new PublicClientRefreshTokenAuthenticationConverter());
+                            clientAuth.authenticationProvider(new PublicClientRefreshProvider(registeredClientRepository));
+                        })
+                        .tokenEndpoint(tokenEndpoint -> tokenEndpoint
+                                .accessTokenResponseHandler(new CookieOAuth2TokenResponseHandler(environment))
+                                .accessTokenRequestConverter(new RefreshTokenCookieAuthenticationConverter())
+                        )
+                        .oidc(Customizer.withDefaults())
+                );
 
         return http.build();
     }
@@ -139,6 +145,7 @@ public class SecurityConfig {
                                 "/login/oauth2/code/**,",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
+                                "/.well-known/jwks.json",
                                 "/actuator/health").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -199,7 +206,10 @@ public class SecurityConfig {
 
     @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
-        return AuthorizationServerSettings.builder().build();
+        return AuthorizationServerSettings.builder()
+                .issuer(issuerUri)
+                .jwkSetEndpoint(jwkSetEndpoint)
+                .build();
     }
 
     @Bean
