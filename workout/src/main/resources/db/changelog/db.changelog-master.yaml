@@ -25,7 +25,3 @@ databaseChangeLog:
   - include:
       file: changes/v4.1-routine-like-functionality.sql
       relativeToChangelogFile: true
-
-  - include:
-      file: changes/v0.0-create-event-publication-table.sql
-      relativeToChangelogFile: true

@@ -1,4 +1,0 @@
-databaseChangeLog:
-  - include:
-      file: v1.0-sharedlinks-changelog.sql
-      relativeToChangelogFile: true

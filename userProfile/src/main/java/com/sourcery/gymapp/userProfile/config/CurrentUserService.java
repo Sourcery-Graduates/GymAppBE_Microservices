@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  * Integrates with Spring Security to access authentication context.
  */
 @Service
-public class CurrentUserService {
+public class  CurrentUserService {
 
     /**
      * Retrieves the current user's ID from JWT token.
