@@ -7,6 +7,6 @@ import org.springframework.stereotype.Service;
 public class CurrentUserService {
 
     public UUID getCurrentUserId() {
-        return UUID.randomUUID();
+        return UUID.randomUUID(); //TODO: Current user id placeholder
     }
 }
