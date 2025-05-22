@@ -14,7 +14,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class WorkoutStatsService {
-    private final WorkoutCurrentUserService workoutCurrentUserService;
+    private final CurrentUserService currentUserService;
     private final OffsetDateService offsetDateService;
     private final WorkoutService workoutService;
     private final RoutineService routineService;
@@ -22,7 +22,7 @@ public class WorkoutStatsService {
     private final RoutineMapper routineMapper;
 
     public List<WorkoutStatsDto> getWorkoutStatsByMonth() {
-        UUID userId = workoutCurrentUserService.getCurrentUserId();
+        UUID userId = currentUserService.getCurrentUserId();
         List<WorkoutStatsDto> userStats = new ArrayList<>();
 
         addWorkoutStats(userStats, userId);
@@ -117,7 +117,7 @@ public class WorkoutStatsService {
             throw new IllegalArgumentException("Routines limit must be greater than 0");
         }
 
-        UUID currentUserId = workoutCurrentUserService.getCurrentUserId();
+        UUID currentUserId = currentUserService.getCurrentUserId();
 
         List<ZonedDateTime> startAndEndOfTheMonth = offsetDateService.getOffsetStartAndCurrentDate(offsetStartMonth);
 
@@ -134,7 +134,7 @@ public class WorkoutStatsService {
     }
 
     public List<MuscleSetDto> getTotalMuscleSetsByWeek(Integer offsetWeek) {
-        UUID currentUserId = workoutCurrentUserService.getCurrentUserId();
+        UUID currentUserId = currentUserService.getCurrentUserId();
         List<ZonedDateTime> startAndEndOfTheWeek = offsetDateService.getWeeklyDateRangeOffset(offsetWeek);
 
         return workoutRepository.getTotalMuscleSetsByUserIdAndDateBetween(

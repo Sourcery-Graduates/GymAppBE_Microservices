@@ -11,8 +11,6 @@ import com.sourcery.gymapp.workout.exception.UserNotAuthorizedException;
 import com.sourcery.gymapp.workout.mapper.RoutineMapper;
 import com.sourcery.gymapp.workout.model.Routine;
 import com.sourcery.gymapp.workout.repository.RoutineRepository;
-import com.sourcery.gymapp.workout.service.RoutineService;
-import com.sourcery.gymapp.workout.service.WorkoutCurrentUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -40,7 +38,7 @@ public class RoutineServiceTest {
     private RoutineMapper routineMapper;
 
     @Mock
-    private WorkoutCurrentUserService currentUserService;
+    private CurrentUserService currentUserService;
 
     @InjectMocks
     private RoutineService routineService;

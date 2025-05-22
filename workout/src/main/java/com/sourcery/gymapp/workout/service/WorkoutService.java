@@ -24,7 +24,7 @@ import java.util.*;
 public class WorkoutService {
     private final WorkoutRepository workoutRepository;
     private final RoutineService routineService;
-    private final WorkoutCurrentUserService currentUserService;
+    private final CurrentUserService currentUserService;
     private final ExerciseService exerciseService;
     private final WorkoutMapper workoutMapper;
     private final WorkoutExerciseService workoutExerciseService;

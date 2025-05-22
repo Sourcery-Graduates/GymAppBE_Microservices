@@ -23,7 +23,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserPhotoService {
-    private final ProfileCurrentUserService currentUserService;
+    private final CurrentUserService currentUserService;
     private final UserProfileRepository userProfileRepository;
     private final S3Client s3Client;
 

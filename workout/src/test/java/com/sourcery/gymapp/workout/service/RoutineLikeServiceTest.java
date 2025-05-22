@@ -8,8 +8,6 @@ import com.sourcery.gymapp.workout.model.Routine;
 import com.sourcery.gymapp.workout.producer.WorkoutKafkaProducer;
 import com.sourcery.gymapp.workout.repository.RoutineLikeRepository;
 import com.sourcery.gymapp.workout.repository.RoutineRepository;
-import com.sourcery.gymapp.workout.service.RoutineLikeService;
-import com.sourcery.gymapp.workout.service.WorkoutCurrentUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -32,7 +30,7 @@ class RoutineLikeServiceTest {
     private RoutineLikeRepository routineLikeRepository;
 
     @Mock
-    private WorkoutCurrentUserService currentUserService;
+    private CurrentUserService currentUserService;
 
     @Mock
     private RoutineRepository routineRepository;
