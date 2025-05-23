@@ -5,3 +5,4 @@ spring:
     activate:
       on-profile: local
     import: configserver:${CONFIG_SERVER_URI:http://localhost:8888}
+

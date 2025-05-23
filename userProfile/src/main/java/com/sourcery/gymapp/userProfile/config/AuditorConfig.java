@@ -1,5 +1,6 @@
 package com.sourcery.gymapp.userProfile.config;
 
+import com.sourcery.gymapp.userProfile.service.CurrentUserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
