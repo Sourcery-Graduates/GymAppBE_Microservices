@@ -53,7 +53,7 @@ public class GoogleOidcConfigTest {
         assertTrue(registration.getScopes().contains("email"));
 
         // Verify redirect URI
-        assertEquals("http://localhost:8080/login/oauth2/code/google", registration.getRedirectUri());
+        assertEquals("http://localhost:8081/login/oauth2/code/google", registration.getRedirectUri());
 
         // Verify user name attribute
         assertEquals(IdTokenClaimNames.SUB, registration.getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName());
