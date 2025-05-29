@@ -6,31 +6,12 @@ spring:
       on-profile: local
     import: configserver:${CONFIG_SERVER_URI:http://localhost:8888}
 
-#  security:
-#    oauth2:
-#      client:
-#        registration:
-#          public-client:
-#            client-id: public-client
-#            client-secret: your-client-secret
-#            authorization-grant-type: authorization_code
-#            redirect-uri: "{baseUrl}/login/oauth2/code/public-client"
-#            scope:
-#              - openid
-#              - profile
-#            provider: spring-auth-server
-#        provider:
-#          spring-auth-server:
-#            authorization-uri: http://localhost:8080/oauth2/authorize
-#            token-uri: http://localhost:8080/oauth2/token
-#            jwk-set-uri: http://localhost:8080/oauth2/jwks
-
   security:
     oauth2:
       resourceserver:
         jwt:
           jwk-set-uri: ${AUTH_SERVICE_URL:http://localhost:8080}/.well-known/jwks.json
-          issuer-uri: http://localhost:8080
+          issuer-uri: ${AUTH_SERVICE_URL:http://localhost:8080}
 
 logging:
   level:
