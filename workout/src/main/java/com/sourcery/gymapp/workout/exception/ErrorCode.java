@@ -16,7 +16,8 @@ public enum ErrorCode {
     VALIDATION_ERROR("Validation error"),
     LIKE_ALREADY_EXISTS("Like already exists"),
     LIKE_NOT_FOUND("Like not found"),
-    METHOD_ARGUMENT_TYPE_MISMATCH("Passed argument was incorrect type");
+    METHOD_ARGUMENT_TYPE_MISMATCH("Passed argument was incorrect type"),
+    USER_ID_HEADER_NOT_FOUND("Missing X-User-Id Header");
 
     private final String code;
 }

@@ -3,12 +3,12 @@ package com.sourcery.gymapp.userProfile.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-//import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,10 +33,10 @@ public class UserProfileExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-//    @ExceptionHandler(AccessDeniedException.class)
-//    public final ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
-//        return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
-//    } TODO: not sure whats that used for
+    @ExceptionHandler(AccessDeniedException.class)
+    public final ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
@@ -69,6 +69,13 @@ public class UserProfileExceptionHandler {
     @ExceptionHandler(S3PhotoUploadException.class)
     public ResponseEntity<ErrorResponse> handleS3PhotoUploadException(S3PhotoUploadException ex) {
         log.error("S3PhotoUploadException caught: {}", ex.getMessage(), ex);
+        ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getCode(), null);
+        return new ResponseEntity<>(response, ex.getStatus());
+    }
+
+    @ExceptionHandler(UserIdHeaderNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserIdHeaderNotFoundException(UserIdHeaderNotFoundException ex) {
+        log.error("UserIdHeaderNotFoundException caught: {}", ex.getMessage(), ex);
         ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getCode(), null);
         return new ResponseEntity<>(response, ex.getStatus());
     }
