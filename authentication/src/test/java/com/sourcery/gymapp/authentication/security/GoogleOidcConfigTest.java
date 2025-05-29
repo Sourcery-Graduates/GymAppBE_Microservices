@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "google.client-id=test-client-id",
     "google.client-secret=test-client-secret",
-    "app.base_url=http://localhost:8080"
+    "app.base_url=http://localhost:8081"
 })
 public class GoogleOidcConfigTest {
 
