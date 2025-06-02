@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 class UserProfileServiceTest {
 
     @Mock
-    private ProfileCurrentUserService currentUserService;
+    private CurrentUserService currentUserService;
     @Mock
     private UserProfileRepository userProfileRepository;
 

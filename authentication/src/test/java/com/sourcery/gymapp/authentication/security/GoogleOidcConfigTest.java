@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "google.client-id=test-client-id",
     "google.client-secret=test-client-secret",
-    "app.base_url=http://localhost:8080"
+    "app.base_url=http://localhost:8081"
 })
 public class GoogleOidcConfigTest {
 
@@ -53,7 +53,7 @@ public class GoogleOidcConfigTest {
         assertTrue(registration.getScopes().contains("email"));
 
         // Verify redirect URI
-        assertEquals("http://localhost:8080/login/oauth2/code/google", registration.getRedirectUri());
+        assertEquals("http://localhost:8081/login/oauth2/code/google", registration.getRedirectUri());
 
         // Verify user name attribute
         assertEquals(IdTokenClaimNames.SUB, registration.getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName());

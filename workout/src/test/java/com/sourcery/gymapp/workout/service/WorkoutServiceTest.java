@@ -45,7 +45,7 @@ public class WorkoutServiceTest {
     private RoutineService routineService;
 
     @Mock
-    private WorkoutCurrentUserService currentUserService;
+    private CurrentUserService currentUserService;
 
     @Mock
     private WorkoutMapper workoutMapper;

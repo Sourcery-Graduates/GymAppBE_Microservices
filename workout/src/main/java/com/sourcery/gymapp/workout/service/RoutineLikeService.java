@@ -20,7 +20,7 @@ import java.util.UUID;
 public class RoutineLikeService {
 
     private final RoutineLikeRepository routineLikeRepository;
-    private final WorkoutCurrentUserService currentUserService;
+    private final CurrentUserService currentUserService;
     private final RoutineRepository routineRepository;
     private final RoutineLikeMapper routineLikeMapper;
     private final WorkoutKafkaProducer kafkaProducer;

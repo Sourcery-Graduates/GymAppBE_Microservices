@@ -19,7 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserProfileService {
 
-    private final ProfileCurrentUserService currentUserService;
+    private final CurrentUserService currentUserService;
     private final UserProfileRepository userProfileRepository;
     private final UserProfileMapper userProfileMapper;
 

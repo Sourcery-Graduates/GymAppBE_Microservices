@@ -135,4 +135,11 @@ public class WorkoutExceptionHandler {
                 return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 
     }
+
+    @ExceptionHandler(UserIdHeaderNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserIdHeaderNotFoundException(UserIdHeaderNotFoundException ex) {
+        log.error("UserIdHeaderNotFoundException caught: {}", ex.getMessage(), ex);
+        ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getCode());
+        return new ResponseEntity<>(response, ex.getStatus());
+    }
 }

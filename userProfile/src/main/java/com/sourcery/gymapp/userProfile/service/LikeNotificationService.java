@@ -27,7 +27,7 @@ import java.util.UUID;
 public class LikeNotificationService {
     private final LikeNotificationRepository likeNotificationRepository;
     private final LikeNotificationMapper likeNotificationMapper;
-    private final ProfileCurrentUserService currentUserService;
+    private final CurrentUserService currentUserService;
 
     /**
      * Aggregation interval in minutes, retrieved from application properties.

@@ -1,6 +1,5 @@
 package com.sourcery.gymapp.userProfile.service;
 
-import com.sourcery.gymapp.userProfile.config.CurrentUserService;
 import com.sourcery.gymapp.userProfile.exception.InvalidImageException;
 import com.sourcery.gymapp.userProfile.exception.UserProfileNotFoundException;
 import com.sourcery.gymapp.userProfile.factory.UserProfileTestFactory;
@@ -33,7 +32,7 @@ import static org.mockito.Mockito.*;
 class UserPhotoServiceTest {
 
     @Mock
-    ProfileCurrentUserService currentUserService;
+    CurrentUserService currentUserService;
 
     @Mock
     private UserProfileRepository userProfileRepository;

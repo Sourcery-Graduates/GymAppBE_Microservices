@@ -20,7 +20,7 @@ public class GoogleOidcConfig {
     @Value("${google.client-secret}")
     private String googleClientSecret;
 
-    @Value("${app.base_url:http://localhost:8080}")
+    @Value("${app.base_url:http://localhost:8081}")
     private String appBaseUrl;
 
     @Bean

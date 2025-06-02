@@ -1,5 +1,6 @@
 package com.sourcery.gymapp.workout.config;
 
+import com.sourcery.gymapp.workout.service.CurrentUserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

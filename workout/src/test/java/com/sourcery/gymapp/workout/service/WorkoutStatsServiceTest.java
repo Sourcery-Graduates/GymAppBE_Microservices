@@ -11,11 +11,6 @@ import com.sourcery.gymapp.workout.factory.WorkoutStatsFactory;
 import com.sourcery.gymapp.workout.mapper.RoutineMapper;
 import com.sourcery.gymapp.workout.model.Routine;
 import com.sourcery.gymapp.workout.repository.WorkoutRepository;
-import com.sourcery.gymapp.workout.service.OffsetDateService;
-import com.sourcery.gymapp.workout.service.RoutineService;
-import com.sourcery.gymapp.workout.service.WorkoutCurrentUserService;
-import com.sourcery.gymapp.workout.service.WorkoutService;
-import com.sourcery.gymapp.workout.service.WorkoutStatsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -38,7 +33,7 @@ import static org.mockito.Mockito.*;
 public class WorkoutStatsServiceTest {
 
     @Mock
-    private WorkoutCurrentUserService workoutCurrentUserService;
+    private CurrentUserService currentUserService;
 
     @Mock
     private OffsetDateService offsetDateService;
@@ -63,7 +58,7 @@ public class WorkoutStatsServiceTest {
     @BeforeEach
     void setUp() {
         userId = UUID.fromString("910cb97b-d601-4c02-b4b6-c9f985e51a1f");
-        lenient().when(workoutCurrentUserService.getCurrentUserId()).thenReturn(userId);
+        lenient().when(currentUserService.getCurrentUserId()).thenReturn(userId);
     }
 
     @Nested

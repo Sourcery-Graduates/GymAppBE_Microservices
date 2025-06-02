@@ -24,7 +24,7 @@ import java.util.UUID;
 public class RoutineService {
     private final RoutineRepository routineRepository;
     private final RoutineMapper routineMapper;
-    private final WorkoutCurrentUserService currentUserService;
+    private final CurrentUserService currentUserService;
 
     @Transactional
     public ResponseRoutineDto createRoutine(CreateRoutineDto createRoutineDto) {

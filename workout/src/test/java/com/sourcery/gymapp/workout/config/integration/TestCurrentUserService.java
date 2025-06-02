@@ -1,6 +1,6 @@
 package com.sourcery.gymapp.workout.config.integration;
 
-import com.sourcery.gymapp.workout.config.CurrentUserService;
+import com.sourcery.gymapp.workout.service.CurrentUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
