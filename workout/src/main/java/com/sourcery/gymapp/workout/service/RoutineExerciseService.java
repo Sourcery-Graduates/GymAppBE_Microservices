@@ -11,6 +11,7 @@ import com.sourcery.gymapp.workout.model.Routine;
 import com.sourcery.gymapp.workout.model.RoutineExercise;
 import com.sourcery.gymapp.workout.repository.RoutineExerciseRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RoutineExerciseService {
     private final RoutineService routineService;
     private final ExerciseService exerciseService;
@@ -29,11 +31,14 @@ public class RoutineExerciseService {
     private final RoutineMapper routineMapper;
 
     @Transactional
-    public ResponseRoutineDetailDto replaceExercisesInRoutine(
+    public ResponseRoutineDetailDto updateExercisesInARoutine(
             UUID routineId,
             List<CreateRoutineExerciseDto> createRoutineExerciseDto) {
 
         Routine routine = routineService.findRoutineById(routineId);
+
+        List<RoutineExercise> existingExercises = routineExerciseRepository.findAllByRoutineId(routineId);
+        routineExerciseRepository.deleteAll(existingExercises);
 
         Map<UUID, Exercise> exerciseMap = exerciseService
                 .getExerciseMapByIds(createRoutineExerciseDto.
@@ -49,7 +54,6 @@ public class RoutineExerciseService {
                 )
                 .toList();
 
-        routineExerciseRepository.deleteAllByRoutineId(routine.getId());
         routineExerciseRepository.saveAll(routineExercises);
 
         return mapToResponseDto(routine, routineExercises);

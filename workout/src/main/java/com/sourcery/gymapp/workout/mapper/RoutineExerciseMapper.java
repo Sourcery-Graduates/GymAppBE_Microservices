@@ -17,7 +17,6 @@ public class RoutineExerciseMapper {
             Exercise exercise) {
 
         RoutineExercise routineExercise = new RoutineExercise();
-        routineExercise.setId(createRoutineExerciseDto.exerciseId());
         routineExercise.setExercise(exercise);
         routineExercise.setRoutine(routine);
         routineExercise.setOrderNumber(createRoutineExerciseDto.orderNumber());

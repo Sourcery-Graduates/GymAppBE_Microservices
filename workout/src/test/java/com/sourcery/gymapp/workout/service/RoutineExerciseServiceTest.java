@@ -102,7 +102,7 @@ public class RoutineExerciseServiceTest {
 
         // Act
         ResponseRoutineDetailDto result = routineExerciseService
-                .replaceExercisesInRoutine(routineId, createRoutineExerciseListDto);
+                .updateExercisesInARoutine(routineId, createRoutineExerciseListDto);
 
         // Assert
         verify(routineExerciseRepository).deleteAllByRoutineId(routineId);

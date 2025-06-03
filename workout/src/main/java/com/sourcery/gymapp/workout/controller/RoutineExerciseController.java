@@ -25,7 +25,7 @@ public class RoutineExerciseController {
             @RequestParam UUID routineId,
             @Valid @RequestBody List<CreateRoutineExerciseDto> createRoutineExerciseDto) {
 
-        return routineExerciseService.replaceExercisesInRoutine(routineId, createRoutineExerciseDto);
+        return routineExerciseService.updateExercisesInARoutine(routineId, createRoutineExerciseDto);
     }
 
 
