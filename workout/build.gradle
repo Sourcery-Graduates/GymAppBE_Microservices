@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.4'
 	id 'io.spring.dependency-management' version '1.1.6'
+	id 'com.google.cloud.tools.jib' version '3.4.5'
 }
 
 group = 'com.sourcery.gymapp'
@@ -16,6 +17,17 @@ java {
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
+	}
+}
+
+jib {
+	container {
+		jvmFlags = [
+				"-Dspring.profiles.active=local",
+		]
+		environment = [
+			"CONFIG_SERVER_URI" : "http://host.docker.internal:8888"
+		]
 	}
 }
 
