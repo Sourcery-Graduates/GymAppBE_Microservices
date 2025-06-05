@@ -22,7 +22,7 @@ configurations {
 
 jib {
 	to {
-		image = "sourcerygraduates/gymapp-${project.name.toLowerCase()}"
+		image = "sourcerygraduates/gymapp-${project.name.toLowerCase()}:jib"
 	}
 	container {
 		jvmFlags = [
@@ -31,7 +31,7 @@ jib {
 		environment = [
 			"CONFIG_SERVER_URI" : "http://host.docker.internal:8888"
 		]
-		ports = ["8083"]
+		ports = ["8082"]
 	}
 }
 

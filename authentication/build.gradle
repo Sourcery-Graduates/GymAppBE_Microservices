@@ -16,7 +16,7 @@ java {
 
 jib {
 	to {
-		image = "sourcerygraduates/gymapp-${project.name.toLowerCase()}"
+		image = "sourcerygraduates/gymapp-${project.name.toLowerCase()}:jib"
 	}
 	container {
 		jvmFlags = [
