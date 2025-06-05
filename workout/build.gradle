@@ -21,6 +21,9 @@ configurations {
 }
 
 jib {
+	to {
+		image = "sourcerygraduates/gymapp-${project.name.toLowerCase()}"
+	}
 	container {
 		jvmFlags = [
 				"-Dspring.profiles.active=local",
@@ -28,6 +31,7 @@ jib {
 		environment = [
 			"CONFIG_SERVER_URI" : "http://host.docker.internal:8888"
 		]
+		ports = ["8083"]
 	}
 }
 
