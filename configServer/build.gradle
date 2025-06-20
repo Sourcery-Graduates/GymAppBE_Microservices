@@ -22,7 +22,11 @@ jib {
 		jvmFlags = [
 				"-Dspring.profiles.active=local",
 		]
-		ports = ["8888"]
+		environment = [
+				'SSH_PRIVATE_KEY_BASE64': 'YOUR SSH KEY BASE64 ENCODED SHOULD BE HERE',
+				'IGNORE_LOCAL_SSH_SETTINGS': 'true'
+		]
+				ports = ["8888"]
 	}
 }
 

@@ -11,6 +11,14 @@ services:
     networks:
       - app-network
 
+  config:
+    image: sourcerygraduates/gymapp-configserver:jib
+    container_name: config
+    ports:
+      - "8888:8888"
+    networks:
+      - app-network
+
   authentication:
     image: sourcerygraduates/gymapp-authentication:jib
     container_name: authentication

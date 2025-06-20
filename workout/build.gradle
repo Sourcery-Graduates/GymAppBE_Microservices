@@ -29,7 +29,7 @@ jib {
 				"-Dspring.profiles.active=deployment",
 		]
 		environment = [
-			"CONFIG_SERVER_URI" : "http://host.docker.internal:8888"
+			"CONFIG_SERVER_URI" : "http://config:8888"
 		]
 		ports = ["8082"]
 	}
