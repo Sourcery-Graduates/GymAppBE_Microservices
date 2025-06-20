@@ -93,7 +93,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Profile("local")
+//    @Profile("local")
     public SecurityFilterChain localSecurityFilterChain(HttpSecurity http) throws Exception {
         // disable https for local development
         http.headers(headers -> headers
