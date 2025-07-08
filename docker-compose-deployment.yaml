@@ -18,6 +18,7 @@ services:
       - "8888:8888"
     networks:
       - app-network
+      - auth-network
 
   authentication:
     image: sourcerygraduates/gymapp-authentication:jib
@@ -28,7 +29,7 @@ services:
       - postgres
       - kafka1
     networks:
-      - app-network
+      - auth-network
 
   workout:
     image: sourcerygraduates/gymapp-workout:jib
@@ -80,6 +81,7 @@ services:
       - ./database/init-multiple-databases.sql:/docker-entrypoint-initdb.d/init-multiple-databases.sql
     networks:
       - app-network
+      - auth-network
 
   pgadmin:
       image: dpage/pgadmin4
@@ -107,6 +109,7 @@ services:
         ZOOKEEPER_SERVERS: zoo1:2888:3888
       networks:
         - app-network
+        - auth-network
 
 
   kafka1:
@@ -140,10 +143,13 @@ services:
         - zoo1
       networks:
         - app-network
+        - auth-network
 
 volumes:
   postgres_gym_app_data:
 
 networks:
   app-network:
+    driver: bridge
+  auth-network:
     driver: bridge
