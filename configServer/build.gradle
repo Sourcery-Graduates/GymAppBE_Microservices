@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.4'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.google.cloud.tools.jib' version '3.4.5'
 }
 
 group = 'com.sourcery.gymapp'
@@ -10,6 +11,22 @@ version = '0.0.1-SNAPSHOT'
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+jib {
+	to {
+		image = "sourcerygraduates/gymapp-${project.name.toLowerCase()}:jib"
+	}
+	container {
+		jvmFlags = [
+				"-Dspring.profiles.active=local",
+		]
+		environment = [
+				'SSH_PRIVATE_KEY_BASE64': 'YOUR SSH KEY BASE64 ENCODED SHOULD BE HERE',
+				'IGNORE_LOCAL_SSH_SETTINGS': 'true'
+		]
+				ports = ["8888"]
 	}
 }
 

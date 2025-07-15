@@ -3,5 +3,7 @@ spring:
     name: gym-app-workout-service
   config:
     activate:
-      on-profile: local
+      on-profile:
+        - local
+        - deployment
     import: configserver:${CONFIG_SERVER_URI:http://localhost:8888}

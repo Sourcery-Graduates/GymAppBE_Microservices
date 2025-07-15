@@ -93,7 +93,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Profile("local")
+// TODO: return profile restrictions when actually deploying on Cloud
+//  @Profile("local")
     public SecurityFilterChain localSecurityFilterChain(HttpSecurity http) throws Exception {
         // disable https for local development
         http.headers(headers -> headers
