@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  userprofile-deployment
+  labels:
+    app:  gym-app-microservices
+    name: userprofile-deployment
+spec:
+  selector:
+    matchLabels:
+      app: gym-app-microservices
+      name: userprofile-pod
+  replicas: 1
+  template:
+    metadata:
+      name: userprofile-pod
+      labels:
+        name: userprofile-pod
+        app: gym-app-microservices
+    spec:
+      containers:
+        - name: userprofile
+          image: sourcerygraduates/gymapp-userprofile:jib
+          ports:
+            - containerPort: 8083

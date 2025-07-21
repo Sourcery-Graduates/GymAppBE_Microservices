@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  configserver-deployment
+  labels:
+    app:  gym-app-microservices
+    name: configserver-deployment
+spec:
+  selector:
+    matchLabels:
+      app: gym-app-microservices
+      name: configserver-pod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: gym-app-microservices
+        name: configserver-pod
+    spec:
+      containers:
+      - name: configserver
+        image: sourcerygraduates/gymapp-configserver:jib
+        ports:
+        - containerPort:  8888

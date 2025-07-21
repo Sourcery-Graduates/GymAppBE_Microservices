@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: email-pod
+  labels:
+    name: email-pod
+    app: gym-app-microservices
+spec:
+  containers:
+    - name: email
+      image: sourcerygraduates/gymapp-email:jib
+      ports:
+        - containerPort: 8084
+  

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: userprofile-pod
+  labels:
+    name: userprofile-pod
+    app: gym-app-microservices
+spec:
+  containers:
+    - name: userprofile
+      image: sourcerygraduates/gymapp-userprofile:jib
+      ports:
+        - containerPort: 8083
