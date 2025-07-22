@@ -1,12 +1,13 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: postgres-deployment
+  name: postgres-statefulset
   labels:
-    name: postgres-deployment
+    name: postgres-statefulset
     app: gym-app-microservices
 spec:
   replicas: 1
+  serviceName: postgres
   selector:
     matchLabels:
       name: postgres-pod
@@ -33,10 +34,45 @@ spec:
             - name: POSTGRES_HOST_AUTH_METHOD
               value: trust
           volumeMounts:
-            - name: postgres-data
+            - name: data
               mountPath: /var/lib/postgresql/data
             - name: import-data
               mountPath: /var/lib/postgresql/import-data
             - name: init-script
               mountPath: /docker-entrypoint-initdb.d/init-multiple-databases.sql
               subPath: init-multiple-databases.sql
+      # For local‐dev only; in production bake these into an image or use a ConfigMap
+      volumes:
+        - name: import-data
+          hostPath:
+            path: /absolute/path/to/database/exercises_data
+            type: Directory
+        - name: init-script
+          hostPath:
+            path: /absolute/path/to/database/init-multiple-databases.sql
+            type: File
+
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    name: postgres-service
+    app: gym-app-microservices
+spec:
+  clusterIP: None
+  selector:
+      name: postgres-pod
+      app: gym-app-microservices
+  ports:
+    - port: 5432
+      targetPort: 5432
