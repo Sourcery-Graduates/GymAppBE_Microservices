@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: postgres-pod
+  labels:
+    name: authentication-pod
+    app: gym-app-microservices
+spec:
+  containers:
+    - name: postgres
+      image: postgres:14-alpine
+      ports:
+        - containerPort: 5432
+      env:
+        - name: POSTGRES_DB
+          value: gym_app_db
+        - name: POSTGRES_USER
+          value: gym_app_user
+        - name: POSTGRES_PASSWORD
+          value: gym_app_pass
+        - name: POSTGRES_HOST_AUTH_METHOD
+          value: trust
+      volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+        - name: import-data
+          mountPath: /var/lib/postgresql/import-data
+        - name: init-script
+          mountPath: /docker-entrypoint-initdb.d/init-multiple-databases.sql
+          subPath: init-multiple-databases.sql
+#  volumes:
+#      - name: postgres-data
+#        persistentVolumeClaim:
+#          claimName: postgres-pvc
+#      - name: import-data
+#        hostPath:
+#          path: /absolute/path/to/database/exercises_data
+#          type: Directory
+#      - name: init-script
+#        hostPath:
+#          path: /absolute/path/to/database/init-multiple-databases.sql
+#          type: File

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: configserver-pod
+  labels:
+    name: configserver-pod
+    app: gym-app-microservices
+spec:
+  containers:
+    - name: configserver
+      image: sourcerygraduates/gymapp-configserver:jib
+      ports:
+        - containerPort: 8888
