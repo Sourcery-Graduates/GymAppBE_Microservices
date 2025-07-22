@@ -22,3 +22,19 @@ spec:
         image: sourcerygraduates/gymapp-configserver:jib
         ports:
         - containerPort:  8888
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: configserver-service
+  labels:
+    name: configserver-service
+    app: gym-app-microservices
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8888
+      targetPort: 8888
+  selector:
+      app: gym-app-microservices
+      name: configserver-pod
