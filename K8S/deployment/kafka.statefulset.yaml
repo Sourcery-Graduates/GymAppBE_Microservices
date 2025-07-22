@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kafka
+  labels: 
+    name: kafka-statefulset
+    app: gym-app-microservices
+spec:
+  serviceName: kafka
+  replicas: 1
+  selector:
+    matchLabels: 
+      name: kafka-pod
+      app: gym-app-microservices
+  template:
+    metadata:
+      labels: 
+        name: kafka-pod
+        app: gym-app-microservices
+    spec:
+      containers:
+        - name: kafka
+          image: confluentinc/cp-kafka:7.3.2
+          ports:
+            - containerPort: 9092
+              name: server
+          env:
+            - name: KAFKA_BROKER_ID
+              value: "1"
+            - name: KAFKA_ZOOKEEPER_CONNECT
+              value: "zookeeper:2181"
+            - name: KAFKA_LISTENERS
+              value: "PLAINTEXT://0.0.0.0:9092"
+            - name: KAFKA_ADVERTISED_LISTENERS
+              value: "PLAINTEXT://kafka-0.kafka:9092"
+            - name: KAFKA_INTER_BROKER_LISTENER_NAME
+              value: "PLAINTEXT"
+          volumeMounts:
+            - name: kafka-data
+              mountPath: /var/lib/kafka/data
+  volumeClaimTemplates:
+    - metadata:
+        name: kafka-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+  labels: 
+   app: gym-app-microservices
+   name: kafka-service
+spec:
+  clusterIP: None
+  selector: 
+    app: gym-app-microservices
+    name: kafka-pod
+  ports:
+    - name: server
+      port: 9092
+      targetPort: 9092
