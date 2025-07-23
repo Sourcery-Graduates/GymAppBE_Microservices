@@ -10,10 +10,9 @@ spec:
   selector:
     matchLabels:
       app: gym-app-microservices
-      name: pgadmin-deployment
+      name: pgadmin-pod
   template:
     metadata:
-      name: pgadmin-pod
       labels:
         app: gym-app-microservices
         name: pgadmin-pod
@@ -28,7 +27,6 @@ spec:
               value: admin_pass
           ports:
             - containerPort: 80
-              hostPort: 8000
 ---
 apiVersion: v1
 kind: Service
@@ -43,6 +41,6 @@ spec:
     app: gym-app-microservices
     name: pgadmin-pod
   ports:
-    - port: 8081
-      targetPort: 8081
+    - port: 80
+      targetPort: 80
       nodePort: 30005

@@ -3,26 +3,28 @@ kind: Deployment
 metadata:
   name: email-deployment
   labels:
-    name: email-deployment
     app: gym-app-microservices
+    name: email-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: email-deployment
       app: gym-app-microservices
+      name: email-pod
   template:
     metadata:
-      name: email-pod
       labels:
-        name: email-pod
         app: gym-app-microservices
+        name: email-pod
     spec:
       containers:
         - name: email
           image: sourcerygraduates/gymapp-email:jib
           ports:
             - containerPort: 8084
+          env:
+            - name: CONFIG_SERVER_URI
+              value: http://configserver-service:8888
 ---
 apiVersion: v1
 kind: Service
@@ -37,5 +39,5 @@ spec:
     - port: 8084
       targetPort: 8084
   selector:
-    name: email-pod
     app: gym-app-microservices
+    name: email-pod
